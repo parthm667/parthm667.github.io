@@ -41,7 +41,7 @@ export default function About() {
               </div>
               <div className="meta-item">
                 <label>Status</label>
-                <span>Open to quant and software opportunities</span>
+                <span>Looking for internship opportunities (not full-time)</span>
               </div>
               <div className="meta-item">
                 <label>Education</label>
@@ -49,7 +49,7 @@ export default function About() {
               </div>
               <div className="meta-item">
                 <label>Interests</label>
-                <span>Quant Research · Trading Systems · Full-Stack</span>
+                <span>Quant Research | Trading Systems | Full-Stack</span>
               </div>
             </div>
 

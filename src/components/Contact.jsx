@@ -45,14 +45,14 @@ export default function Contact() {
         <p className="lbl">Get in touch</p>
         <h2 className="h2">Contact</h2>
         <p className="sub">
-          Interested in collaboration, quant research, or engineering opportunities? Reach out.
+          Interested in collaboration, quant research, or internship opportunities? Reach out.
         </p>
 
         <div className="contact-grid">
           <div className="ct-info">
             <h3>Let&apos;s build something together</h3>
             <p>
-              I am currently open to conversations about quant developer roles, software engineering,
+              I am currently open to conversations about quant developer internships and software engineering internships,
               and high-impact data-driven products.
             </p>
 

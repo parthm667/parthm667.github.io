@@ -5,7 +5,7 @@ const roles = [
   'Quant Analyst at Smith Investment Fund',
   "Master's in Financial Risk Management",
   'Aspiring Quant Developer',
-  'Full-Stack Developer',
+  'Seeking Summer Internship Roles',
 ]
 
 export default function Hero() {
@@ -46,7 +46,7 @@ export default function Hero() {
         <p className="hero-bio">
           I build data-driven software across quant finance and full-stack engineering,
           from backtesting and options pricing to production web applications.
-          I am based in College Park, Maryland and open to quant and software roles.
+          I am based in College Park, Maryland and currently looking for internship opportunities.
         </p>
 
         <div className="hero-btns">
