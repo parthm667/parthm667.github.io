@@ -47,6 +47,15 @@ const projects = [
     live: '',
   },
   {
+    title: 'Population Biology Laboratory - IISER Pune',
+    kind: 'Research',
+    description:
+      'Research Assistant (Remote), Mar 2024 - Jan 2025. Built a logistic-regression classifier with TF-IDF vectorization and 5-fold cross-validation (96% accuracy on 35k+ papers). Fine-tuned BART-large-CNN for literature reviews, built a BeautifulSoup DOI metadata repair pipeline, and optimized logistic-regression and SVM models with GridSearchCV.',
+    stack: ['Logistic Regression', 'TF-IDF', 'BART-large-CNN', 'BeautifulSoup', 'GridSearchCV', 'SVM'],
+    github: '',
+    live: '',
+  },
+  {
     title: 'EVCode',
     kind: 'GitHub',
     description: 'Public EVCode repository.',

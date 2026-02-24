@@ -6,7 +6,7 @@ export default function About() {
       <div className="container about-grid">
         <div className="about-photo">
           <img
-            src="https://images.squarespace-cdn.com/content/v1/5eb2c11998fcbd048420afd6/af4e19ac-8943-4aab-80f6-11f12eeeff0f/ParthMhaske.jpg?format=750w"
+            src="/parth-photo.webp"
             alt="Parth Mhaske"
           />
         </div>
@@ -47,7 +47,7 @@ export default function About() {
               <span className="meta-icon"><GraduationCap size={15} /></span>
               <div>
                 <label>Education</label>
-                <span>University of Maryland - Computer Science</span>
+                <span>University of Maryland - Computer Science and Applied Mathematics</span>
               </div>
             </div>
             <div className="meta-item">
