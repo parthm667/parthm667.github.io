@@ -21,8 +21,8 @@ export default function About() {
             <h2 className="h2">Who I am</h2>
 
             <p>
-              I am <strong>Parth Mhaske</strong>, a quant-focused software engineer and student with
-              strong interests in systematic trading, market microstructure, and production-grade systems.
+              I am <strong>Parth Mhaske</strong>, a software engineer and student working across
+              quant systems, robotics, and research-driven modeling.
             </p>
             <p>
               I currently work as a Quant Analyst at the{' '}
@@ -30,8 +30,8 @@ export default function About() {
               where I contribute to strategy research and portfolio analytics.
             </p>
             <p>
-              My work focuses on quant development and practical engineering,
-              and I actively build projects spanning backtesting engines, forecasting models, and web apps.
+              My work spans low-latency trading infrastructure, autonomous robotics control,
+              computational simulation, and practical software delivery.
             </p>
 
             <div className="meta-grid">
@@ -49,7 +49,7 @@ export default function About() {
               </div>
               <div className="meta-item">
                 <label>Interests</label>
-                <span>Quant Research | Trading Systems | Full-Stack</span>
+                <span>Robotics | Research Computing | Quant Systems</span>
               </div>
             </div>
 
