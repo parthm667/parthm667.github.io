@@ -99,7 +99,6 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);line-height:1
 .skills-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1.2rem}
 .skill-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1.5rem;transition:var(--ease)}
 .skill-card:hover{border-color:var(--accent);transform:translateY(-4px);box-shadow:0 12px 40px var(--glow)}
-.sk-icon{font-size:1.6rem;margin-bottom:.5rem}
 .skill-card h3{font-size:.82rem;font-weight:700;color:var(--txt);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.8rem}
 .sk-tags{display:flex;flex-wrap:wrap;gap:.4rem}
 
@@ -111,7 +110,6 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);line-height:1
 .proj-card:hover{border-color:var(--accent);transform:translateY(-6px);box-shadow:0 16px 48px var(--glow)}
 .proj-card:hover::before{transform:scaleX(1)}
 .proj-head{display:flex;align-items:flex-start;justify-content:space-between}
-.proj-icon{font-size:1.8rem}
 .proj-links{display:flex;gap:.5rem}
 .proj-link{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:6px;border:1px solid var(--border);color:var(--txt3);font-size:.85rem;text-decoration:none;transition:var(--ease)}
 .proj-link:hover{color:var(--accent-l);border-color:var(--accent-l);background:var(--glow)}

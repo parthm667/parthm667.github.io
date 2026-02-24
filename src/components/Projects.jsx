@@ -2,7 +2,6 @@ import { FiGithub, FiExternalLink } from 'react-icons/fi'
 
 const projects = [
   {
-    icon: 'Q1',
     title: 'RobotTourMazeSolver',
     description:
       'Python repository focused on robot tour and maze-solving workflows, including algorithmic path-finding and traversal logic.',
@@ -11,7 +10,6 @@ const projects = [
     live: '',
   },
   {
-    icon: 'Q2',
     title: 'Fast Crypto Options Pricing',
     description:
       'High-performance options pricing engine for crypto derivatives, with implementations based on quantitative finance models.',
@@ -20,7 +18,6 @@ const projects = [
     live: '',
   },
   {
-    icon: 'Q3',
     title: 'StockForecasting_with_LSTM',
     description:
       'Time-series stock forecasting experiments using LSTM-based deep learning models and notebook-driven research workflows.',
@@ -29,7 +26,6 @@ const projects = [
     live: '',
   },
   {
-    icon: 'Q4',
     title: 'Student-Management-System-MERN',
     description:
       'MERN-based student management platform that supports structured records, full-stack CRUD operations, and admin workflows.',
@@ -38,7 +34,6 @@ const projects = [
     live: '',
   },
   {
-    icon: 'Q5',
     title: 'BacktestingEngine',
     description:
       'Rust repository for backtesting financial strategies with an emphasis on speed, determinism, and robust simulation.',
@@ -47,7 +42,6 @@ const projects = [
     live: '',
   },
   {
-    icon: 'Q6',
     title: 'Popularity Bias Simulation',
     description:
       'Simulation study of popularity bias in recommendation systems, modeling feedback loops and ranking amplification.',
@@ -71,7 +65,6 @@ export default function Projects() {
           {projects.map(proj => (
             <div className="proj-card" key={proj.title}>
               <div className="proj-head">
-                <span className="proj-icon">{proj.icon}</span>
                 <div className="proj-links">
                   {proj.github && (
                     <a href={proj.github} target="_blank" rel="noreferrer" className="proj-link" aria-label="GitHub">
