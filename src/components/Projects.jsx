@@ -2,51 +2,45 @@ import { FiGithub, FiExternalLink } from 'react-icons/fi'
 
 const projects = [
   {
+    title: 'EVCode',
+    description: 'Public EVCode project repository.',
+    stack: ['Jupyter Notebook'],
+    github: 'https://github.com/parthm667/EVCode',
+    live: '',
+  },
+  {
     title: 'RobotTourMazeSolver',
-    description:
-      'Python repository focused on robot tour and maze-solving workflows, including algorithmic path-finding and traversal logic.',
-    stack: ['Python', 'Algorithms', 'Path Planning'],
+    description: 'Maze solver and robot tour project repository.',
+    stack: ['Jupyter Notebook'],
     github: 'https://github.com/parthm667/RobotTourMazeSolver',
     live: '',
   },
   {
-    title: 'Fast Crypto Options Pricing',
-    description:
-      'High-performance options pricing engine for crypto derivatives, with implementations based on quantitative finance models.',
-    stack: ['Python', 'NumPy', 'Quant Finance'],
-    github: 'https://github.com/parthm667/Fast-Crypto-Options-Pricing',
+    title: 'PolymarketAnalysis',
+    description: 'Polymarket analysis project repository.',
+    stack: ['Jupyter Notebook'],
+    github: 'https://github.com/parthm667/PolymarketAnalysis',
     live: '',
   },
   {
-    title: 'StockForecasting_with_LSTM',
-    description:
-      'Time-series stock forecasting experiments using LSTM-based deep learning models and notebook-driven research workflows.',
-    stack: ['Jupyter', 'Python', 'LSTM'],
-    github: 'https://github.com/parthm667/StockForecasting_with_LSTM',
+    title: 'nj-hin-generator',
+    description: 'Python project repository for NJ HIN generation.',
+    stack: ['Python'],
+    github: 'https://github.com/parthm667/nj-hin-generator',
     live: '',
   },
   {
-    title: 'Student-Management-System-MERN',
-    description:
-      'MERN-based student management platform that supports structured records, full-stack CRUD operations, and admin workflows.',
-    stack: ['MongoDB', 'Express', 'React', 'Node.js'],
-    github: 'https://github.com/parthm667/Student-Management-System-MERN',
-    live: '',
+    title: 'parthm667.github.io',
+    description: 'Source repository for this portfolio site.',
+    stack: ['JavaScript', 'React', 'Vite'],
+    github: 'https://github.com/parthm667/parthm667.github.io',
+    live: 'https://parthm667.github.io',
   },
   {
-    title: 'BacktestingEngine',
-    description:
-      'Rust repository for backtesting financial strategies with an emphasis on speed, determinism, and robust simulation.',
-    stack: ['Rust', 'Backtesting', 'Performance Engineering'],
-    github: 'https://github.com/parthm667/BacktestingEngine',
-    live: '',
-  },
-  {
-    title: 'Popularity Bias Simulation',
-    description:
-      'Simulation study of popularity bias in recommendation systems, modeling feedback loops and ranking amplification.',
-    stack: ['Python', 'NumPy', 'Jupyter'],
-    github: 'https://github.com/parthm667/popularitybiassim',
+    title: 'Insulin-Dosage-Model',
+    description: 'Forked repository for insulin dosage modeling work.',
+    stack: ['Forked Project'],
+    github: 'https://github.com/parthm667/Insulin-Dosage-Model',
     live: '',
   },
 ]
@@ -58,7 +52,7 @@ export default function Projects() {
         <p className="lbl">Things I have built</p>
         <h2 className="h2">Projects</h2>
         <p className="sub">
-          Project set compiled from my public GitHub profile and repositories.
+          Real projects from my public GitHub profile.
         </p>
 
         <div className="proj-grid">

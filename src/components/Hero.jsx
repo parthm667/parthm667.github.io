@@ -3,7 +3,7 @@ import { FiGithub, FiLinkedin, FiMail, FiArrowRight } from 'react-icons/fi'
 
 const roles = [
   'Quant Analyst at Smith Investment Fund',
-  "Master's in Financial Risk Management",
+  'Student at University of Maryland',
   'Aspiring Quant Developer',
   'Seeking Summer Internship Roles',
 ]
@@ -65,7 +65,7 @@ export default function Hero() {
           <a href="https://linkedin.com/in/parthmhaske667" target="_blank" rel="noreferrer" className="soc-link" aria-label="LinkedIn">
             <FiLinkedin />
           </a>
-          <a href="mailto:mhaskep@terpmail.umd.edu" className="soc-link" aria-label="Email">
+          <a href="mailto:pmhaske@terpmail.umd.edu" className="soc-link" aria-label="Email">
             <FiMail />
           </a>
         </div>

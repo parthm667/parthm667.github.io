@@ -5,8 +5,8 @@ const contactLinks = [
   {
     icon: <FiMail />,
     label: 'Email',
-    value: 'mhaskep@terpmail.umd.edu',
-    href: 'mailto:mhaskep@terpmail.umd.edu',
+    value: 'pmhaske@terpmail.umd.edu',
+    href: 'mailto:pmhaske@terpmail.umd.edu',
   },
   {
     icon: <FiLinkedin />,
@@ -34,7 +34,7 @@ export default function Contact() {
     const body = encodeURIComponent(
       `Name: ${form.name}\nEmail: ${form.email}\n\nMessage:\n${form.message}`
     )
-    window.location.href = `mailto:mhaskep@terpmail.umd.edu?subject=${subject}&body=${body}`
+    window.location.href = `mailto:pmhaske@terpmail.umd.edu?subject=${subject}&body=${body}`
     setSent(true)
     setForm({ name: '', email: '', message: '' })
   }
