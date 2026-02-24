@@ -11,20 +11,20 @@ const projects = [
     live: '',
   },
   {
-    title: 'FRC Team 1923 - Electrical Director',
-    kind: 'Robotics',
+    title: 'MASS Lab Research - UT Austin',
+    kind: 'Research',
     description:
-      'Led electrical system design and diagnostics across CAN and encoder signal integrity, and supported autonomous strategy and match-level decision workflows.',
-    stack: ['Electrical Systems', 'Diagnostics', 'Autonomous Strategy'],
+      'Researched UAV landing stability under stochastic conditions and built a parallel Monte Carlo pipeline with 6.2x speedup; invited to present at the 2026 AIAA Aviation Forum.',
+    stack: ['UAV Dynamics', 'ODE Modeling', 'Parallel Simulation'],
     github: '',
     live: '',
   },
   {
-    title: 'Computational Social Dynamics Lab Research',
+    title: 'Population Biology Laboratory - IISER Pune',
     kind: 'Research',
     description:
-      'Developed stochastic simulation models for popularity-driven bias in online markets, including large-scale Monte Carlo sweeps and ABC calibration against ranking data.',
-    stack: ['Monte Carlo', 'Agent-Based Modeling', 'ABC'],
+      'Built and tuned literature-classification pipelines (logistic regression and SVM) across 35k+ papers using TF-IDF, cross-validation, and metadata repair tooling.',
+    stack: ['Logistic Regression', 'TF-IDF', 'GridSearchCV', 'SVM'],
     github: '',
     live: '',
   },
@@ -38,20 +38,20 @@ const projects = [
     live: '',
   },
   {
-    title: 'MASS Lab Research - UT Austin',
+    title: 'Computational Social Dynamics Lab Research',
     kind: 'Research',
     description:
-      'Researched UAV landing stability under stochastic conditions, derived coupled high-order ODE models, and built a parallel Monte Carlo pipeline with 6.2x speedup.',
-    stack: ['UAV Dynamics', 'ODE Modeling', 'Parallel Simulation'],
+      'Developed stochastic simulation models for popularity-driven bias in online markets, including large-scale Monte Carlo sweeps and ABC calibration against ranking data.',
+    stack: ['Monte Carlo', 'Agent-Based Modeling', 'ABC'],
     github: '',
     live: '',
   },
   {
-    title: 'Population Biology Laboratory - IISER Pune',
-    kind: 'Research',
+    title: 'FRC Team 1923 - Electrical Director',
+    kind: 'Robotics',
     description:
-      'Research Assistant (Remote), Mar 2024 - Jan 2025. Built a logistic-regression classifier with TF-IDF vectorization and 5-fold cross-validation (96% accuracy on 35k+ papers). Fine-tuned BART-large-CNN for literature reviews, built a BeautifulSoup DOI metadata repair pipeline, and optimized logistic-regression and SVM models with GridSearchCV.',
-    stack: ['Logistic Regression', 'TF-IDF', 'BART-large-CNN', 'BeautifulSoup', 'GridSearchCV', 'SVM'],
+      'Led electrical system design and diagnostics across CAN and encoder signal integrity, and supported autonomous strategy and match-level decision workflows.',
+    stack: ['Electrical Systems', 'Diagnostics', 'Autonomous Strategy'],
     github: '',
     live: '',
   },
@@ -95,7 +95,7 @@ export default function Projects() {
         <p className="lbl">Selected Work</p>
         <h2 className="h2">Projects, Robotics, and Research</h2>
         <p className="sub">
-          Work spanning autonomous robotics, lab research, and public repositories.
+          Ordered from coolest to least cool across robotics, research, and public repositories.
         </p>
 
         <div className="proj-grid">

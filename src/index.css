@@ -389,6 +389,15 @@ a {
   text-decoration: underline;
 }
 
+.about-copy a.btn {
+  color: #f6f8f7;
+}
+
+.about-copy a.btn:hover {
+  color: #f6f8f7;
+  text-decoration: none;
+}
+
 .about-meta {
   margin: 1.4rem 0 1.6rem;
   display: grid;
