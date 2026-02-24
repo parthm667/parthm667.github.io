@@ -9,11 +9,11 @@ export default function About() {
           {/* Avatar */}
           <div className="av-wrap">
             <div className="av-frame">
-              {/* Replace the div below with <img src="./photo.jpg" alt="Parth Mhaske" /> */}
-              <div className="av-ph">
-                ðŸ§‘â€ðŸ’»
-                <small>your photo here</small>
-              </div>
+              <img
+                src="https://github.com/parthm667.png"
+                alt="Parth Mhaske"
+                style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'inherit' }}
+              />
             </div>
             <div className="av-corner" />
           </div>
@@ -29,7 +29,7 @@ export default function About() {
               that sits at the intersection of code and creativity.
             </p>
             <p>
-              I enjoy working across the stack â€” designing clean UIs in React, building
+              I enjoy working across the stack &mdash; designing clean UIs in React, building
               robust APIs, and digging into data. When I&apos;m not coding, you&apos;ll
               find me reading about markets, working on side projects, or cycling.
             </p>
@@ -41,19 +41,19 @@ export default function About() {
             <div className="meta-grid">
               <div className="meta-item">
                 <label>Location</label>
-                <span>United States</span>
+                <span>College Park, MD</span>
               </div>
               <div className="meta-item">
                 <label>Status</label>
-                <span>Open to work âœ…</span>
+                <span>Open to work ✅</span>
               </div>
               <div className="meta-item">
                 <label>Education</label>
-                <span>B.S. Computer Science</span>
+                <span>B.S. CS &amp; Math &middot; UMD</span>
               </div>
               <div className="meta-item">
                 <label>Interests</label>
-                <span>Fintech Â· OSS Â· Cycling</span>
+                <span>Fintech &middot; OSS &middot; Cycling</span>
               </div>
             </div>
 

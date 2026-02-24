@@ -5,14 +5,14 @@ const contactLinks = [
   {
     icon: <FiMail />,
     label: 'Email',
-    value: 'your@email.com',
-    href: 'mailto:your@email.com',
+    value: 'parth.mhaske@gmail.com',
+    href: 'mailto:parth.mhaske@gmail.com',
   },
   {
     icon: <FiLinkedin />,
     label: 'LinkedIn',
-    value: 'linkedin.com/in/parthm667',
-    href: 'https://linkedin.com/in/parthm667',
+    value: 'linkedin.com/in/parthmhaske667',
+    href: 'https://linkedin.com/in/parthmhaske667',
   },
   {
     icon: <FiGithub />,
@@ -28,15 +28,13 @@ export default function Contact() {
 
   const handleChange = e => setForm(f => ({ ...f, [e.target.name]: e.target.value }))
 
-  const handleSubmit = async e => {
+  const handleSubmit = e => {
     e.preventDefault()
-    // Replace the action URL below with your Formspree endpoint
-    const res = await fetch('https://formspree.io/f/YOUR_FORM_ID', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify(form),
-    })
-    if (res.ok) { setSent(true); setForm({ name: '', email: '', message: '' }) }
+    const subject = encodeURIComponent(`Message from ${form.name}`)
+    const body = encodeURIComponent(`Name: ${form.name}\nEmail: ${form.email}\n\n${form.message}`)
+    window.open(`mailto:parth.mhaske@gmail.com?subject=${subject}&body=${body}`)
+    setSent(true)
+    setForm({ name: '', email: '', message: '' })
   }
 
   return (
@@ -53,7 +51,7 @@ export default function Contact() {
             <h3>Let&apos;s build something together</h3>
             <p>
               I&apos;m currently looking for new opportunities. Whether you have a question,
-              a project idea, or just want to connect â€” feel free to reach out!
+              a project idea, or just want to connect &mdash; feel free to reach out!
             </p>
 
             <div className="ct-links">
@@ -71,8 +69,8 @@ export default function Contact() {
 
           {sent ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1rem', minHeight: '300px', background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 'var(--r)', padding: '2rem', textAlign: 'center' }}>
-              <span style={{ fontSize: '3rem' }}>ðŸŽ‰</span>
-              <h3>Message sent!</h3>
+              <span style={{ fontSize: '3rem' }}>🎉</span>
+              <h3>Email client opened!</h3>
               <p style={{ color: 'var(--txt2)', fontSize: '.9rem' }}>Thanks for reaching out. I&apos;ll get back to you soon.</p>
               <button className="btn btn-o" onClick={() => setSent(false)}>Send another</button>
             </div>

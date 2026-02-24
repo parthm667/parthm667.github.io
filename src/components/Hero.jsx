@@ -61,10 +61,10 @@ export default function Hero() {
           <a href="https://github.com/parthm667" target="_blank" rel="noreferrer" className="soc-link" aria-label="GitHub">
             <FiGithub />
           </a>
-          <a href="https://linkedin.com/in/parthm667" target="_blank" rel="noreferrer" className="soc-link" aria-label="LinkedIn">
+          <a href="https://linkedin.com/in/parthmhaske667" target="_blank" rel="noreferrer" className="soc-link" aria-label="LinkedIn">
             <FiLinkedin />
           </a>
-          <a href="mailto:your@email.com" className="soc-link" aria-label="Email">
+          <a href="mailto:parth.mhaske@gmail.com" className="soc-link" aria-label="Email">
             <FiMail />
           </a>
         </div>

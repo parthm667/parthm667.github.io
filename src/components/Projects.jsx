@@ -2,7 +2,7 @@ import { FiGithub, FiExternalLink } from 'react-icons/fi'
 
 const projects = [
   {
-    icon: 'ðŸ“ˆ',
+    icon: '📈',
     title: 'Fast Crypto Options Pricing',
     description:
       'High-performance options pricing engine for crypto derivatives using Black-Scholes and Monte Carlo simulation. Built in Python with optimized NumPy vectorisation.',
@@ -11,34 +11,25 @@ const projects = [
     live: '',
   },
   {
-    icon: 'ðŸ¤–',
-    title: 'Tau-Bench Agent',
+    icon: '📊',
+    title: 'Polymarket Analysis',
     description:
-      'Autonomous task-completion agent evaluated on the tau-bench benchmark. Implements tool-use, multi-step planning, and self-correction for real-world tasks.',
-    stack: ['Python', 'LLM APIs', 'Docker'],
-    github: 'https://github.com/parthm667',
+      'Data-driven analysis of prediction market pricing on Polymarket. Explores market efficiency, probability calibration, and trading signals across political and event-based contracts.',
+    stack: ['Python', 'Jupyter', 'Pandas', 'Matplotlib'],
+    github: 'https://github.com/parthm667/PolymarketAnalysis',
     live: '',
   },
   {
-    icon: 'ðŸŒ',
-    title: 'Full-Stack App',
+    icon: '🤖',
+    title: 'Robot Tour Maze Solver',
     description:
-      'Production-ready full-stack web application with authentication, real-time updates, and a clean component-driven UI.',
-    stack: ['React', 'Node.js', 'PostgreSQL', 'Express'],
-    github: 'https://github.com/parthm667',
+      'Algorithmic maze-solving agent using graph traversal strategies. Implements BFS, DFS, and heuristic-guided search for autonomous robot path planning.',
+    stack: ['Python', 'Jupyter', 'Algorithms'],
+    github: 'https://github.com/parthm667/RobotTourMazeSolver',
     live: '',
   },
   {
-    icon: 'ðŸ“¡',
-    title: 'Alpha Competition Model',
-    description:
-      'Quantitative alpha signal research for competition. Explores cross-sectional momentum, statistical arbitrage, and factor models.',
-    stack: ['Python', 'Pandas', 'SciPy', 'Matplotlib'],
-    github: 'https://github.com/parthm667',
-    live: '',
-  },
-  {
-    icon: 'ðŸ”¬',
+    icon: '🔬',
     title: 'Popularity Bias Sim',
     description:
       'Simulation study of popularity bias in recommendation systems. Models feedback loops and filter-bubble effects.',
@@ -47,10 +38,19 @@ const projects = [
     live: '',
   },
   {
-    icon: 'ðŸ ',
+    icon: '🛠️',
+    title: 'NJ HIN Generator',
+    description:
+      'Utility tool for generating New Jersey Health Insurance Network identifiers. A practical Python tool built for data processing and compliance workflows.',
+    stack: ['Python'],
+    github: 'https://github.com/parthm667/nj-hin-generator',
+    live: '',
+  },
+  {
+    icon: '🎨',
     title: 'Personal Website',
     description:
-      'This site! Built with React + Vite, dark-themed, deployed to GitHub Pages. Fully custom â€” no templates.',
+      'This site! Built with React + Vite, dark-themed, deployed to GitHub Pages. Fully custom — no templates.',
     stack: ['React', 'Vite', 'CSS', 'GitHub Pages'],
     github: 'https://github.com/parthm667/parthm667.github.io',
     live: 'https://parthm667.github.io',
@@ -64,7 +64,7 @@ export default function Projects() {
         <p className="lbl">Things I have built</p>
         <h2 className="h2">Projects</h2>
         <p className="sub">
-          A selection of projects I&apos;ve worked on â€” from quant tools to full-stack apps.
+          A selection of projects I&apos;ve worked on &mdash; from quant tools to full-stack apps.
         </p>
 
         <div className="proj-grid">
