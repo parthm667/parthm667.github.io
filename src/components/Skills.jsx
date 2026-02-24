@@ -1,27 +1,23 @@
 const categories = [
   {
-    title: 'Quant & Data',
-    skills: ['Python', 'NumPy', 'Pandas', 'Statistical Modeling', 'Backtesting', 'Time Series'],
+    title: 'Languages',
+    skills: ['Python', 'JavaScript', 'Java', 'C++', 'C', 'R', 'HTML/CSS', 'LaTeX'],
   },
   {
-    title: 'Software Engineering',
-    skills: ['Data Structures', 'Algorithms', 'OOP', 'System Design', 'Testing', 'Debugging'],
-  },
-  {
-    title: 'Web Development',
-    skills: ['React', 'JavaScript', 'Node.js', 'Express', 'REST APIs', 'MongoDB'],
-  },
-  {
-    title: 'Programming Languages',
-    skills: ['Python', 'Rust', 'JavaScript', 'SQL', 'C++', 'MATLAB'],
-  },
-  {
-    title: 'Machine Learning',
-    skills: ['LSTM', 'Feature Engineering', 'Model Evaluation', 'Jupyter', 'Data Visualization'],
+    title: 'Libraries',
+    skills: ['NumPy', 'SciPy', 'scikit-learn', 'pandas', 'Matplotlib', 'TensorFlow'],
   },
   {
     title: 'Tools',
-    skills: ['Git', 'GitHub', 'Vite', 'VS Code', 'Linux', 'Docker'],
+    skills: ['Git', 'GitHub', 'Jupyter', 'Linux/Bash', 'REST APIs', 'Optuna'],
+  },
+  {
+    title: 'Technical Areas',
+    skills: ['Monte Carlo Simulation', 'ODE Modeling', 'PID Control', 'A* Pathfinding', 'Logistic Regression', 'K-means Clustering'],
+  },
+  {
+    title: 'GitHub Repo Languages',
+    skills: ['Jupyter Notebook', 'Python', 'JavaScript'],
   },
 ]
 
@@ -32,7 +28,7 @@ export default function Skills() {
         <p className="lbl">What I work with</p>
         <h2 className="h2">Skills & Technologies</h2>
         <p className="sub">
-          Core technologies and methods I use across quant research and software delivery.
+          Skills listed from resume technical skills and public GitHub repository metadata.
         </p>
 
         <div className="skills-grid">

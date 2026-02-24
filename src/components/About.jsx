@@ -41,7 +41,7 @@ export default function About() {
               </div>
               <div className="meta-item">
                 <label>Status</label>
-                <span>Looking for internship opportunities (not full-time)</span>
+                <span>Looking for internship opportunities</span>
               </div>
               <div className="meta-item">
                 <label>Education</label>
