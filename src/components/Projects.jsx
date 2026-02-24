@@ -2,58 +2,58 @@ import { FiGithub, FiExternalLink } from 'react-icons/fi'
 
 const projects = [
   {
-    icon: 'ðŸ“ˆ',
+    icon: 'Q1',
+    title: 'RobotTourMazeSolver',
+    description:
+      'Python repository focused on robot tour and maze-solving workflows, including algorithmic path-finding and traversal logic.',
+    stack: ['Python', 'Algorithms', 'Path Planning'],
+    github: 'https://github.com/parthm667/RobotTourMazeSolver',
+    live: '',
+  },
+  {
+    icon: 'Q2',
     title: 'Fast Crypto Options Pricing',
     description:
-      'High-performance options pricing engine for crypto derivatives using Black-Scholes and Monte Carlo simulation. Built in Python with optimized NumPy vectorisation.',
-    stack: ['Python', 'NumPy', 'FastAPI', 'React'],
+      'High-performance options pricing engine for crypto derivatives, with implementations based on quantitative finance models.',
+    stack: ['Python', 'NumPy', 'Quant Finance'],
     github: 'https://github.com/parthm667/Fast-Crypto-Options-Pricing',
     live: '',
   },
   {
-    icon: 'ðŸ¤–',
-    title: 'Tau-Bench Agent',
+    icon: 'Q3',
+    title: 'StockForecasting_with_LSTM',
     description:
-      'Autonomous task-completion agent evaluated on the tau-bench benchmark. Implements tool-use, multi-step planning, and self-correction for real-world tasks.',
-    stack: ['Python', 'LLM APIs', 'Docker'],
-    github: 'https://github.com/parthm667',
+      'Time-series stock forecasting experiments using LSTM-based deep learning models and notebook-driven research workflows.',
+    stack: ['Jupyter', 'Python', 'LSTM'],
+    github: 'https://github.com/parthm667/StockForecasting_with_LSTM',
     live: '',
   },
   {
-    icon: 'ðŸŒ',
-    title: 'Full-Stack App',
+    icon: 'Q4',
+    title: 'Student-Management-System-MERN',
     description:
-      'Production-ready full-stack web application with authentication, real-time updates, and a clean component-driven UI.',
-    stack: ['React', 'Node.js', 'PostgreSQL', 'Express'],
-    github: 'https://github.com/parthm667',
+      'MERN-based student management platform that supports structured records, full-stack CRUD operations, and admin workflows.',
+    stack: ['MongoDB', 'Express', 'React', 'Node.js'],
+    github: 'https://github.com/parthm667/Student-Management-System-MERN',
     live: '',
   },
   {
-    icon: 'ðŸ“¡',
-    title: 'Alpha Competition Model',
+    icon: 'Q5',
+    title: 'BacktestingEngine',
     description:
-      'Quantitative alpha signal research for competition. Explores cross-sectional momentum, statistical arbitrage, and factor models.',
-    stack: ['Python', 'Pandas', 'SciPy', 'Matplotlib'],
-    github: 'https://github.com/parthm667',
+      'Rust repository for backtesting financial strategies with an emphasis on speed, determinism, and robust simulation.',
+    stack: ['Rust', 'Backtesting', 'Performance Engineering'],
+    github: 'https://github.com/parthm667/BacktestingEngine',
     live: '',
   },
   {
-    icon: 'ðŸ”¬',
-    title: 'Popularity Bias Sim',
+    icon: 'Q6',
+    title: 'Popularity Bias Simulation',
     description:
-      'Simulation study of popularity bias in recommendation systems. Models feedback loops and filter-bubble effects.',
+      'Simulation study of popularity bias in recommendation systems, modeling feedback loops and ranking amplification.',
     stack: ['Python', 'NumPy', 'Jupyter'],
     github: 'https://github.com/parthm667/popularitybiassim',
     live: '',
-  },
-  {
-    icon: 'ðŸ ',
-    title: 'Personal Website',
-    description:
-      'This site! Built with React + Vite, dark-themed, deployed to GitHub Pages. Fully custom â€” no templates.',
-    stack: ['React', 'Vite', 'CSS', 'GitHub Pages'],
-    github: 'https://github.com/parthm667/parthm667.github.io',
-    live: 'https://parthm667.github.io',
   },
 ]
 
@@ -64,7 +64,7 @@ export default function Projects() {
         <p className="lbl">Things I have built</p>
         <h2 className="h2">Projects</h2>
         <p className="sub">
-          A selection of projects I&apos;ve worked on â€” from quant tools to full-stack apps.
+          Project set compiled from my public GitHub profile and repositories.
         </p>
 
         <div className="proj-grid">

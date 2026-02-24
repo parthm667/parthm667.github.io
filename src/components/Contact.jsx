@@ -5,14 +5,14 @@ const contactLinks = [
   {
     icon: <FiMail />,
     label: 'Email',
-    value: 'your@email.com',
-    href: 'mailto:your@email.com',
+    value: 'mhaskep@terpmail.umd.edu',
+    href: 'mailto:mhaskep@terpmail.umd.edu',
   },
   {
     icon: <FiLinkedin />,
     label: 'LinkedIn',
-    value: 'linkedin.com/in/parthm667',
-    href: 'https://linkedin.com/in/parthm667',
+    value: 'linkedin.com/in/parthmhaske667',
+    href: 'https://linkedin.com/in/parthmhaske667',
   },
   {
     icon: <FiGithub />,
@@ -28,15 +28,15 @@ export default function Contact() {
 
   const handleChange = e => setForm(f => ({ ...f, [e.target.name]: e.target.value }))
 
-  const handleSubmit = async e => {
+  const handleSubmit = e => {
     e.preventDefault()
-    // Replace the action URL below with your Formspree endpoint
-    const res = await fetch('https://formspree.io/f/YOUR_FORM_ID', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify(form),
-    })
-    if (res.ok) { setSent(true); setForm({ name: '', email: '', message: '' }) }
+    const subject = encodeURIComponent(`Portfolio message from ${form.name}`)
+    const body = encodeURIComponent(
+      `Name: ${form.name}\nEmail: ${form.email}\n\nMessage:\n${form.message}`
+    )
+    window.location.href = `mailto:mhaskep@terpmail.umd.edu?subject=${subject}&body=${body}`
+    setSent(true)
+    setForm({ name: '', email: '', message: '' })
   }
 
   return (
@@ -45,15 +45,15 @@ export default function Contact() {
         <p className="lbl">Get in touch</p>
         <h2 className="h2">Contact</h2>
         <p className="sub">
-          Have a project in mind or just want to say hi? My inbox is always open.
+          Interested in collaboration, quant research, or engineering opportunities? Reach out.
         </p>
 
         <div className="contact-grid">
           <div className="ct-info">
             <h3>Let&apos;s build something together</h3>
             <p>
-              I&apos;m currently looking for new opportunities. Whether you have a question,
-              a project idea, or just want to connect â€” feel free to reach out!
+              I am currently open to conversations about quant developer roles, software engineering,
+              and high-impact data-driven products.
             </p>
 
             <div className="ct-links">
@@ -71,9 +71,9 @@ export default function Contact() {
 
           {sent ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1rem', minHeight: '300px', background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 'var(--r)', padding: '2rem', textAlign: 'center' }}>
-              <span style={{ fontSize: '3rem' }}>ðŸŽ‰</span>
-              <h3>Message sent!</h3>
-              <p style={{ color: 'var(--txt2)', fontSize: '.9rem' }}>Thanks for reaching out. I&apos;ll get back to you soon.</p>
+              <span style={{ fontSize: '3rem' }}>Sent</span>
+              <h3>Email draft opened</h3>
+              <p style={{ color: 'var(--txt2)', fontSize: '.9rem' }}>Your default mail app should open with a pre-filled message.</p>
               <button className="btn btn-o" onClick={() => setSent(false)}>Send another</button>
             </div>
           ) : (

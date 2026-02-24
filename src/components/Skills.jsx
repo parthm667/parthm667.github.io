@@ -1,33 +1,33 @@
 const categories = [
   {
-    icon: 'âš›ï¸',
-    title: 'Frontend',
-    skills: ['React', 'TypeScript', 'JavaScript', 'HTML5', 'CSS3', 'Tailwind', 'Vite'],
+    icon: 'QT',
+    title: 'Quant & Data',
+    skills: ['Python', 'NumPy', 'Pandas', 'Statistical Modeling', 'Backtesting', 'Time Series'],
   },
   {
-    icon: 'ðŸ› ï¸',
-    title: 'Backend',
-    skills: ['Node.js', 'Express', 'Python', 'FastAPI', 'REST APIs', 'PostgreSQL', 'MongoDB'],
+    icon: 'SE',
+    title: 'Software Engineering',
+    skills: ['Data Structures', 'Algorithms', 'OOP', 'System Design', 'Testing', 'Debugging'],
   },
   {
-    icon: 'â˜ï¸',
-    title: 'Cloud & DevOps',
-    skills: ['AWS', 'Docker', 'GitHub Actions', 'Vercel', 'Linux', 'Nginx'],
+    icon: 'WD',
+    title: 'Web Development',
+    skills: ['React', 'JavaScript', 'Node.js', 'Express', 'REST APIs', 'MongoDB'],
   },
   {
-    icon: 'ðŸ“Š',
-    title: 'Data & Quant',
-    skills: ['Python', 'NumPy', 'Pandas', 'Matplotlib', 'SQL', 'MATLAB'],
+    icon: 'PL',
+    title: 'Programming Languages',
+    skills: ['Python', 'Rust', 'JavaScript', 'SQL', 'C++', 'MATLAB'],
   },
   {
-    icon: 'ðŸ”§',
+    icon: 'ML',
+    title: 'Machine Learning',
+    skills: ['LSTM', 'Feature Engineering', 'Model Evaluation', 'Jupyter', 'Data Visualization'],
+  },
+  {
+    icon: 'TL',
     title: 'Tools',
-    skills: ['Git', 'VS Code', 'Figma', 'Postman', 'Jira', 'Notion'],
-  },
-  {
-    icon: 'ðŸ§ ',
-    title: 'CS Fundamentals',
-    skills: ['Algorithms', 'Data Structures', 'OOP', 'System Design', 'C/C++', 'Java'],
+    skills: ['Git', 'GitHub', 'Vite', 'VS Code', 'Linux', 'Docker'],
   },
 ]
 
@@ -38,7 +38,7 @@ export default function Skills() {
         <p className="lbl">What I work with</p>
         <h2 className="h2">Skills & Technologies</h2>
         <p className="sub">
-          A curated set of tools and technologies I use to bring ideas to life.
+          Core technologies and methods I use across quant research and software delivery.
         </p>
 
         <div className="skills-grid">

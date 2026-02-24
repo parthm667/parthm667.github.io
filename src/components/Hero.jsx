@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
-import { FiGithub, FiLinkedin, FiTwitter, FiMail, FiDownload, FiArrowRight } from 'react-icons/fi'
+import { FiGithub, FiLinkedin, FiMail, FiArrowRight } from 'react-icons/fi'
 
 const roles = [
-  'Software Engineer',
+  'Quant Analyst at Smith Investment Fund',
+  "Master's in Financial Risk Management",
+  'Aspiring Quant Developer',
   'Full-Stack Developer',
-  'Problem Solver',
-  'Open-Source Contributor',
 ]
 
 export default function Hero() {
@@ -44,8 +44,9 @@ export default function Hero() {
           <span className="cursor" />
         </div>
         <p className="hero-bio">
-          I build things for the web and beyond â€” from fast web apps to quantitative tools.
-          Passionate about clean code, great UX, and solving hard problems.
+          I build data-driven software across quant finance and full-stack engineering,
+          from backtesting and options pricing to production web applications.
+          I am based in College Park, Maryland and open to quant and software roles.
         </p>
 
         <div className="hero-btns">
@@ -61,10 +62,10 @@ export default function Hero() {
           <a href="https://github.com/parthm667" target="_blank" rel="noreferrer" className="soc-link" aria-label="GitHub">
             <FiGithub />
           </a>
-          <a href="https://linkedin.com/in/parthm667" target="_blank" rel="noreferrer" className="soc-link" aria-label="LinkedIn">
+          <a href="https://linkedin.com/in/parthmhaske667" target="_blank" rel="noreferrer" className="soc-link" aria-label="LinkedIn">
             <FiLinkedin />
           </a>
-          <a href="mailto:your@email.com" className="soc-link" aria-label="Email">
+          <a href="mailto:mhaskep@terpmail.umd.edu" className="soc-link" aria-label="Email">
             <FiMail />
           </a>
         </div>

@@ -1,4 +1,4 @@
-import { FiDownload } from 'react-icons/fi'
+﻿import { FiDownload } from 'react-icons/fi'
 
 export default function About() {
   return (
@@ -6,54 +6,50 @@ export default function About() {
       <div className="container">
         <div className="about-grid">
 
-          {/* Avatar */}
           <div className="av-wrap">
             <div className="av-frame">
-              {/* Replace the div below with <img src="./photo.jpg" alt="Parth Mhaske" /> */}
-              <div className="av-ph">
-                ðŸ§‘â€ðŸ’»
-                <small>your photo here</small>
-              </div>
+              <img
+                src="https://images.squarespace-cdn.com/content/v1/5eb2c11998fcbd048420afd6/af4e19ac-8943-4aab-80f6-11f12eeeff0f/ParthMhaske.jpg?format=750w"
+                alt="Parth Mhaske"
+              />
             </div>
             <div className="av-corner" />
           </div>
 
-          {/* Text */}
           <div className="about-txt">
             <p className="lbl">About Me</p>
             <h2 className="h2">Who I am</h2>
 
             <p>
-              Hey! I&apos;m <strong>Parth Mhaske</strong>, a software engineer and student who loves
-              building full-stack web applications, quantitative tools, and anything
-              that sits at the intersection of code and creativity.
+              I am <strong>Parth Mhaske</strong>, a quant-focused software engineer and graduate student with
+              strong interests in systematic trading, market microstructure, and production-grade systems.
             </p>
             <p>
-              I enjoy working across the stack â€” designing clean UIs in React, building
-              robust APIs, and digging into data. When I&apos;m not coding, you&apos;ll
-              find me reading about markets, working on side projects, or cycling.
+              I currently work as a Quant Analyst at the{' '}
+              <a href="https://www.sifumd.org/our-team" target="_blank" rel="noreferrer">Smith Investment Fund</a>,
+              where I contribute to strategy research and portfolio analytics.
             </p>
             <p>
-              I&apos;m currently open to <strong>internship and new grad roles</strong> in
-              software engineering and fintech.
+              My public profile highlights a focus on financial risk management and quant development,
+              and I actively build projects spanning backtesting engines, forecasting models, and web apps.
             </p>
 
             <div className="meta-grid">
               <div className="meta-item">
                 <label>Location</label>
-                <span>United States</span>
+                <span>College Park, Maryland</span>
               </div>
               <div className="meta-item">
                 <label>Status</label>
-                <span>Open to work âœ…</span>
+                <span>Open to quant and software opportunities</span>
               </div>
               <div className="meta-item">
                 <label>Education</label>
-                <span>B.S. Computer Science</span>
+                <span>Financial Risk Management and CS track</span>
               </div>
               <div className="meta-item">
                 <label>Interests</label>
-                <span>Fintech Â· OSS Â· Cycling</span>
+                <span>Quant Research · Trading Systems · Full-Stack</span>
               </div>
             </div>
 
@@ -67,3 +63,4 @@ export default function About() {
     </section>
   )
 }
+
