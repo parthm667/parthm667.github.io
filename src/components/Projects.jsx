@@ -2,29 +2,11 @@
 
 const projects = [
   {
-    title: 'Autonomous Maze Navigating Robot',
-    kind: 'Robotics',
-    description:
-      'Built cascaded PID control with odometry plus IMU sensor fusion and an A* pathfinding pipeline with collision checks and turn-cost optimization. Placed 3rd at the 2024 Science Olympiad National Tournament.',
-    stack: ['PID Control', 'Sensor Fusion', 'A* Pathfinding'],
-    github: 'https://github.com/parthm667/RobotTourMazeSolver',
-    live: '',
-  },
-  {
     title: 'MASS Lab Research - UT Austin',
     kind: 'Research',
     description:
       'Researched UAV landing stability under stochastic conditions and built a parallel Monte Carlo pipeline with 6.2x speedup; invited to present at the 2026 AIAA Aviation Forum.',
     stack: ['UAV Dynamics', 'ODE Modeling', 'Parallel Simulation'],
-    github: '',
-    live: '',
-  },
-  {
-    title: 'Population Biology Laboratory - IISER Pune',
-    kind: 'Research',
-    description:
-      'Built and tuned literature-classification pipelines (logistic regression and SVM) across 35k+ papers using TF-IDF, cross-validation, and metadata repair tooling.',
-    stack: ['Logistic Regression', 'TF-IDF', 'GridSearchCV', 'SVM'],
     github: '',
     live: '',
   },
@@ -47,20 +29,39 @@ const projects = [
     live: '',
   },
   {
+    title: 'Autonomous Maze Navigating Robot',
+    kind: 'Robotics',
+    description:
+      'Built cascaded PID control with odometry plus IMU sensor fusion and an A* pathfinding pipeline with collision checks and turn-cost optimization. Placed 3rd at the 2024 Science Olympiad National Tournament.',
+    stack: ['PID Control', 'Sensor Fusion', 'A* Pathfinding'],
+    github: 'https://github.com/parthm667/RobotTourMazeSolver',
+    live: '',
+  },
+  {
+    title: 'Population Biology Laboratory - IISER Pune',
+    kind: 'Research',
+    description:
+      'Built and tuned literature-classification pipelines (logistic regression and SVM) across 35k+ papers using TF-IDF, cross-validation, and metadata repair tooling.',
+    stack: ['Logistic Regression', 'TF-IDF', 'GridSearchCV', 'SVM'],
+    github: '',
+    live: '',
+  },
+  {
+    title: 'nj-hin-generator',
+    kind: 'GitHub',
+    description:
+      'Automated New Jersey High Injury Network generator for SS4A grant workflows with geospatial crash assignment, Poisson significance testing, equity overlays, and map/data exports.',
+    stack: ['FastAPI', 'PostGIS', 'GeoPandas', 'React', 'Leaflet'],
+    github: 'https://github.com/parthm667/nj-hin-generator',
+    live: '',
+  },
+  {
     title: 'FRC Team 1923 - Electrical Director',
     kind: 'Robotics',
     description:
       'Led electrical system design and diagnostics across CAN and encoder signal integrity, and supported autonomous strategy and match-level decision workflows.',
     stack: ['Electrical Systems', 'Diagnostics', 'Autonomous Strategy'],
     github: '',
-    live: '',
-  },
-  {
-    title: 'EVCode',
-    kind: 'GitHub',
-    description: 'Public EVCode repository.',
-    stack: ['Jupyter Notebook', 'Python'],
-    github: 'https://github.com/parthm667/EVCode',
     live: '',
   },
   {
@@ -72,11 +73,11 @@ const projects = [
     live: '',
   },
   {
-    title: 'nj-hin-generator',
+    title: 'EVCode',
     kind: 'GitHub',
-    description: 'Python repository for NJ HIN generation.',
-    stack: ['Python'],
-    github: 'https://github.com/parthm667/nj-hin-generator',
+    description: 'Public EVCode repository.',
+    stack: ['Jupyter Notebook', 'Python'],
+    github: 'https://github.com/parthm667/EVCode',
     live: '',
   },
 ]
@@ -94,10 +95,6 @@ export default function Projects() {
       <div className="container">
         <p className="lbl">Selected Work</p>
         <h2 className="h2">Projects, Robotics, and Research</h2>
-        <p className="sub">
-          Ordered from coolest to least cool across robotics, research, and public repositories.
-        </p>
-
         <div className="proj-grid">
           {projects.map(project => (
             <article className="proj-card" key={project.title}>
