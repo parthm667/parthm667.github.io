@@ -389,13 +389,19 @@ a {
   text-decoration: underline;
 }
 
-.about-copy a.btn {
+.about-copy a.btn.btn-p {
   color: #f6f8f7;
 }
 
-.about-copy a.btn:hover {
+.about-copy a.btn.btn-p:hover {
   color: #f6f8f7;
   text-decoration: none;
+}
+
+.about-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.72rem;
 }
 
 .about-meta {

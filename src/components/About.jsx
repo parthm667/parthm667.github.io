@@ -1,4 +1,4 @@
-﻿import { Download, GraduationCap, HeartPulse, MapPin, Radar } from 'lucide-react'
+import { Camera, Download, GraduationCap, HeartPulse, MapPin, Radar } from 'lucide-react'
 
 export default function About() {
   return (
@@ -20,8 +20,7 @@ export default function About() {
             robotics, and simulation-heavy research.
           </p>
           <p>
-            I currently work as a Quant Analyst at the <a href="https://www.sifumd.org/our-team" target="_blank" rel="noreferrer">Smith Investment Fund</a>,
-            where I focus on strategy research and implementation.
+            I currently work as an SWE @ Stealth Startup (YC-backed), where I focus on AI Safety and Alignment.
           </p>
           <p>
             My recent work spans low-latency trading infrastructure, autonomous robotics control, and computational
@@ -59,9 +58,14 @@ export default function About() {
             </div>
           </div>
 
-          <a href="/resume.pdf" download className="btn btn-p">
-            <Download size={16} /> Resume
-          </a>
+          <div className="about-actions">
+            <a href="/resume.pdf" download className="btn btn-p">
+              <Download size={16} /> Resume
+            </a>
+            <a href="https://parthmhaske.myportfolio.com/" target="_blank" rel="noreferrer" className="btn btn-o">
+              <Camera size={16} /> Photo Portfolio
+            </a>
+          </div>
         </div>
       </div>
     </section>

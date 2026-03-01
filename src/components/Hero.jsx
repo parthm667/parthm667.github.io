@@ -1,6 +1,7 @@
-﻿import {
+import {
   ArrowRight,
   BriefcaseBusiness,
+  Camera,
   Github,
   GraduationCap,
   Linkedin,
@@ -24,7 +25,7 @@ export default function Hero() {
 
           <div className="hero-facts">
             <span className="fact"><MapPin size={16} /> College Park, Maryland</span>
-            <span className="fact"><BriefcaseBusiness size={16} /> Quant Analyst at Smith Investment Fund</span>
+            <span className="fact"><BriefcaseBusiness size={16} /> SWE @ Stealth Startup (YC-backed)</span>
             <span className="fact"><GraduationCap size={16} /> University of Maryland</span>
           </div>
 
@@ -43,6 +44,9 @@ export default function Hero() {
             </a>
             <a href="https://linkedin.com/in/parthmhaske667" target="_blank" rel="noreferrer" className="soc-link">
               <Linkedin size={16} /> LinkedIn
+            </a>
+            <a href="https://parthmhaske.myportfolio.com/" target="_blank" rel="noreferrer" className="soc-link">
+              <Camera size={16} /> Photography
             </a>
             <a href="mailto:pmhaske@terpmail.umd.edu" className="soc-link">
               <Mail size={16} /> Email
