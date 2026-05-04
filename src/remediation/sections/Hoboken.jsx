@@ -5,28 +5,28 @@ const INTERVENTIONS = [
     n: '01',
     label: 'High-visibility paint',
     title: 'They repainted every crosswalk so drivers had to see them.',
-    body: `Continental-style stripes: wide white bars instead of two thin parallel lines. The pattern reads as a stop signal at speed, not a footnote on the asphalt. Hoboken now repaints every crosswalk it passes during routine repaving. The cost is rounding-error.`,
+    body: `Continental-style stripes use wide white bars instead of two thin parallel lines, so they're visible to a driver going 30 mph and not just to someone standing on the sidewalk. Hoboken now repaints every crosswalk during routine repaving. The cost is basically nothing.`,
     Illustration: CrosswalkSVG,
   },
   {
     n: '02',
     label: 'Daylighting',
     title: 'Flexible posts at every corner. Drivers can suddenly see kids.',
-    body: `Parking removed for ~25 feet before the crosswalk, replaced with vertical posts. The line of sight between a driver and a pedestrian opens up, and neither can hide behind a parked SUV. The interventions cost roughly $200 per corner.`,
+    body: `Parking is removed for about 25 feet before each crosswalk and replaced with flexible posts. Drivers can now see pedestrians at the corner instead of having their view blocked by parked cars. The intervention costs roughly $200 per corner.`,
     Illustration: DaylightingSVG,
   },
   {
     n: '03',
     label: 'Speed limit',
     title: 'Citywide 20 mph. A ten-percent drop with disproportionate effect.',
-    body: `A pedestrian struck at 25 mph has roughly a 1-in-4 chance of dying. At 20 mph it falls to about 1-in-10. Hoboken changed signs, repainted lane widths to match the lower target, and let drivers self-regulate. The street geometry did most of the enforcement.`,
+    body: `A pedestrian struck at 25 mph has roughly a 1-in-4 chance of dying. At 20 mph it falls to about 1-in-10. Hoboken changed the signs and repainted the lane widths to be narrower. Drivers slowed down because the street was designed for it, not because of additional enforcement.`,
     Illustration: SpeedSVG,
   },
   {
     n: '04',
     label: 'Leading pedestrian intervals',
     title: 'A three-second head start at every signal.',
-    body: `When the light changes, the walk signal goes white before the green. Pedestrians enter the crosswalk first; turning drivers see them already in motion. It costs nothing to add (just a software change at the cabinet), and it eliminates one of the deadliest right-hook conflicts.`,
+    body: `When the light changes, the walk signal goes white before the green. Pedestrians get to enter the crosswalk first, so turning drivers see them before they start to turn. It costs nothing to add (just a software change at the signal cabinet), and it eliminates one of the most common right-hook crashes.`,
     Illustration: SignalSVG,
   },
 ]
@@ -62,10 +62,10 @@ export default function Hoboken() {
       {/* Interventions — alternating left/right magazine vignettes, NOT a card grid */}
       <div className="rm-interventions">
         <p className="rm-interventions-intro">
-          None of what Hoboken did was expensive. None of it was technically
-          complicated. The four interventions below were paid for through
-          ordinary repaving budgets and signal-software updates, and rolled
-          out citywide over the course of a few years.
+          None of what Hoboken did was expensive or technically complicated.
+          The four interventions below were paid for through ordinary repaving
+          budgets and signal-software updates, and rolled out citywide over a
+          few years.
         </p>
         {INTERVENTIONS.map((iv, i) => (
           <motion.article

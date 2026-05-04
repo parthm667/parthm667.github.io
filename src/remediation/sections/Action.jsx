@@ -58,10 +58,10 @@ export default function Action() {
           </header>
           <h3>Share the case. Then write your state rep.</h3>
           <p>
-            Federal action helps; state action moves faster. New Jersey is
-            considering reauthorization of the <em>Sarah Debbink Langenkamp Active
-            Transportation Safety Act</em>. Call the office of your state
-            senator and assembly member to tell them you support it.
+            State action usually moves faster than federal action. New Jersey
+            is considering reauthorization of the <em>Sarah Debbink Langenkamp
+            Active Transportation Safety Act</em>. Call the office of your
+            state senator and assembly member to tell them you support it.
           </p>
           <ul className="rm-share-row">
             <li>

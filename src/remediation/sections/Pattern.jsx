@@ -39,8 +39,8 @@ export default function Pattern() {
         <div className="rm-chart-caption">
           <p>
             In 1990, the United States and the Netherlands killed pedestrians at
-            nearly identical rates. By 2018, one country had cut deaths by three
-            quarters. The other reversed course.
+            nearly identical rates. By 2018, the Netherlands had cut its rate by
+            about 75%. The U.S. rate went up.
           </p>
           <p className="rm-mono rm-source">
             Source: Buehler &amp; Pucher (2021), <em>Transport Reviews</em>.

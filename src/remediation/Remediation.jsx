@@ -11,7 +11,7 @@ import './remediation.css'
 
 export default function Remediation() {
   useEffect(() => {
-    document.title = 'Designed to Fail / A Public Remediation'
+    document.title = 'Designed to be Dangerous / A Public Remediation'
     return () => { document.title = 'parthm667.github.io' }
   }, [])
 
