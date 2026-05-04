@@ -11,10 +11,6 @@ export default function RmFooter() {
             Built &amp; written by Parth Mhaske · {new Date().getFullYear()}
           </span>
         </p>
-        <p className="rm-footer-context">
-          A public remediation of an academic position paper on American road
-          safety. ENGL 101, Spring 2026 · University of Maryland.
-        </p>
         <p className="rm-footer-links">
           <Link to="/">← parthm667.github.io</Link>
         </p>

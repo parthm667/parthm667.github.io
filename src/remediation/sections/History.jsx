@@ -37,52 +37,18 @@ export default function History() {
           cars, and cars had legal priority over people on foot.
         </p>
 
-        <figure className="rm-history-photo" aria-label="1920s American street with mixed pedestrian, streetcar, and auto traffic">
-          {/* Placeholder — Parth to drop a real 1920s archival photo (Library of Congress / Wikimedia Commons).
-              Suggested file: public/remediation/history-1920s-street.webp, ~1600x900. */}
-          <div className="rm-history-photo-placeholder" role="img" aria-label="placeholder">
-            <svg viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-              <defs>
-                <pattern id="grain1920" width="3" height="3" patternUnits="userSpaceOnUse">
-                  <rect width="3" height="3" fill="#1a2522" />
-                  <circle cx="1" cy="1" r="0.6" fill="#0d1614" opacity="0.5" />
-                </pattern>
-              </defs>
-              <rect width="800" height="450" fill="url(#grain1920)" />
-              {/* Suggestion of streetcar lines + figures */}
-              <line x1="0" y1="280" x2="800" y2="280" stroke="#3a4642" strokeWidth="2" />
-              <line x1="0" y1="295" x2="800" y2="295" stroke="#3a4642" strokeWidth="2" />
-              {[80, 160, 260, 340, 460, 560, 660].map((cx, i) => (
-                <g key={i} opacity="0.45">
-                  <rect x={cx} y={250 - (i % 2) * 8} width="6" height={i % 2 === 0 ? 30 : 22} fill="#5b6661" />
-                  <circle cx={cx + 3} cy={245 - (i % 2) * 8} r="3" fill="#5b6661" />
-                </g>
-              ))}
-              <text
-                x="400" y="220"
-                textAnchor="middle"
-                fontFamily="IBM Plex Mono, monospace"
-                fontSize="13"
-                fill="#b9b09e"
-                letterSpacing="0.2em"
-              >
-                ARCHIVAL PHOTO PLACEHOLDER
-              </text>
-              <text
-                x="400" y="240"
-                textAnchor="middle"
-                fontFamily="IBM Plex Mono, monospace"
-                fontSize="10"
-                fill="#7e8681"
-                letterSpacing="0.14em"
-              >
-                AMERICAN STREET, c. 1920 · LIBRARY OF CONGRESS
-              </text>
-            </svg>
+        <figure className="rm-history-photo" aria-label="Monroe Avenue and Cadillac Square, Detroit, c. 1915-1925">
+          <div className="rm-history-photo-frame">
+            <img
+              src="/remediation/detroit-1920s.jpg"
+              alt="Monroe Avenue and Cadillac Square, Detroit, around 1915-1925. Pedestrians, streetcars, and cars share the same right-of-way."
+              loading="lazy"
+            />
           </div>
           <figcaption>
-            A typical American street before the auto industry's PR campaign.
-            Pedestrians, streetcars, cyclists, and cars share the same right-of-way.
+            Monroe Avenue and Cadillac Square, Detroit, c. 1915-1925.
+            Pedestrians, streetcars, and cars share the same right-of-way.
+            Detroit Publishing Co. / Library of Congress.
           </figcaption>
         </figure>
 
