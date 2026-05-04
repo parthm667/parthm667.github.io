@@ -7,17 +7,17 @@ const ITEMS = [
     answer: (
       <>
         <p>
-          Bad drivers exist in every country. So do distractions, fatigue, and
-          impairment. The question is why the same human errors produce a
-          fatality in one place and a fender-bender in another.
+          Bad drivers exist everywhere. People get distracted and tired, and
+          they drive impaired. The question is why the same kinds of mistakes
+          produce a fatality in one country and a minor crash in another.
         </p>
         <p>
           Dumbaugh &amp; Li examined fatal crashes across the San Antonio metro
           area and found they cluster on a specific kind of road: wide arterials
           with high design speeds and few pedestrian protections. Streets with
           shorter blocks and narrower lanes had a fraction of the fatalities,
-          even though plenty of bad drivers used them too. The road geometry,
-          not driver behavior, is what makes a mistake deadly.
+          even though plenty of bad drivers used them too. The road is what
+          makes a mistake deadly, not the driver.
         </p>
       </>
     ),
@@ -80,12 +80,12 @@ export default function Counterargs() {
           viewport={{ once: true, margin: '-15%' }}
           transition={{ duration: 0.7 }}
         >
-          The objections,<br />
-          <em>answered.</em>
+          The common<br />
+          <em>objections.</em>
         </motion.h2>
         <p className="rm-counter-intro">
           Three rebuttals you'll hear at every council meeting. None of them
-          survive contact with the evidence.
+          hold up against the data.
         </p>
       </div>
       <div className="rm-counter-body">

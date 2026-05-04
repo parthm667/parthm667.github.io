@@ -21,28 +21,21 @@ export default function History() {
         <p className="rm-prose-lede">
           <span className="rm-dropcap">I</span>n the 1920s, American streets
           belonged to everyone. Pedestrians, cyclists, streetcars, children, and
-          early autos all shared the same asphalt. When car ownership began to
-          climb and the body count rose with it, the public reaction was outrage.
-          At drivers.
+          early autos all shared the road. When car ownership started to rise
+          and pedestrian deaths began spiking, the public directed its anger at
+          drivers.
         </p>
 
         <p>
           A coalition of car dealers, manufacturers, and auto clubs that the
           historian Peter Norton calls{' '}
-          <strong>motordom</strong> spent the next decade reversing that verdict.
-          They lobbied for new traffic laws that gave cars legal priority on
-          public roads. They coined the word <em>jaywalker</em> and pushed it
-          relentlessly to recast pedestrians as the problem. By the end of the
-          decade, the street was no longer a shared place. It was a road, and
-          roads were for cars.
+          <strong>motordom</strong> spent the next decade changing that. They
+          lobbied for new traffic laws that gave cars legal priority on public
+          roads. They coined the word <em>jaywalker</em> and pushed it
+          relentlessly to shift the blame onto pedestrians for getting hit. By
+          the end of the decade, motordom had won. Streets were spaces for
+          cars, and cars had legal priority over people on foot.
         </p>
-
-        <aside className="rm-pullquote rm-pullquote-right">
-          <p>
-            “Motordom redefined the street as a place where people don't belong.”
-          </p>
-          <cite>Peter Norton · Fighting Traffic, 2008</cite>
-        </aside>
 
         <figure className="rm-history-photo" aria-label="1920s American street with mixed pedestrian, streetcar, and auto traffic">
           {/* Placeholder — Parth to drop a real 1920s archival photo (Library of Congress / Wikimedia Commons).
@@ -94,21 +87,23 @@ export default function History() {
         </figure>
 
         <p>
-          Once the street was theirs, the engineering profession built its
-          standards around it. The American Association of State Highway and
-          Transportation Officials (AASHTO) published a thick green design manual,
-          the <em>Green Book</em>, that became the reference every state
-          engineer was trained on. It told them how wide to make a lane, how
-          long the sight lines should be, and how fast to design for. Beneath
-          all of it sat one assumption: <strong>the safest road is the one that
-          forgives a fast driver's mistakes.</strong>
+          Once motordom had won control of the streets, the engineering
+          profession built its standards around the assumption that roads
+          exist to move cars as fast as possible. The American Association of
+          State Highway and Transportation Officials (AASHTO) published a
+          design manual called the <em>Green Book</em> that became the standard
+          reference for road engineers across the country. It set rules for how
+          wide lanes should be, how long sight lines had to be, and what speed
+          roads should be designed for. All of it was built around one
+          assumption: <strong>giving drivers more room to correct their
+          mistakes would make roads safer.</strong>
         </p>
 
         <p>
-          Wider lanes. Longer sight lines. Higher design speeds. Bigger
-          shoulders. Every parameter pushed in the same direction. Pedestrians
-          and cyclists weren't ignored on purpose. They simply weren't part of
-          the math.
+          The Green Book set rules for lane width, sight lines, design speeds,
+          and shoulder size, and all of them were built around the same
+          assumption that faster, wider roads are safer. Pedestrians and
+          cyclists were not part of the math.
         </p>
 
         <aside className="rm-history-interactive" aria-label="Interactive lane width demonstrator">
@@ -116,8 +111,8 @@ export default function History() {
             <p className="rm-mono">Interactive · drag to widen</p>
             <h4>Lane width is design speed.</h4>
             <p>
-              The Green Book treats wider lanes as a safety feature. Driver
-              behavior treats them as permission. Move the slider.
+              The Green Book treats wider lanes as safer. In practice, drivers
+              treat them as permission to go faster. Move the slider.
             </p>
           </header>
           <LaneWidthSlider />
