@@ -1,22 +1,15 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import Portfolio from './Portfolio'
+import Remediation from './remediation/Remediation'
 import './index.css'
-import Navbar   from './components/Navbar'
-import Hero     from './components/Hero'
-import About    from './components/About'
-import Skills   from './components/Skills'
-import Projects from './components/Projects'
-import Contact  from './components/Contact'
-import Footer   from './components/Footer'
 
 export default function App() {
   return (
-    <>
-      <Navbar />
-      <Hero />
-      <About />
-      <Skills />
-      <Projects />
-      <Contact />
-      <Footer />
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Portfolio />} />
+        <Route path="/public_remediation" element={<Remediation />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
