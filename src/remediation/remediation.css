@@ -515,17 +515,16 @@
   transform: translateX(-50%);
   position: relative;
 }
-.rm-history-photo-placeholder {
+.rm-history-photo-frame {
   width: 100%;
-  aspect-ratio: 16 / 9;
   background: #1a2522;
   border: 1px solid var(--rm-ink);
   overflow: hidden;
   display: block;
 }
-.rm-history-photo-placeholder svg {
+.rm-history-photo-frame img {
   width: 100%;
-  height: 100%;
+  height: auto;
   display: block;
 }
 .rm-history-photo figcaption {
