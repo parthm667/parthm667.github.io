@@ -17,14 +17,6 @@ export default function RmFooter() {
         </p>
         <p className="rm-footer-links">
           <Link to="/">← parthm667.github.io</Link>
-          <span aria-hidden="true">·</span>
-          <a
-            href="https://github.com/parthm667/nj-hin-generator"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            HIN Generator (GitHub)
-          </a>
         </p>
       </div>
     </footer>

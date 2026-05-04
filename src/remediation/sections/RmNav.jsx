@@ -7,7 +7,6 @@ const SECTIONS = [
   ['history', 'History'],
   ['hoboken', 'Hoboken'],
   ['counter', 'Counterarguments'],
-  ['tool', 'The Tool'],
   ['action', 'Act'],
 ]
 

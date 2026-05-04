@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { ArrowUpRight, Megaphone, MapPin, Share2 } from 'lucide-react'
+import { Megaphone, Share2 } from 'lucide-react'
 import LetterBuilder from '../interactive/LetterBuilder'
 
 const SHARE_URL = 'https://parthm667.github.io/public_remediation'
@@ -9,7 +9,7 @@ export default function Action() {
   return (
     <section id="action" className="rm-section rm-action">
       <div className="rm-action-head">
-        <p className="rm-mono rm-section-label">07 / Take action</p>
+        <p className="rm-mono rm-section-label">06 / Take action</p>
         <motion.h2
           initial={{ opacity: 0, y: 14 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -22,7 +22,7 @@ export default function Action() {
       </div>
 
       <div className="rm-action-tracks">
-        {/* RESIDENT — letter builder is the centerpiece, replaces the static template */}
+        {/* RESIDENT — letter builder is the centerpiece */}
         <motion.article
           className="rm-track rm-track-resident"
           initial={{ opacity: 0, y: 30 }}
@@ -37,40 +37,11 @@ export default function Action() {
           <h3>Build a public-comment letter in 60 seconds.</h3>
           <p>
             Read it at the next council meeting. Or paste it into an email to
-            your council clerk. The arguments and citations are pre-loaded.
-            You bring your town and your name.
+            your council clerk. The arguments and citations are pre-loaded. You
+            bring your town and your name. Edit anything you'd like before
+            sending.
           </p>
           <LetterBuilder />
-        </motion.article>
-
-        {/* OFFICIAL — full-bleed dark stripe with the HIN tool framed for them */}
-        <motion.article
-          className="rm-track rm-track-official"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-10%' }}
-          transition={{ duration: 0.6, delay: 0.05 }}
-        >
-          <header>
-            <MapPin size={28} strokeWidth={1.5} />
-            <p className="rm-mono">For municipal officials</p>
-          </header>
-          <h3>You don't need a GIS department to apply for SS4A funding.</h3>
-          <p>
-            The HIN generator runs the analysis. The output is the corridor
-            ranking, equity overlay, and Poisson significance test that federal
-            applications ask for. You can have a defensible target list by next
-            week.
-          </p>
-          <a
-            className="rm-track-link rm-track-link-bright"
-            href="https://github.com/parthm667/nj-hin-generator"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Run the HIN generator on your town
-            <ArrowUpRight size={16} />
-          </a>
         </motion.article>
 
         {/* EVERYONE — slim share row */}

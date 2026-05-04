@@ -5,9 +5,7 @@ import Pattern from './sections/Pattern'
 import History from './sections/History'
 import Hoboken from './sections/Hoboken'
 import Counterargs from './sections/Counterargs'
-import Tool from './sections/Tool'
 import Action from './sections/Action'
-import About from './sections/About'
 import RmFooter from './sections/RmFooter'
 import './remediation.css'
 
@@ -26,9 +24,7 @@ export default function Remediation() {
         <History />
         <Hoboken />
         <Counterargs />
-        <Tool />
         <Action />
-        <About />
       </main>
       <RmFooter />
     </div>
