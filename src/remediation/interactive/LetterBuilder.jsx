@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Copy, Check, Mail } from 'lucide-react'
+import { Copy, Check, Mail, RotateCcw } from 'lucide-react'
 
 const ROLES = [
   { v: 'resident', label: 'a resident' },
@@ -25,7 +25,7 @@ function buildLetter({ town, road, role, name }) {
     '',
     `The research is well established. Wide arterials with high design speeds concentrate fatalities; narrower lanes, daylit corners, and slower speed limits dramatically reduce them (Dumbaugh & Li, 2011; Marshall & Ferenchak, 2019). Hoboken, NJ has now gone seven years without a single traffic death using only high-visibility crosswalk paint, flexible posts at corners, a citywide 20 mph speed limit, and leading pedestrian intervals at signals. None of those measures was expensive. None of them was controversial. They were folded into ordinary repaving budgets.`,
     '',
-    `I am asking the council to (1) commission a High Injury Network analysis for ${cleanTown}, (2) lower the default urban speed limit to 20 mph where pedestrians are present, and (3) adopt a continental crosswalk standard at the next repaving cycle. I would be glad to attend a future meeting to speak in support of these changes.`,
+    `I am asking the council to (1) commission a crash-data review of the most dangerous corridors in ${cleanTown}, (2) lower the default urban speed limit to 20 mph where pedestrians are present, and (3) adopt a continental crosswalk standard at the next repaving cycle. I would be glad to attend a future meeting to speak in support of these changes.`,
     '',
     'Sincerely,',
     cleanName,
@@ -39,10 +39,27 @@ export default function LetterBuilder() {
   const [name, setName] = useState('')
   const [copied, setCopied] = useState(false)
 
-  const letter = useMemo(
+  const generated = useMemo(
     () => buildLetter({ town, road, role, name }),
     [town, road, role, name]
   )
+
+  // userDraft is null while the form drives the letter; once the user types
+  // in the textarea, we capture their edits and stop tracking the form. Reset
+  // returns to form-driven mode.
+  const [userDraft, setUserDraft] = useState(null)
+  const edited = userDraft !== null
+  const letter = edited ? userDraft : generated
+
+  function handleLetterChange(e) {
+    const next = e.target.value
+    // Snapping back to the generated text returns to form-driven mode.
+    setUserDraft(next === generated ? null : next)
+  }
+
+  function handleReset() {
+    setUserDraft(null)
+  }
 
   async function handleCopy() {
     try {
@@ -50,14 +67,10 @@ export default function LetterBuilder() {
       setCopied(true)
       setTimeout(() => setCopied(false), 2200)
     } catch {
-      // Clipboard API blocked — fall back to selecting the preview text.
-      const pre = document.querySelector('.rm-letter-text')
-      if (pre) {
-        const range = document.createRange()
-        range.selectNodeContents(pre)
-        const sel = window.getSelection()
-        sel.removeAllRanges()
-        sel.addRange(range)
+      const ta = document.querySelector('.rm-letter-text')
+      if (ta) {
+        ta.focus()
+        ta.select()
       }
     }
   }
@@ -113,8 +126,29 @@ export default function LetterBuilder() {
       </div>
 
       <div className="rm-letter-preview">
-        <p className="rm-mono rm-letter-preview-label">Live preview</p>
-        <pre className="rm-letter-text">{letter}</pre>
+        <div className="rm-letter-preview-head">
+          <p className="rm-mono rm-letter-preview-label">
+            {edited ? 'Your draft (edit freely)' : 'Live preview · edit freely'}
+          </p>
+          {edited && (
+            <button
+              type="button"
+              className="rm-letter-reset"
+              onClick={handleReset}
+              aria-label="Reset draft to generated template"
+            >
+              <RotateCcw size={12} />
+              <span>Reset to template</span>
+            </button>
+          )}
+        </div>
+        <textarea
+          className="rm-letter-text"
+          value={letter}
+          onChange={handleLetterChange}
+          spellCheck={true}
+          aria-label="Letter draft"
+        />
       </div>
 
       <div className="rm-letter-actions">
