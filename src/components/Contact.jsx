@@ -1,21 +1,18 @@
-﻿import { ArrowUpRight, CheckCircle2, Github, Linkedin, Mail, Send } from 'lucide-react'
+import { ArrowUpRight, CheckCircle2, Send } from 'lucide-react'
 import { useState } from 'react'
 
 const contactLinks = [
   {
-    icon: Mail,
     label: 'Email',
     value: 'pmhaske@terpmail.umd.edu',
     href: 'mailto:pmhaske@terpmail.umd.edu',
   },
   {
-    icon: Linkedin,
     label: 'LinkedIn',
     value: 'linkedin.com/in/parthmhaske667',
     href: 'https://linkedin.com/in/parthmhaske667',
   },
   {
-    icon: Github,
     label: 'GitHub',
     value: 'github.com/parthm667',
     href: 'https://github.com/parthm667',
@@ -48,24 +45,21 @@ export default function Contact() {
 
         <div className="contact-grid">
           <div className="ct-info">
-            <h3>Reach out directly</h3>
-            <p>
-              If you are hiring for internships or want to discuss work across quant systems, robotics, or research,
-              I am happy to connect.
+            <p className="ct-intro">
+              Happy to talk about quant systems, robotics, or research engineering. Reach out directly:
             </p>
 
-            <div className="ct-links">
+            <ul className="ct-list">
               {contactLinks.map(link => (
-                <a key={link.label} href={link.href} target="_blank" rel="noreferrer" className="ct-link">
-                  <span className="ct-icon"><link.icon size={16} /></span>
-                  <span className="ct-text">
-                    <strong>{link.label}</strong>
-                    {link.value}
-                  </span>
-                  <ArrowUpRight size={15} />
-                </a>
+                <li key={link.label}>
+                  <a href={link.href} target="_blank" rel="noreferrer">
+                    <span className="ct-label">{link.label}</span>
+                    <span className="ct-value">{link.value}</span>
+                    <ArrowUpRight size={16} />
+                  </a>
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
 
           {sent ? (

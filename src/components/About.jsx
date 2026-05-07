@@ -1,14 +1,18 @@
-import { Camera, Download, GraduationCap, HeartPulse, MapPin, Radar } from 'lucide-react'
+import { ArrowUpRight, Camera } from 'lucide-react'
+
+const facts = [
+  { label: 'Location', value: 'College Park, Maryland' },
+  { label: 'Status', value: 'Looking for internship opportunities' },
+  { label: 'Education', value: 'University of Maryland — Computer Science and Applied Mathematics' },
+  { label: 'Focus', value: 'Robotics · Research Computing · Quant Systems' },
+]
 
 export default function About() {
   return (
     <section className="section about" id="about">
       <div className="container about-grid">
         <div className="about-photo">
-          <img
-            src="/parth-photo.webp"
-            alt="Parth Mhaske"
-          />
+          <img src="/parth-photo.webp" alt="Parth Mhaske" />
         </div>
 
         <div className="about-copy">
@@ -20,50 +24,34 @@ export default function About() {
             robotics, and simulation-heavy research.
           </p>
           <p>
-            I currently work as an SWE @ Stealth Startup (YC-backed), where I focus on AI Safety and Alignment.
+            Currently <strong>SWE Intern @ Corsha</strong>, where I work on backend development for OT
+            authentication systems.
           </p>
           <p>
-            My recent work spans low-latency trading infrastructure, autonomous robotics control, and computational
-            modeling projects in academic research environments.
+            My recent work spans low-latency trading infrastructure, autonomous robotics control, and
+            computational modeling projects in academic research environments.
           </p>
 
-          <div className="about-meta">
-            <div className="meta-item">
-              <span className="meta-icon"><MapPin size={15} /></span>
-              <div>
-                <label>Location</label>
-                <span>College Park, Maryland</span>
+          <dl className="dl">
+            {facts.map(fact => (
+              <div className="dl-row" key={fact.label}>
+                <dt>{fact.label}</dt>
+                <dd>{fact.value}</dd>
               </div>
-            </div>
-            <div className="meta-item">
-              <span className="meta-icon"><HeartPulse size={15} /></span>
-              <div>
-                <label>Status</label>
-                <span>Looking for internship opportunities</span>
-              </div>
-            </div>
-            <div className="meta-item">
-              <span className="meta-icon"><GraduationCap size={15} /></span>
-              <div>
-                <label>Education</label>
-                <span>University of Maryland - Computer Science and Applied Mathematics</span>
-              </div>
-            </div>
-            <div className="meta-item">
-              <span className="meta-icon"><Radar size={15} /></span>
-              <div>
-                <label>Focus</label>
-                <span>Robotics | Research Computing | Quant Systems</span>
-              </div>
-            </div>
-          </div>
+            ))}
+          </dl>
 
           <div className="about-actions">
-            <a href="/resume.pdf" download className="btn btn-p">
-              <Download size={16} /> Resume
+            <a href="/resume.pdf" target="_blank" rel="noreferrer" className="btn btn-p">
+              Resume <ArrowUpRight size={16} />
             </a>
-            <a href="https://parthmhaske.myportfolio.com/" target="_blank" rel="noreferrer" className="btn btn-o">
-              <Camera size={16} /> Photo Portfolio
+            <a
+              href="https://parthmhaske.myportfolio.com/"
+              target="_blank"
+              rel="noreferrer"
+              className="hero-link"
+            >
+              <Camera size={15} /> Photo Portfolio
             </a>
           </div>
         </div>
