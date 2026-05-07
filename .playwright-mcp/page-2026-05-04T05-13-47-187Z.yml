@@ -1,0 +1,91 @@
+- generic [ref=e3]:
+  - navigation "Remediation navigation" [ref=e4]:
+    - generic [ref=e5]:
+      - link "Parth Mhaske" [ref=e6] [cursor=pointer]:
+        - /url: /
+        - img [ref=e7]
+        - generic [ref=e9]: Parth Mhaske
+      - button "Toggle sections" [ref=e10] [cursor=pointer]: Sections
+      - list:
+        - listitem:
+          - link "The Pattern":
+            - /url: "#pattern"
+        - listitem:
+          - link "History":
+            - /url: "#history"
+        - listitem:
+          - link "Hoboken":
+            - /url: "#hoboken"
+        - listitem:
+          - link "Counterarguments":
+            - /url: "#counter"
+        - listitem:
+          - link "The Tool":
+            - /url: "#tool"
+        - listitem:
+          - link "Act":
+            - /url: "#action"
+  - main [ref=e11]:
+    - region "Designed to fail" [ref=e12]:
+      - generic [ref=e13]:
+        - img
+      - generic [ref=e16]:
+        - paragraph [ref=e17]: A public remediation · 2026
+        - heading "In March 2022 I was hit by a car on a road that was designed to be dangerous." [level=1] [ref=e18]:
+          - text: In March 2022 I was hit by a car
+          - emphasis [ref=e19]: on a road that was designed
+          - text: to be dangerous.
+        - generic [ref=e20]:
+          - paragraph [ref=e21]:
+            - text: I survived.
+            - generic [ref=e22]:
+              - generic "7,500 pedestrian deaths" [ref=e23]: "0"
+              - text: Americans
+            - text: last year did not.
+          - paragraph [ref=e24]:
+            - text: Pedestrian fatalities, 2022. Smart Growth America,
+            - emphasis [ref=e25]: Dangerous by Design 2024
+            - text: .
+    - generic [ref=e26]:
+      - generic [ref=e27]:
+        - paragraph [ref=e28]: 02 — The pattern
+        - heading "The deaths are not spread randomly." [level=2] [ref=e29]:
+          - text: The deaths are not
+          - emphasis [ref=e30]: spread randomly
+          - text: .
+      - blockquote [ref=e31]:
+        - paragraph [ref=e32]: “Fatal crashes are not distributed randomly across the city. They cluster on arterial roads with wide lanes and high speeds.”
+        - generic [ref=e33]: Dumbaugh & Li, 2011
+      - generic [ref=e34]:
+        - figure [ref=e35]:
+          - img "Pedestrian fatality rate, US vs. Netherlands, 1990–2018 Both countries started near 3.3 deaths per 100,000 in 1990. The Netherlands fell to 0.8 by 2018; the US fell, then climbed back to 2.6." [ref=e36]:
+            - generic [ref=e38]: "0.0"
+            - generic [ref=e40]: "1.0"
+            - generic [ref=e42]: "2.0"
+            - generic [ref=e44]: "3.0"
+            - generic [ref=e46]: "4.0"
+            - generic [ref=e47]: DEATHS PER 100K
+            - generic [ref=e49]: "1990"
+            - generic [ref=e51]: "2000"
+            - generic [ref=e53]: "2010"
+            - generic [ref=e55]: "2018"
+            - generic [ref=e58]:
+              - generic [ref=e59]: United States
+              - generic [ref=e60]: 2.6 (2018)
+            - generic [ref=e61]:
+              - generic [ref=e62]: Netherlands
+              - generic [ref=e63]: 0.8 (2018)
+            - 'generic "United States, 1990: 3.5 per 100,000" [ref=e65] [cursor=pointer]'
+            - 'generic "United States, 2000: 2.5 per 100,000" [ref=e67] [cursor=pointer]'
+            - 'generic "United States, 2010: 2.2 per 100,000" [ref=e69] [cursor=pointer]'
+            - 'generic "United States, 2018: 2.6 per 100,000" [ref=e71] [cursor=pointer]'
+            - 'generic "Netherlands, 1990: 3.2 per 100,000" [ref=e73] [cursor=pointer]'
+            - 'generic "Netherlands, 2000: 1.8 per 100,000" [ref=e75] [cursor=pointer]'
+            - 'generic "Netherlands, 2010: 1.0 per 100,000" [ref=e77] [cursor=pointer]'
+            - 'generic "Netherlands, 2018: 0.8 per 100,000" [ref=e79] [cursor=pointer]'
+        - generic [ref=e80]:
+          - paragraph [ref=e81]: In 1990, the United States and the Netherlands killed pedestrians at nearly identical rates. By 2018, one country had cut deaths by three quarters. The other reversed course.
+          - paragraph [ref=e82]:
+            - text: Source — Buehler & Pucher (2021),
+            - emphasis [ref=e83]: Transport Reviews
+            - text: . Rate per 100,000 population.

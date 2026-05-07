@@ -1,5 +1,5 @@
 ﻿import { useEffect, useState } from 'react'
-import { FileText, Menu, X } from 'lucide-react'
+import { Bike, FileText, Menu, X } from 'lucide-react'
 
 const links = [
   { label: 'About', href: '#about' },
@@ -57,6 +57,11 @@ export default function Navbar() {
               </a>
             </li>
           ))}
+          <li>
+            <a href="/public_remediation" className="nav-resume" onClick={() => setOpen(false)}>
+              <Bike size={15} /> Cycling
+            </a>
+          </li>
           <li>
             <a href="/resume.pdf" target="_blank" rel="noreferrer" className="nav-resume">
               <FileText size={15} /> Resume

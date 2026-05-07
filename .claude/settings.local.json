@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "mcp__plugin_playwright_playwright__browser_navigate",
+      "Bash(npx playwright *)",
+      "mcp__plugin_playwright_playwright__browser_resize",
+      "Read(//c/Program Files/Google/Chrome/Application/**)",
+      "Read(//c/Program Files \\(x86\\)/Google/Chrome/Application/**)",
+      "Read(//c/Users/parth/AppData/Local/Google/Chrome/Application/**)",
+      "Read(//c/Program Files/Microsoft/Edge/Application/**)",
+      "Bash(where chrome.exe)",
+      "Bash(where msedge.exe)",
+      "Read(//c/Users/parth/AppData/Local/ms-playwright//**)",
+      "Read(//c/Users/parth/.claude/plugins/cache/claude-plugins-official/playwright/**)",
+      "Read(//c/Users/parth/.claude/plugins/**)",
+      "Bash(mkdir -p \"/c/Users/parth/AppData/Local/Google/Chrome/Application\")",
+      "Bash(cp -r \"/c/Users/parth/AppData/Local/ms-playwright/chromium-1217/chrome-win64/.\" \"/c/Users/parth/AppData/Local/Google/Chrome/Application/\")",
+      "mcp__plugin_playwright_playwright__browser_take_screenshot",
+      "mcp__plugin_playwright_playwright__browser_console_messages",
+      "mcp__plugin_playwright_playwright__browser_evaluate",
+      "mcp__plugin_playwright_playwright__browser_click",
+      "mcp__plugin_playwright_playwright__browser_press_key",
+      "Bash(curl -sSL -o public/remediation/detroit-1920s.jpg \"https://tile.loc.gov/storage-services/service/pnp/det/4a20000/4a27000/4a27900/4a27922v.jpg\" -w \"HTTP %{http_code}, %{size_download} bytes\\\\n\")"
+    ]
+  }
+}

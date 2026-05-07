@@ -1,4 +1,4 @@
-﻿import { Bot, ExternalLink, FlaskConical, Github, Rss } from 'lucide-react'
+import { Bot, ExternalLink, FlaskConical, Github, Rss } from 'lucide-react'
 
 const projects = [
   {
@@ -7,7 +7,7 @@ const projects = [
     description:
       'Researched UAV landing stability under stochastic conditions and built a parallel Monte Carlo pipeline with 6.2x speedup; invited to present at the 2026 AIAA Aviation Forum.',
     stack: ['UAV Dynamics', 'ODE Modeling', 'Parallel Simulation'],
-    github: '',
+    github: 'https://github.com/parthm667/UAVSuspensionSystem',
     live: '',
   },
   {
@@ -26,6 +26,14 @@ const projects = [
       'Developed stochastic simulation models for popularity-driven bias in online markets, including large-scale Monte Carlo sweeps and ABC calibration against ranking data.',
     stack: ['Monte Carlo', 'Agent-Based Modeling', 'ABC'],
     github: '',
+    live: '',
+  },
+  {
+    title: 'Crypto HFT Infrastructure Project',
+    kind: 'GitHub',
+    description: 'Public repository for Crypto HFT infrastructure.',
+    stack: ['Jupyter Notebook', 'Python'],
+    github: 'https://github.com/sujaykonda/crupto-hft',
     live: '',
   },
   {
@@ -67,26 +75,18 @@ const projects = [
   {
     title: 'PolymarketAnalysis',
     kind: 'GitHub',
-    description: 'Public repository for Polymarket analysis.',
+    description: 'Trader analysis of 600,000+ traders on Polymarket.',
     stack: ['Jupyter Notebook', 'Python'],
     github: 'https://github.com/parthm667/PolymarketAnalysis',
-    live: '',
-  },
-  {
-    title: 'EVCode',
-    kind: 'GitHub',
-    description: 'Public EVCode repository.',
-    stack: ['Jupyter Notebook', 'Python'],
-    github: 'https://github.com/parthm667/EVCode',
     live: '',
   },
 ]
 
 function KindIcon({ kind }) {
-  if (kind === 'Robotics') return <Bot size={14} />
-  if (kind === 'Research') return <FlaskConical size={14} />
-  if (kind === 'GitHub') return <Github size={14} />
-  return <Rss size={14} />
+  if (kind === 'Robotics') return <Bot size={13} />
+  if (kind === 'Research') return <FlaskConical size={13} />
+  if (kind === 'GitHub') return <Github size={13} />
+  return <Rss size={13} />
 }
 
 export default function Projects() {
@@ -95,32 +95,46 @@ export default function Projects() {
       <div className="container">
         <p className="lbl">Selected Work</p>
         <h2 className="h2">Projects, Robotics, and Research</h2>
-        <div className="proj-grid">
+        <p className="sub">
+          A selection of research, robotics, and engineering work across academic labs and personal projects.
+        </p>
+
+        <div className="proj-list">
           {projects.map(project => (
-            <article className="proj-card" key={project.title}>
+            <article className="proj-item" key={project.title}>
               <div className="proj-head">
+                <h3>{project.title}</h3>
                 <span className="proj-kind">
                   <KindIcon kind={project.kind} /> {project.kind}
                 </span>
+              </div>
+              <p className="proj-desc">{project.description}</p>
+              <div className="proj-foot">
+                <p className="proj-stack">{project.stack.join('  ·  ')}</p>
                 <div className="proj-links">
                   {project.github && (
-                    <a href={project.github} target="_blank" rel="noreferrer" className="proj-link" aria-label="GitHub link">
+                    <a
+                      href={project.github}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="proj-link"
+                      aria-label="GitHub link"
+                    >
                       <Github size={15} />
                     </a>
                   )}
                   {project.live && (
-                    <a href={project.live} target="_blank" rel="noreferrer" className="proj-link" aria-label="Live link">
+                    <a
+                      href={project.live}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="proj-link"
+                      aria-label="Live link"
+                    >
                       <ExternalLink size={15} />
                     </a>
                   )}
                 </div>
-              </div>
-
-              <h3>{project.title}</h3>
-              <p>{project.description}</p>
-
-              <div className="proj-stack">
-                {project.stack.map(item => <span className="tag" key={item}>{item}</span>)}
               </div>
             </article>
           ))}
