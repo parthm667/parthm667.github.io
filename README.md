@@ -1,16 +1,40 @@
-# React + Vite
+# parthm667.github.io
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Personal site of Parth Mhaske, deployed to GitHub Pages.
 
-Currently, two official plugins are available:
+Two routes, one React app:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- `/` — portfolio (hero, about, skills, projects, contact)
+- `/public_remediation` — a standalone long-form page on street design and cycling safety (intentionally unlinked from the portfolio; reachable only by direct URL)
 
-## React Compiler
+## Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+React 19 + Vite 7, `react-router-dom` for the two routes, `framer-motion` (remediation page only), `lucide-react` icons. No CSS framework — hand-written styles in `src/index.css` (portfolio) and `src/remediation/remediation.css` (scoped under `.rm`).
 
-## Expanding the ESLint configuration
+Client-side routing on GitHub Pages uses the [spa-github-pages](https://github.com/rafgraph/spa-github-pages) redirect trick (`public/404.html` + the restore script in `index.html`).
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Structure
+
+```
+index.html                  entry + meta/fonts
+public/                     static assets (resume, photos, favicon)
+src/
+  App.jsx                   routes
+  Portfolio.jsx             landing page composition
+  components/               portfolio sections (Navbar, Hero, About, ...)
+  index.css                 portfolio styles + design tokens
+  remediation/              the /public_remediation page
+    sections/               page sections
+    interactive/            charts, sliders, counters
+    remediation.css         scoped styles
+```
+
+## Develop
+
+```sh
+npm install
+npm run dev       # local dev server
+npm run lint      # eslint
+npm run build     # production build to dist/
+npm run deploy    # build + publish dist/ to the gh-pages branch
+```

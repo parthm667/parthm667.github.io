@@ -22,3 +22,12 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# OS cruft
+desktop.ini
+Thumbs.db
+
+# Local AI/tooling session state — never commit
+.playwright-mcp/
+.omc/
+.claude/settings.local.json

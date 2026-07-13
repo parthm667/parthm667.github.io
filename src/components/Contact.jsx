@@ -38,7 +38,7 @@ export default function Contact() {
     <section className="section contact" id="contact">
       <div className="container">
         <p className="lbl">Contact</p>
-        <h2 className="h2">Lets connect</h2>
+        <h2 className="h2">Let’s connect</h2>
         <p className="sub">
           Open to internship roles, technical collaboration, and research-aligned engineering projects.
         </p>
