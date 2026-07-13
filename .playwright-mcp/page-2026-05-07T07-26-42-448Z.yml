@@ -1,0 +1,261 @@
+- generic [ref=e2]:
+  - navigation [ref=e3]:
+    - generic [ref=e4]:
+      - link "Parth Mhaske" [ref=e5] [cursor=pointer]:
+        - /url: "#hero"
+      - list [ref=e6]:
+        - listitem [ref=e7]:
+          - link "About" [ref=e8] [cursor=pointer]:
+            - /url: "#about"
+        - listitem [ref=e9]:
+          - link "Skills" [ref=e10] [cursor=pointer]:
+            - /url: "#skills"
+        - listitem [ref=e11]:
+          - link "Projects" [ref=e12] [cursor=pointer]:
+            - /url: "#projects"
+        - listitem [ref=e13]:
+          - link "Contact" [ref=e14] [cursor=pointer]:
+            - /url: "#contact"
+        - listitem [ref=e15]:
+          - link "Cycling" [ref=e16] [cursor=pointer]:
+            - /url: /public_remediation
+            - img [ref=e17]
+            - text: Cycling
+        - listitem [ref=e22]:
+          - link "Resume" [ref=e23] [cursor=pointer]:
+            - /url: /resume.pdf
+            - img [ref=e24]
+            - text: Resume
+  - generic [ref=e29]:
+    - paragraph [ref=e30]: Portfolio
+    - heading "Parth Mhaske" [level=1] [ref=e31]
+    - paragraph [ref=e32]: Software engineer building across quant systems, robotics, and research computing.
+    - paragraph [ref=e33]: I design and build practical systems across trading infrastructure, autonomous robotics, and computational research. I am based in College Park, Maryland and currently seeking internship opportunities.
+    - paragraph [ref=e34]:
+      - generic [ref=e35]: College Park, MD
+      - generic [ref=e36]: ·
+      - generic [ref=e37]: SWE Intern @ Corsha
+      - generic [ref=e38]: ·
+      - generic [ref=e39]: University of Maryland
+    - generic [ref=e40]:
+      - link "View Work" [ref=e41] [cursor=pointer]:
+        - /url: "#projects"
+        - text: View Work
+        - img [ref=e42]
+      - link "Or get in touch" [ref=e44] [cursor=pointer]:
+        - /url: "#contact"
+    - paragraph [ref=e45]:
+      - link "GitHub" [ref=e46] [cursor=pointer]:
+        - /url: https://github.com/parthm667
+      - generic [ref=e47]: ·
+      - link "LinkedIn" [ref=e48] [cursor=pointer]:
+        - /url: https://linkedin.com/in/parthmhaske667
+      - generic [ref=e49]: ·
+      - link "Photography" [ref=e50] [cursor=pointer]:
+        - /url: https://parthmhaske.myportfolio.com/
+      - generic [ref=e51]: ·
+      - link "Email" [ref=e52] [cursor=pointer]:
+        - /url: mailto:pmhaske@terpmail.umd.edu
+  - generic [ref=e54]:
+    - img "Parth Mhaske" [ref=e56]
+    - generic [ref=e57]:
+      - paragraph [ref=e58]: About
+      - heading "Who I am" [level=2] [ref=e59]
+      - paragraph [ref=e60]:
+        - text: I am
+        - strong [ref=e61]: Parth Mhaske
+        - text: ", a software engineer and student building across quant systems, robotics, and simulation-heavy research."
+      - paragraph [ref=e62]:
+        - text: Currently
+        - strong [ref=e63]: SWE Intern @ Corsha
+        - text: ", where I work on backend development for OT authentication systems."
+      - paragraph [ref=e64]: My recent work spans low-latency trading infrastructure, autonomous robotics control, and computational modeling projects in academic research environments.
+      - generic [ref=e65]:
+        - generic [ref=e66]:
+          - term [ref=e67]: Location
+          - definition [ref=e68]: College Park, Maryland
+        - generic [ref=e69]:
+          - term [ref=e70]: Status
+          - definition [ref=e71]: Looking for internship opportunities
+        - generic [ref=e72]:
+          - term [ref=e73]: Education
+          - definition [ref=e74]: University of Maryland — Computer Science and Applied Mathematics
+        - generic [ref=e75]:
+          - term [ref=e76]: Focus
+          - definition [ref=e77]: Robotics · Research Computing · Quant Systems
+      - generic [ref=e78]:
+        - link "Resume" [ref=e79] [cursor=pointer]:
+          - /url: /resume.pdf
+          - text: Resume
+          - img [ref=e80]
+        - link "Photo Portfolio" [ref=e83] [cursor=pointer]:
+          - /url: https://parthmhaske.myportfolio.com/
+          - img [ref=e84]
+          - text: Photo Portfolio
+  - generic [ref=e88]:
+    - paragraph [ref=e89]: Capabilities
+    - heading "Skills and Technologies" [level=2] [ref=e90]
+    - paragraph [ref=e91]: Skills listed from resume technical sections and public GitHub repository metadata.
+    - generic [ref=e92]:
+      - generic [ref=e93]:
+        - term [ref=e94]: Languages
+        - definition [ref=e95]: Python · JavaScript · Java · C++ · C · R · HTML/CSS · LaTeX
+      - generic [ref=e96]:
+        - term [ref=e97]: Libraries
+        - definition [ref=e98]: NumPy · SciPy · scikit-learn · pandas · Matplotlib · TensorFlow
+      - generic [ref=e99]:
+        - term [ref=e100]: Tools
+        - definition [ref=e101]: Git · GitHub · Jupyter · Linux/Bash · REST APIs · Optuna
+      - generic [ref=e102]:
+        - term [ref=e103]: Technical Areas
+        - definition [ref=e104]: Monte Carlo Simulation · ODE Modeling · PID Control · A* Pathfinding · Logistic Regression · K-means Clustering
+      - generic [ref=e105]:
+        - term [ref=e106]: Public Repo Stack
+        - definition [ref=e107]: Jupyter Notebook · Python · JavaScript
+  - generic [ref=e109]:
+    - paragraph [ref=e110]: Selected Work
+    - heading "Projects, Robotics, and Research" [level=2] [ref=e111]
+    - paragraph [ref=e112]: A selection of research, robotics, and engineering work across academic labs and personal projects.
+    - generic [ref=e113]:
+      - article [ref=e114]:
+        - generic [ref=e115]:
+          - heading "MASS Lab Research - UT Austin" [level=3] [ref=e116]
+          - generic [ref=e117]:
+            - img [ref=e118]
+            - text: Research
+        - paragraph [ref=e120]: Researched UAV landing stability under stochastic conditions and built a parallel Monte Carlo pipeline with 6.2x speedup; invited to present at the 2026 AIAA Aviation Forum.
+        - generic [ref=e121]:
+          - paragraph [ref=e122]: UAV Dynamics · ODE Modeling · Parallel Simulation
+          - link "GitHub link" [ref=e124] [cursor=pointer]:
+            - /url: https://github.com/parthm667/UAVSuspensionSystem
+            - img [ref=e125]
+      - article [ref=e128]:
+        - generic [ref=e129]:
+          - heading "Astronomy Research - UMD" [level=3] [ref=e130]
+          - generic [ref=e131]:
+            - img [ref=e132]
+            - text: Research
+        - paragraph [ref=e134]: Built computational models of light-particle interactions for circumstellar dust and generated synthetic photometric and polarimetric outputs for observational validation.
+        - paragraph [ref=e136]: Computational Modeling · Scientific Computing · Machine Learning
+      - article [ref=e137]:
+        - generic [ref=e138]:
+          - heading "Computational Social Dynamics Lab Research" [level=3] [ref=e139]
+          - generic [ref=e140]:
+            - img [ref=e141]
+            - text: Research
+        - paragraph [ref=e143]: Developed stochastic simulation models for popularity-driven bias in online markets, including large-scale Monte Carlo sweeps and ABC calibration against ranking data.
+        - paragraph [ref=e145]: Monte Carlo · Agent-Based Modeling · ABC
+      - article [ref=e146]:
+        - generic [ref=e147]:
+          - heading "Crypto HFT Infrastructure Project" [level=3] [ref=e148]
+          - generic [ref=e149]:
+            - img [ref=e150]
+            - text: GitHub
+        - paragraph [ref=e153]: Public repository for Crypto HFT infrastructure.
+        - generic [ref=e154]:
+          - paragraph [ref=e155]: Jupyter Notebook · Python
+          - link "GitHub link" [ref=e157] [cursor=pointer]:
+            - /url: https://github.com/sujaykonda/crupto-hft
+            - img [ref=e158]
+      - article [ref=e161]:
+        - generic [ref=e162]:
+          - heading "Autonomous Maze Navigating Robot" [level=3] [ref=e163]
+          - generic [ref=e164]:
+            - img [ref=e165]
+            - text: Robotics
+        - paragraph [ref=e168]: Built cascaded PID control with odometry plus IMU sensor fusion and an A* pathfinding pipeline with collision checks and turn-cost optimization. Placed 3rd at the 2024 Science Olympiad National Tournament.
+        - generic [ref=e169]:
+          - paragraph [ref=e170]: PID Control · Sensor Fusion · A* Pathfinding
+          - link "GitHub link" [ref=e172] [cursor=pointer]:
+            - /url: https://github.com/parthm667/RobotTourMazeSolver
+            - img [ref=e173]
+      - article [ref=e176]:
+        - generic [ref=e177]:
+          - heading "Population Biology Laboratory - IISER Pune" [level=3] [ref=e178]
+          - generic [ref=e179]:
+            - img [ref=e180]
+            - text: Research
+        - paragraph [ref=e182]: Built and tuned literature-classification pipelines (logistic regression and SVM) across 35k+ papers using TF-IDF, cross-validation, and metadata repair tooling.
+        - paragraph [ref=e184]: Logistic Regression · TF-IDF · GridSearchCV · SVM
+      - article [ref=e185]:
+        - generic [ref=e186]:
+          - heading "nj-hin-generator" [level=3] [ref=e187]
+          - generic [ref=e188]:
+            - img [ref=e189]
+            - text: GitHub
+        - paragraph [ref=e192]: Automated New Jersey High Injury Network generator for SS4A grant workflows with geospatial crash assignment, Poisson significance testing, equity overlays, and map/data exports.
+        - generic [ref=e193]:
+          - paragraph [ref=e194]: FastAPI · PostGIS · GeoPandas · React · Leaflet
+          - link "GitHub link" [ref=e196] [cursor=pointer]:
+            - /url: https://github.com/parthm667/nj-hin-generator
+            - img [ref=e197]
+      - article [ref=e200]:
+        - generic [ref=e201]:
+          - heading "FRC Team 1923 - Electrical Director" [level=3] [ref=e202]
+          - generic [ref=e203]:
+            - img [ref=e204]
+            - text: Robotics
+        - paragraph [ref=e207]: Led electrical system design and diagnostics across CAN and encoder signal integrity, and supported autonomous strategy and match-level decision workflows.
+        - paragraph [ref=e209]: Electrical Systems · Diagnostics · Autonomous Strategy
+      - article [ref=e210]:
+        - generic [ref=e211]:
+          - heading "PolymarketAnalysis" [level=3] [ref=e212]
+          - generic [ref=e213]:
+            - img [ref=e214]
+            - text: GitHub
+        - paragraph [ref=e217]: Trader analysis of 600,000+ traders on Polymarket.
+        - generic [ref=e218]:
+          - paragraph [ref=e219]: Jupyter Notebook · Python
+          - link "GitHub link" [ref=e221] [cursor=pointer]:
+            - /url: https://github.com/parthm667/PolymarketAnalysis
+            - img [ref=e222]
+  - generic [ref=e226]:
+    - paragraph [ref=e227]: Contact
+    - heading "Lets connect" [level=2] [ref=e228]
+    - paragraph [ref=e229]: Open to internship roles, technical collaboration, and research-aligned engineering projects.
+    - generic [ref=e230]:
+      - generic [ref=e231]:
+        - paragraph [ref=e232]: "Happy to talk about quant systems, robotics, or research engineering. Reach out directly:"
+        - list [ref=e233]:
+          - listitem [ref=e234]:
+            - link "Email pmhaske@terpmail.umd.edu" [ref=e235] [cursor=pointer]:
+              - /url: mailto:pmhaske@terpmail.umd.edu
+              - generic [ref=e236]: Email
+              - generic [ref=e237]: pmhaske@terpmail.umd.edu
+              - img [ref=e238]
+          - listitem [ref=e241]:
+            - link "LinkedIn linkedin.com/in/parthmhaske667" [ref=e242] [cursor=pointer]:
+              - /url: https://linkedin.com/in/parthmhaske667
+              - generic [ref=e243]: LinkedIn
+              - generic [ref=e244]: linkedin.com/in/parthmhaske667
+              - img [ref=e245]
+          - listitem [ref=e248]:
+            - link "GitHub github.com/parthm667" [ref=e249] [cursor=pointer]:
+              - /url: https://github.com/parthm667
+              - generic [ref=e250]: GitHub
+              - generic [ref=e251]: github.com/parthm667
+              - img [ref=e252]
+      - generic [ref=e255]:
+        - generic [ref=e256]:
+          - generic [ref=e257]: Name
+          - textbox "Name" [ref=e258]:
+            - /placeholder: Your name
+        - generic [ref=e259]:
+          - generic [ref=e260]: Email
+          - textbox "Email" [ref=e261]:
+            - /placeholder: you@example.com
+        - generic [ref=e262]:
+          - generic [ref=e263]: Message
+          - textbox "Message" [ref=e264]:
+            - /placeholder: What would you like to discuss?
+        - button "Send message" [ref=e265] [cursor=pointer]:
+          - img [ref=e266]
+          - text: Send message
+  - contentinfo [ref=e269]:
+    - paragraph [ref=e271]:
+      - link "Parth Mhaske" [ref=e272] [cursor=pointer]:
+        - /url: https://github.com/parthm667
+      - text: "|"
+      - link "Photography Portfolio" [ref=e273] [cursor=pointer]:
+        - /url: https://parthmhaske.myportfolio.com/
+      - text: "| 2026 | Built with React and Vite"

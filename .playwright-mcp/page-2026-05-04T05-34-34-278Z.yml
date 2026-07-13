@@ -1,0 +1,349 @@
+- generic [ref=e3]:
+  - navigation "Remediation navigation" [ref=e4]:
+    - generic [ref=e5]:
+      - link "Parth Mhaske" [ref=e6] [cursor=pointer]:
+        - /url: /
+        - img [ref=e7]
+        - generic [ref=e9]: Parth Mhaske
+      - button "Toggle sections" [ref=e10] [cursor=pointer]: Sections
+      - list:
+        - listitem:
+          - link "The Pattern":
+            - /url: "#pattern"
+        - listitem:
+          - link "History":
+            - /url: "#history"
+        - listitem:
+          - link "Hoboken":
+            - /url: "#hoboken"
+        - listitem:
+          - link "Counterarguments":
+            - /url: "#counter"
+        - listitem:
+          - link "The Tool":
+            - /url: "#tool"
+        - listitem:
+          - link "Act":
+            - /url: "#action"
+  - main [ref=e11]:
+    - region "Designed to fail" [ref=e12]:
+      - generic [ref=e13]:
+        - img
+      - generic [ref=e16]:
+        - paragraph [ref=e17]: A public remediation · 2026
+        - heading "In March 2022 I was hit by a car on a road that was designed to be dangerous." [level=1] [ref=e18]:
+          - text: In March 2022 I was hit by a car
+          - emphasis [ref=e19]: on a road that was designed
+          - text: to be dangerous.
+        - generic [ref=e20]:
+          - paragraph [ref=e21]:
+            - text: I survived.
+            - generic [ref=e22]:
+              - generic "7,500 pedestrian deaths" [ref=e23]: "0"
+              - text: Americans
+            - text: last year did not.
+          - paragraph [ref=e24]:
+            - text: Pedestrian fatalities, 2022. Smart Growth America,
+            - emphasis [ref=e25]: Dangerous by Design 2024
+            - text: .
+    - generic [ref=e26]:
+      - generic [ref=e27]:
+        - paragraph [ref=e28]: 02 — The pattern
+        - heading "The deaths are not spread randomly." [level=2] [ref=e29]:
+          - text: The deaths are not
+          - emphasis [ref=e30]: spread randomly
+          - text: .
+      - blockquote [ref=e31]:
+        - paragraph [ref=e32]: “Fatal crashes are not distributed randomly across the city. They cluster on arterial roads with wide lanes and high speeds.”
+        - generic [ref=e33]: Dumbaugh & Li, 2011
+      - generic [ref=e34]:
+        - figure [ref=e35]:
+          - img "Pedestrian fatality rate, US vs. Netherlands, 1990–2018 Both countries started near 3.3 deaths per 100,000 in 1990. The Netherlands fell to 0.8 by 2018; the US fell, then climbed back to 2.6." [ref=e36]:
+            - generic [ref=e38]: "0.0"
+            - generic [ref=e40]: "1.0"
+            - generic [ref=e42]: "2.0"
+            - generic [ref=e44]: "3.0"
+            - generic [ref=e46]: "4.0"
+            - generic [ref=e47]: DEATHS PER 100K
+            - generic [ref=e49]: "1990"
+            - generic [ref=e51]: "2000"
+            - generic [ref=e53]: "2010"
+            - generic [ref=e55]: "2018"
+            - generic [ref=e58]:
+              - generic [ref=e60]: United States
+              - generic [ref=e61]: 2.6 · 2018
+            - generic [ref=e62]:
+              - generic [ref=e64]: Netherlands
+              - generic [ref=e65]: 0.8 · 2018
+            - 'generic "United States, 1990: 3.5 per 100,000" [ref=e67] [cursor=pointer]'
+            - 'generic "United States, 2000: 2.5 per 100,000" [ref=e69] [cursor=pointer]'
+            - 'generic "United States, 2010: 2.2 per 100,000" [ref=e71] [cursor=pointer]'
+            - 'generic "United States, 2018: 2.6 per 100,000" [ref=e73] [cursor=pointer]'
+            - 'generic "Netherlands, 1990: 3.2 per 100,000" [ref=e75] [cursor=pointer]'
+            - 'generic "Netherlands, 2000: 1.8 per 100,000" [ref=e77] [cursor=pointer]'
+            - 'generic "Netherlands, 2010: 1.0 per 100,000" [ref=e79] [cursor=pointer]'
+            - 'generic "Netherlands, 2018: 0.8 per 100,000" [ref=e81] [cursor=pointer]'
+        - generic [ref=e82]:
+          - paragraph [ref=e83]: In 1990, the United States and the Netherlands killed pedestrians at nearly identical rates. By 2018, one country had cut deaths by three quarters. The other reversed course.
+          - paragraph [ref=e84]:
+            - text: Source — Buehler & Pucher (2021),
+            - emphasis [ref=e85]: Transport Reviews
+            - text: . Rate per 100,000 population.
+    - generic [ref=e86]:
+      - generic [ref=e87]:
+        - paragraph [ref=e88]: 03 — How we got here
+        - heading "The streets weren't always for cars." [level=2] [ref=e89]:
+          - text: The streets weren't
+          - text: always for cars.
+      - article [ref=e90]:
+        - paragraph [ref=e91]:
+          - generic [ref=e92]: I
+          - text: n the 1920s, American streets belonged to everyone. Pedestrians, cyclists, streetcars, children, and early autos all shared the same asphalt. When car ownership began to climb and the body count rose with it, the public reaction was outrage — at drivers.
+        - paragraph [ref=e93]:
+          - text: A coalition of car dealers, manufacturers, and auto clubs that the historian Peter Norton calls
+          - strong [ref=e94]: motordom
+          - text: spent the next decade reversing that verdict. They lobbied for new traffic laws that gave cars legal priority on public roads. They invented the slur
+          - emphasis [ref=e95]: jaywalker
+          - text: and pushed it relentlessly to recast pedestrians as the problem. By the end of the decade, the street was no longer a shared place. It was a road, and roads were for cars.
+        - complementary [ref=e96]:
+          - paragraph [ref=e97]: “Motordom redefined the street as a place where people don't belong.”
+          - generic [ref=e98]: Peter Norton · Fighting Traffic, 2008
+        - figure "1920s American street with mixed pedestrian, streetcar, and auto traffic" [ref=e99]:
+          - img "placeholder" [ref=e100]:
+            - img [ref=e101]:
+              - generic [ref=e124]: ARCHIVAL PHOTO PLACEHOLDER
+              - generic [ref=e125]: AMERICAN STREET, c. 1920 · LIBRARY OF CONGRESS
+          - generic [ref=e126]: A typical American street before the auto industry's PR campaign. Pedestrians, streetcars, cyclists, and cars share the same right-of-way.
+        - paragraph [ref=e127]:
+          - text: Once the street was theirs, the engineering profession built its standards around it. The American Association of State Highway and Transportation Officials (AASHTO) published a thick green design manual — the
+          - emphasis [ref=e128]: Green Book
+          - text: "— that became the reference every state engineer was trained on. It told them how wide to make a lane, how long the sight lines should be, and how fast to design for. Beneath all of it sat one assumption:"
+          - strong [ref=e129]: the safest road is the one that forgives a fast driver's mistakes.
+        - paragraph [ref=e130]: Wider lanes. Longer sight lines. Higher design speeds. Bigger shoulders. Every parameter pushed in the same direction. Pedestrians and cyclists weren't ignored on purpose — they simply weren't part of the math.
+        - complementary "Interactive lane width demonstrator" [ref=e131]:
+          - generic [ref=e132]:
+            - paragraph [ref=e133]: Interactive · drag to widen
+            - heading "Lane width is design speed." [level=4] [ref=e134]
+            - paragraph [ref=e135]: The Green Book treats wider lanes as a safety feature. Driver behavior treats them as permission. Move the slider.
+          - generic [ref=e136]:
+            - img [ref=e138]:
+              - generic [ref=e140]: 11 FT
+            - generic [ref=e147]:
+              - generic [ref=e148]: Lane width
+              - generic [ref=e149]:
+                - generic [ref=e150]: 9 ft
+                - slider "Lane width in feet" [ref=e151]: "11"
+                - generic [ref=e152]: 14 ft
+              - generic [ref=e153]:
+                - generic [ref=e154]:
+                  - paragraph [ref=e155]: Driver speed (free-flow)
+                  - paragraph [ref=e156]:
+                    - generic [ref=e157]: "24"
+                    - generic [ref=e158]: mph
+                - generic [ref=e159]:
+                  - paragraph [ref=e160]: Pedestrian risk if struck
+                  - paragraph [ref=e161]:
+                    - generic [ref=e162]: "27"
+                    - generic [ref=e163]: "% killed"
+              - paragraph [ref=e164]: Approximation. Speed/lane-width relationship from FHWA guidance and Dewar & Olson summaries; risk curve from AAA Foundation pedestrian-impact research.
+        - paragraph [ref=e165]: This is the assumption everything else on this page dismantles.
+    - generic [ref=e166]:
+      - generic [ref=e171]:
+        - paragraph [ref=e172]: 04 — The counterfactual · Hoboken, NJ
+        - heading "7+ years. Zero traffic deaths. One mile from Manhattan." [level=2] [ref=e173]:
+          - generic [ref=e174]: 7+ years.
+          - emphasis [ref=e176]: Zero traffic deaths.
+          - generic [ref=e177]: One mile from Manhattan.
+        - paragraph [ref=e178]: Hoboken, New Jersey · pop. 60,419
+      - generic [ref=e179]:
+        - paragraph [ref=e180]: None of what Hoboken did was expensive. None of it was technically complicated. The four interventions below were paid for through ordinary repaving budgets and signal-software updates — and rolled out citywide over the course of a few years.
+        - article [ref=e181]:
+          - img [ref=e183]
+          - generic [ref=e192]:
+            - paragraph [ref=e193]: 01 · High-visibility paint
+            - heading "They repainted every crosswalk so drivers had to see them." [level=3] [ref=e194]
+            - paragraph [ref=e195]: Continental-style stripes — wide white bars instead of two thin parallel lines. The pattern reads as a stop signal at speed, not a footnote on the asphalt. Hoboken now repaints every crosswalk it passes during routine repaving. The cost is rounding-error.
+        - article [ref=e196]:
+          - img [ref=e198]
+          - generic [ref=e228]:
+            - paragraph [ref=e229]: 02 · Daylighting
+            - heading "Flexible posts at every corner. Drivers can suddenly see kids." [level=3] [ref=e230]
+            - paragraph [ref=e231]: Parking removed for ~25 feet before the crosswalk, replaced with vertical posts. The line of sight between a driver and a pedestrian opens up — neither can hide behind a parked SUV. The interventions cost roughly $200 per corner.
+        - article [ref=e232]:
+          - img [ref=e234]:
+            - generic [ref=e237]: SPEED
+            - generic [ref=e238]: LIMIT
+            - generic [ref=e239]: "20"
+            - generic [ref=e240]: M·P·H
+          - generic [ref=e241]:
+            - paragraph [ref=e242]: 03 · Speed limit
+            - heading "Citywide 20 mph. A ten-percent drop with disproportionate effect." [level=3] [ref=e243]
+            - paragraph [ref=e244]: A pedestrian struck at 25 mph has roughly a 1-in-4 chance of dying. At 20 mph it falls to about 1-in-10. Hoboken changed signs, repainted lane widths to match the lower target, and let drivers self-regulate. The street geometry did most of the enforcement.
+        - article [ref=e245]:
+          - img [ref=e247]:
+            - generic [ref=e257]: WAIT
+            - generic [ref=e258]: +3s
+          - generic [ref=e259]:
+            - paragraph [ref=e260]: 04 · Leading pedestrian intervals
+            - heading "A three-second head start at every signal." [level=3] [ref=e261]
+            - paragraph [ref=e262]: When the light changes, the walk signal goes white before the green. Pedestrians enter the crosswalk first; turning drivers see them already in motion. It costs nothing to add — just a software change at the cabinet — and it eliminates one of the deadliest right-hook conflicts.
+        - blockquote [ref=e263]:
+          - paragraph [ref=e264]:
+            - text: Cars still drive on Hoboken streets. People still get to work.
+            - emphasis [ref=e265]: The roads were just redesigned so they don't kill anyone.
+    - generic [ref=e266]:
+      - generic [ref=e267]:
+        - paragraph [ref=e268]: 05 — Counterarguments
+        - heading "The objections, answered." [level=2] [ref=e269]:
+          - text: The objections,
+          - emphasis [ref=e270]: answered.
+        - paragraph [ref=e271]: Three rebuttals you'll hear at every council meeting. None of them survive contact with the evidence.
+      - generic [ref=e273]:
+        - generic [ref=e274]:
+          - button "01 Aren’t most crashes just bad drivers?" [expanded] [ref=e275] [cursor=pointer]:
+            - generic [ref=e276]: "01"
+            - generic [ref=e277]: Aren’t most crashes just bad drivers?
+            - img [ref=e279]
+          - generic [ref=e281]:
+            - paragraph [ref=e282]: Bad drivers exist in every country. So do distractions, fatigue, and impairment. The question is why the same human errors produce a fatality in one place and a fender-bender in another.
+            - paragraph [ref=e283]: "Dumbaugh & Li examined fatal crashes across the San Antonio metro area and found they cluster on a specific kind of road: wide arterials with high design speeds and few pedestrian protections. Streets with shorter blocks and narrower lanes had a fraction of the fatalities, even though plenty of bad drivers used them too. The road geometry — not driver behavior — is what makes a mistake deadly."
+            - paragraph [ref=e284]: Dumbaugh & Li (2011) · Designing for the Safety of Pedestrians, Cyclists, and Motorists in Urban Environments
+        - button "02 Won’t road redesigns cause gridlock?" [ref=e286] [cursor=pointer]:
+          - generic [ref=e287]: "02"
+          - generic [ref=e288]: Won’t road redesigns cause gridlock?
+          - img [ref=e290]
+        - button "03 Americans love their cars — change isn’t realistic." [ref=e292] [cursor=pointer]:
+          - generic [ref=e293]: "03"
+          - generic [ref=e294]: Americans love their cars — change isn’t realistic.
+          - img [ref=e296]
+    - generic [ref=e297]:
+      - img [ref=e299]
+      - generic [ref=e317]:
+        - paragraph [ref=e318]: 06 — The tool · for NJ municipalities
+        - heading "Find your town's most dangerous roads." [level=2] [ref=e319]:
+          - text: Find your town's
+          - emphasis [ref=e320]: most dangerous roads.
+        - generic [ref=e321]:
+          - paragraph [ref=e322]: I built a High Injury Network generator for New Jersey that runs the full geospatial analysis automatically. Drop in NJ DOT crash data and it produces a corridor-by-corridor ranking with Poisson significance tests and equity overlays. The output is grant-application ready — municipalities without GIS departments can use it to compete for federal Safe Streets and Roads for All funding.
+          - generic [ref=e323]:
+            - generic [ref=e324]:
+              - img [ref=e325]
+              - text: NJ-specific · DOT crash data
+            - generic [ref=e328]: Free · open source
+            - generic [ref=e329]: Built for SS4A grant applications
+          - link "Open the HIN Generator" [ref=e330] [cursor=pointer]:
+            - /url: https://github.com/parthm667/nj-hin-generator
+            - generic [ref=e331]: Open the HIN Generator
+            - img [ref=e333]
+          - paragraph [ref=e336]: Built specifically for NJ municipalities. Free to use. An academic paper can't put a tool in your hands. A website can.
+    - generic [ref=e337]:
+      - generic [ref=e338]:
+        - paragraph [ref=e339]: 07 — Take action
+        - heading "The next move is yours." [level=2] [ref=e340]:
+          - text: The next move
+          - text: is yours.
+      - generic [ref=e341]:
+        - article [ref=e342]:
+          - generic [ref=e343]:
+            - img [ref=e344]
+            - paragraph [ref=e347]: For residents
+          - heading "Show up to your town council meeting." [level=3] [ref=e348]
+          - paragraph [ref=e349]: Every council in New Jersey has open public-comment periods. Three minutes of evidence — referencing the data and the Hoboken playbook on this page — is more than most members hear in a week.
+          - link "Download a 3-minute speech template" [disabled]:
+            - /url: "#"
+            - text: Download a 3-minute speech template
+            - img
+          - paragraph [ref=e350]:
+            - emphasis [ref=e351]: Template PDF coming soon — Parth to upload.
+        - article [ref=e352]:
+          - generic [ref=e353]:
+            - img [ref=e354]
+            - paragraph [ref=e357]: For municipal officials
+          - heading "You don't need a GIS department to apply for SS4A funding." [level=3] [ref=e358]
+          - paragraph [ref=e359]: The HIN generator runs the analysis. The output is the corridor ranking, equity overlay, and Poisson significance test that federal applications ask for. You can have a defensible target list by next week.
+          - link "Run the HIN generator on your town" [ref=e360] [cursor=pointer]:
+            - /url: https://github.com/parthm667/nj-hin-generator
+            - text: Run the HIN generator on your town
+            - img [ref=e361]
+        - article [ref=e364]:
+          - generic [ref=e365]:
+            - img [ref=e366]
+            - paragraph [ref=e372]: For everyone
+          - heading "Share the case. Then write your state rep." [level=3] [ref=e373]
+          - paragraph [ref=e374]:
+            - text: Federal action helps; state action moves faster. New Jersey is considering reauthorization of the
+            - emphasis [ref=e375]: Sarah Debbink Langenkamp Active Transportation Safety Act
+            - text: — call the office of your state senator and assembly member to tell them you support it.
+          - list [ref=e376]:
+            - listitem [ref=e377]:
+              - link "Twitter / X" [ref=e378] [cursor=pointer]:
+                - /url: https://twitter.com/intent/tweet?text=American%20road%20design%20kills%207%2C500%2B%20pedestrians%20a%20year.%20Hoboken%20proves%20the%20fix%20is%20cheap.%20Read%20the%20case%3A&url=https%3A%2F%2Fparthm667.github.io%2Fpublic_remediation
+            - listitem [ref=e379]:
+              - link "LinkedIn" [ref=e380] [cursor=pointer]:
+                - /url: https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fparthm667.github.io%2Fpublic_remediation
+            - listitem [ref=e381]:
+              - link "Email" [ref=e382] [cursor=pointer]:
+                - /url: mailto:?subject=Designed%20to%20Fail&body=American%20road%20design%20kills%207%2C500%2B%20pedestrians%20a%20year.%20Hoboken%20proves%20the%20fix%20is%20cheap.%20Read%20the%20case%3A%0A%0Ahttps%3A%2F%2Fparthm667.github.io%2Fpublic_remediation
+            - listitem [ref=e383]:
+              - link "Find your NJ rep ↗" [ref=e384] [cursor=pointer]:
+                - /url: https://www.njleg.state.nj.us/legislative-roster
+    - generic [ref=e385]:
+      - generic [ref=e386]:
+        - paragraph [ref=e387]: 08 — About
+        - paragraph [ref=e388]: I'm Parth Mhaske, a student at the University of Maryland. In March 2022 I was hit by a car on a road that didn't have a bike lane or a shoulder, designed for traffic moving 45 mph. I walked away with broken bones and a busted wheel. Most people who get hit on roads like that don't walk away. This site is a remediation of an academic paper I wrote about why.
+        - paragraph [ref=e389]:
+          - link "parthm667.github.io ↗" [ref=e390] [cursor=pointer]:
+            - /url: /
+          - text: — the rest of my work.
+      - generic [ref=e391]:
+        - heading "Further reading The seven sources this page rests on." [level=3] [ref=e392]:
+          - generic [ref=e393]: Further reading
+          - emphasis [ref=e394]: The seven sources this page rests on.
+        - list [ref=e395]:
+          - listitem [ref=e396]:
+            - generic [ref=e397]: "01"
+            - generic [ref=e398]:
+              - paragraph [ref=e399]: Buehler, R. & Pucher, J. (2021). “The growing gap in pedestrian and cyclist fatality rates between the United States and the United Kingdom, Germany, Denmark, and the Netherlands, 1990–2018.” Transport Reviews, 41(1).
+              - paragraph [ref=e400]: The international comparison that anchors the chart at the top of this page.
+          - listitem [ref=e401]:
+            - generic [ref=e402]: "02"
+            - generic [ref=e403]:
+              - paragraph [ref=e404]: Dumbaugh, E. & Li, W. (2011). “Designing for the Safety of Pedestrians, Cyclists, and Motorists in Urban Environments.” Journal of the American Planning Association, 77(1).
+              - paragraph [ref=e405]: Why crashes cluster on wide arterials and not on shorter, narrower streets.
+          - listitem [ref=e406]:
+            - generic [ref=e407]: "03"
+            - generic [ref=e408]:
+              - paragraph [ref=e409]: "Norton, P. (2008). Fighting Traffic: The Dawn of the Motor Age in the American City. MIT Press."
+              - paragraph [ref=e410]: The 1920s history. How motordom redefined the American street as a place for cars.
+          - listitem [ref=e411]:
+            - generic [ref=e412]: "04"
+            - generic [ref=e413]:
+              - paragraph [ref=e414]: Marshall, W. & Ferenchak, N. (2019). “Why cities with high bicycling rates are safer for all road users.” Journal of Transport & Health, 13.
+              - paragraph [ref=e415]: Cities that build bike infrastructure are safer for drivers too. The road-diet evidence.
+          - listitem [ref=e416]:
+            - generic [ref=e417]: "05"
+            - generic [ref=e418]:
+              - paragraph [ref=e419]: Marohn, C. (2021). Confessions of a Recovering Engineer. Wiley.
+              - paragraph [ref=e420]: A traffic engineer’s account of why the profession keeps building dangerous roads even when they know better.
+          - listitem [ref=e421]:
+            - generic [ref=e422]: "06"
+            - generic [ref=e423]:
+              - paragraph [ref=e424]: Smart Growth America (2024). Dangerous by Design 2024.
+              - paragraph [ref=e425]: The current US fatality data — 7,500+ pedestrian deaths in 2022, the worst year in four decades.
+          - listitem [ref=e426]:
+            - generic [ref=e427]: "07"
+            - generic [ref=e428]:
+              - paragraph [ref=e429]: Wesseler, M. (2023). “The unconscious bias that drives car culture.” Yale Climate Connections.
+              - paragraph [ref=e430]: The Swansea motonormativity study — why car-centric design feels like the default.
+  - contentinfo [ref=e431]:
+    - generic [ref=e432]:
+      - paragraph [ref=e433]:
+        - generic [ref=e434]: Designed to Fail
+        - generic [ref=e436]: Built & written by Parth Mhaske · 2026
+      - paragraph [ref=e437]: A public remediation of an academic position paper on American road safety. ENGL 101, Spring 2026 · University of Maryland.
+      - paragraph [ref=e438]:
+        - link "← parthm667.github.io" [ref=e439] [cursor=pointer]:
+          - /url: /
+        - generic [ref=e440]: ·
+        - link "HIN Generator (GitHub)" [ref=e441] [cursor=pointer]:
+          - /url: https://github.com/parthm667/nj-hin-generator

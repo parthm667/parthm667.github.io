@@ -1,0 +1,221 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1778137075638,
+  "projectRoot": "C:\\Users\\parth\\parthm667.github.io",
+  "techStack": {
+    "languages": [
+      {
+        "name": "JavaScript/TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "package.json"
+        ]
+      }
+    ],
+    "frameworks": [
+      {
+        "name": "react",
+        "version": "19.2.0",
+        "category": "frontend"
+      },
+      {
+        "name": "react-dom",
+        "version": "19.2.0",
+        "category": "frontend"
+      },
+      {
+        "name": "vite",
+        "version": "7.3.1",
+        "category": "build"
+      }
+    ],
+    "packageManager": "npm",
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": "npm run build",
+    "testCommand": null,
+    "lintCommand": "npm run lint",
+    "devCommand": "npm run dev",
+    "scripts": {
+      "dev": "vite",
+      "build": "vite build",
+      "lint": "eslint .",
+      "preview": "vite preview",
+      "predeploy": "npm run build",
+      "deploy": "gh-pages -d dist"
+    }
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": "type-based"
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "public",
+      "src"
+    ],
+    "gitBranches": {
+      "defaultBranch": "main",
+      "branchingStrategy": null
+    }
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "dist": {
+      "path": "dist",
+      "purpose": "Distribution/build output",
+      "fileCount": 6,
+      "lastAccessed": 1778137075606,
+      "keyFiles": [
+        "404.html",
+        "favicon.svg",
+        "index.html",
+        "parth-photo.webp",
+        "resume.pdf"
+      ]
+    },
+    "public": {
+      "path": "public",
+      "purpose": "Public files",
+      "fileCount": 5,
+      "lastAccessed": 1778137075607,
+      "keyFiles": [
+        "404.html",
+        "favicon.svg",
+        "parth-photo.webp",
+        "resume.pdf",
+        "vite.svg"
+      ]
+    },
+    "src": {
+      "path": "src",
+      "purpose": "Source code",
+      "fileCount": 5,
+      "lastAccessed": 1778137075613,
+      "keyFiles": [
+        "App.css",
+        "App.jsx",
+        "index.css",
+        "main.jsx",
+        "Portfolio.jsx"
+      ]
+    },
+    "dist\\assets": {
+      "path": "dist\\assets",
+      "purpose": "Static assets",
+      "fileCount": 2,
+      "lastAccessed": 1778137075615,
+      "keyFiles": [
+        "index-1t0EJqnb.css",
+        "index-DAR5RJFu.js"
+      ]
+    },
+    "src\\assets": {
+      "path": "src\\assets",
+      "purpose": "Static assets",
+      "fileCount": 1,
+      "lastAccessed": 1778137075615,
+      "keyFiles": [
+        "react.svg"
+      ]
+    },
+    "src\\components": {
+      "path": "src\\components",
+      "purpose": "UI components",
+      "fileCount": 7,
+      "lastAccessed": 1778137075615,
+      "keyFiles": [
+        "About.jsx",
+        "Contact.jsx",
+        "Footer.jsx"
+      ]
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "docs\\superpowers\\specs\\2026-05-07-landing-redesign-design.md",
+      "accessCount": 4,
+      "lastAccessed": 1778138144767,
+      "type": "file"
+    },
+    {
+      "path": "src\\index.css",
+      "accessCount": 4,
+      "lastAccessed": 1778138678460,
+      "type": "file"
+    },
+    {
+      "path": "src\\components\\Navbar.jsx",
+      "accessCount": 3,
+      "lastAccessed": 1778137214382,
+      "type": "file"
+    },
+    {
+      "path": "src\\components\\Projects.jsx",
+      "accessCount": 3,
+      "lastAccessed": 1778138549665,
+      "type": "file"
+    },
+    {
+      "path": "src\\components\\Hero.jsx",
+      "accessCount": 2,
+      "lastAccessed": 1778138227233,
+      "type": "file"
+    },
+    {
+      "path": "src\\components\\About.jsx",
+      "accessCount": 2,
+      "lastAccessed": 1778138249366,
+      "type": "file"
+    },
+    {
+      "path": "src\\components\\Skills.jsx",
+      "accessCount": 2,
+      "lastAccessed": 1778138271278,
+      "type": "file"
+    },
+    {
+      "path": "src\\components\\Contact.jsx",
+      "accessCount": 2,
+      "lastAccessed": 1778138580997,
+      "type": "file"
+    },
+    {
+      "path": "vite.config.js",
+      "accessCount": 1,
+      "lastAccessed": 1778137136815,
+      "type": "file"
+    },
+    {
+      "path": "src\\App.jsx",
+      "accessCount": 1,
+      "lastAccessed": 1778137143474,
+      "type": "file"
+    },
+    {
+      "path": "src\\Portfolio.jsx",
+      "accessCount": 1,
+      "lastAccessed": 1778137510092,
+      "type": "file"
+    },
+    {
+      "path": "src\\components\\Footer.jsx",
+      "accessCount": 1,
+      "lastAccessed": 1778137697242,
+      "type": "file"
+    },
+    {
+      "path": "public\\resume.pdf",
+      "accessCount": 1,
+      "lastAccessed": 1778138108212,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}

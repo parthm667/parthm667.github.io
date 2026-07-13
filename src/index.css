@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 /* Fonts are loaded from index.html with preconnect; keep this file import-free
    so first paint is not blocked behind a CSS-chained font request. */
+=======
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,500;1,6..72,600&display=swap');
+>>>>>>> 31c84abe0141aba58f086733873f14baf308cd1e
 
 *,
 *::before,
@@ -91,7 +95,10 @@ section[id] {
   line-height: 1.08;
   margin-bottom: 0.9rem;
   font-weight: 600;
+<<<<<<< HEAD
   text-wrap: balance;
+=======
+>>>>>>> 31c84abe0141aba58f086733873f14baf308cd1e
 }
 
 .sub {
