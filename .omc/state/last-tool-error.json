@@ -1,7 +1,0 @@
-{
-  "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"ls \\\"/c/Program Files/Google/Chrome/Application/chrome.exe\\\" 2>&1; ls \\\"/c/Program Files (x86)/Google/Chrome/Application/chrome.exe\\\" 2>&1; ls \\\"/c/Users/parth/AppData/Local/Google/Chrome/...",
-  "error": "Exit code 2\nls: cannot access '/c/Program Files/Google/Chrome/Application/chrome.exe': No such file or directory\nls: cannot access '/c/Program Files (x86)/Google/Chrome/Application/chrome.exe': No such file or directory\nls: cannot access '/c/Users/parth/AppData/Local/Google/Chrome/Application/chrome.exe': No such file or directory\nls: cannot access '/c/Program Files/Microsoft/Edge/Application/msedge.exe': No such file or directory",
-  "timestamp": "2026-05-04T05:05:58.468Z",
-  "retry_count": 1
-}

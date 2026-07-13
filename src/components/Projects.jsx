@@ -32,7 +32,7 @@ const projects = [
     title: 'Crypto HFT Infrastructure Project',
     kind: 'GitHub',
     description: 'Public repository for Crypto HFT infrastructure.',
-    stack: ['Jupyter Notebook', 'Python'],
+    stack: ['C++', 'Quant', 'HFT'],
     github: 'https://github.com/sujaykonda/crupto-hft',
     live: '',
   },
