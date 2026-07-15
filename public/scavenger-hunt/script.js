@@ -14,17 +14,22 @@ const complaints = [
   "still no.",
   "Bubbles is ignoring you.",
   "seriously. stop pushing my buttons.",
-  "okay. wow. you are persistent.",
-  "one more click and I'm telling the teacher.",
+  "okay, okay! you win. ONE more click and I'll unlock it.",
 ];
 
 let clicks = 0;
 
-document.getElementById("snack-button").addEventListener("click", function () {
+const button = document.getElementById("snack-button");
+const vault = document.getElementById("vault");
+
+button.addEventListener("click", function () {
   if (clicks < complaints.length) {
     alert(complaints[clicks]);
     clicks = clicks + 1;
   } else {
-    alert("FINE. You win. The seventh code is " + "loud" + "-" + "button");
+    vault.textContent =
+      "🔓 OPEN. The seventh code is " + "loud" + "-" + "button" + ". Please do not tell the teacher.";
+    vault.classList.add("open");
+    alert("There. I've unlocked my vault. It's somewhere on this page — go find it. And stop pushing my buttons.");
   }
 });

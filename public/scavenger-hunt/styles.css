@@ -154,6 +154,24 @@ p:last-child {
   box-shadow: 0 1px 0 #a32723;
 }
 
+/* ---- the vault: sealed until somebody finds the key ---- */
+
+.vault {
+  background: #dfe7ec;
+  border: 3px dashed #6b7f8d;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+
+.vault.open {
+  background: #d9f5e0;
+  border-color: #2fa45f;
+  border-style: solid;
+}
+
 /* ---- the portrait ---- */
 
 .mascot {
