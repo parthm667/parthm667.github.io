@@ -1,10 +1,9 @@
-﻿import { useEffect, useState } from 'react'
-import { Bike, FileText, Menu, X } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
 const links = [
   { label: 'About', href: '#about' },
   { label: 'Skills', href: '#skills' },
-  { label: 'Projects', href: '#projects' },
+  { label: 'Work', href: '#projects' },
   { label: 'Contact', href: '#contact' },
 ]
 
@@ -42,7 +41,7 @@ export default function Navbar() {
     <nav className={`navbar${scrolled ? ' scrolled' : ''}`}>
       <div className="container nav-shell">
         <a href="#hero" className="nav-logo">
-          <span>Parth</span> Mhaske
+          Parth Mhaske<span className="dot">.</span>
         </a>
 
         <ul className={`nav-links${open ? ' open' : ''}`}>
@@ -58,25 +57,20 @@ export default function Navbar() {
             </li>
           ))}
           <li>
-            <a href="/public_remediation" className="nav-resume" onClick={() => setOpen(false)}>
-              <Bike size={15} /> Cycling
-            </a>
-          </li>
-          <li>
-            <a href="/resume.pdf" target="_blank" rel="noreferrer" className="nav-resume">
-              <FileText size={15} /> Resume
+            <a href="/resume.pdf" target="_blank" rel="noreferrer" className="nav-cta">
+              Resume&thinsp;↗
             </a>
           </li>
         </ul>
 
         <button
           type="button"
-          className="hamburger"
+          className="nav-toggle"
           onClick={() => setOpen(value => !value)}
           aria-label="Toggle menu"
           aria-expanded={open}
         >
-          {open ? <X size={18} /> : <Menu size={18} />}
+          {open ? 'Close' : 'Menu'}
         </button>
       </div>
     </nav>

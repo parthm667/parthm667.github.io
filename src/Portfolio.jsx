@@ -5,8 +5,11 @@ import Skills   from './components/Skills'
 import Projects from './components/Projects'
 import Contact  from './components/Contact'
 import Footer   from './components/Footer'
+import useReveal from './hooks/useReveal'
 
 export default function Portfolio() {
+  useReveal()
+
   return (
     <>
       <Navbar />
