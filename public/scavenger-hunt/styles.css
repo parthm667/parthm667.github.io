@@ -103,7 +103,9 @@ p:last-child {
 .shy {
   color: lightblue; /* invisible: matches the background */
   font-weight: bold;
-  padding: 14px 26px;
+  width: fit-content; /* only the words themselves, no wider */
+  margin: 24px auto;
+  cursor: default;
 }
 
 .shy:hover {
@@ -115,9 +117,9 @@ p:last-child {
 }
 
 .way-out-there {
-  margin-left: 3000px; /* whoops. someone got carried away. */
-  white-space: nowrap;
+  margin-top: 3000px; /* whoops. someone got carried away. */
   font-weight: bold;
+  text-align: center;
 }
 
 /* ---- the emergency snack buttons ---- */
