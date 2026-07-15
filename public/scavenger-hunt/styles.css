@@ -101,10 +101,8 @@ p:last-child {
 }
 
 .shy {
-  color: lightblue; /* invisible: matches the background */
+  color: #fffdf6; /* invisible: matches the card behind it */
   font-weight: bold;
-  width: fit-content; /* only the words themselves, no wider */
-  margin: 24px auto;
   cursor: default;
 }
 
@@ -114,6 +112,7 @@ p:last-child {
 
 .whisper {
   font-size: 2px;
+  text-align: center;
 }
 
 .way-out-there {
