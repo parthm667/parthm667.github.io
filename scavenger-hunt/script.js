@@ -7,6 +7,11 @@ console.log(
   "font-size: 15px; background: lightblue; color: #17364a; padding: 8px 12px; border-radius: 8px;"
 );
 
+// Bubbles encrypts his secrets now. He read one (1) article about
+// cryptography. These only turn back into words while the page is running.
+const ghostLine = document.getElementById("ghost-line");
+ghostLine.textContent = atob("VGhlIHNlY29uZCBjb2RlIGlzIGdob3N0LXBlcHBlcg==");
+
 // The emergency snack buttons: three decoys, and one button that listens.
 // Every click, Bubbles gets a little more annoyed.
 const complaints = [
@@ -28,7 +33,7 @@ button.addEventListener("click", function () {
     clicks = clicks + 1;
   } else {
     vault.textContent =
-      "🔓 OPEN. The seventh code is " + "loud" + "-" + "button" + ". Please do not tell the teacher.";
+      "🔓 OPEN. " + atob("VGhlIHNldmVudGggY29kZSBpcyBsb3VkLWJ1dHRvbg==") + ". Please do not tell the teacher.";
     vault.classList.add("open");
     alert("There. I've unlocked my vault. It's somewhere on this page. Go find it, and stop pushing my buttons.");
   }

@@ -101,9 +101,9 @@ p:last-child {
 }
 
 .shy {
-  color: lightblue; /* invisible: matches the background */
+  color: #fffdf6; /* invisible: matches the card behind it */
   font-weight: bold;
-  padding: 14px 26px;
+  cursor: default;
 }
 
 .shy:hover {
@@ -112,12 +112,13 @@ p:last-child {
 
 .whisper {
   font-size: 2px;
+  text-align: center;
 }
 
 .way-out-there {
-  margin-left: 3000px; /* whoops. someone got carried away. */
-  white-space: nowrap;
+  margin-top: 3000px; /* whoops. someone got carried away. */
   font-weight: bold;
+  text-align: center;
 }
 
 /* ---- the emergency snack buttons ---- */
