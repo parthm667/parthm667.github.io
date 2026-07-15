@@ -1,9 +1,9 @@
-// script.js — Bubbles wrote this himself. Do not make fun of his variable names.
+// script.js: Bubbles wrote this himself. Do not make fun of his variable names.
 // (Wondering if a code is stashed in here? Read closely. Bubbles is
 //  smarter than that. Mostly.)
 
 console.log(
-  "%c🐠 blub blub. There are no codes in the console — go poke the HTML and CSS!",
+  "%c🐠 blub blub. There are no codes in the console. Go poke the HTML and CSS!",
   "font-size: 15px; background: lightblue; color: #17364a; padding: 8px 12px; border-radius: 8px;"
 );
 
@@ -30,6 +30,6 @@ button.addEventListener("click", function () {
     vault.textContent =
       "🔓 OPEN. The seventh code is " + "loud" + "-" + "button" + ". Please do not tell the teacher.";
     vault.classList.add("open");
-    alert("There. I've unlocked my vault. It's somewhere on this page — go find it. And stop pushing my buttons.");
+    alert("There. I've unlocked my vault. It's somewhere on this page. Go find it, and stop pushing my buttons.");
   }
 });
