@@ -8,9 +8,12 @@ console.log(
 );
 
 // Bubbles encrypts his secrets now. He read one (1) article about
-// cryptography. These only turn back into words while the page is running.
-const ghostLine = document.getElementById("ghost-line");
-ghostLine.textContent = atob("VGhlIHNlY29uZCBjb2RlIGlzIGdob3N0LXBlcHBlcg==");
+// cryptography. The hidden words below only exist while the page is
+// running. View Source sees nothing.
+document.getElementById("ghost-line").textContent = atob("VGhlIHNlY29uZCBjb2RlIGlzIGdob3N0LXBlcHBlcg==");
+document.querySelector(".shy").textContent = atob("VGhlIGZpZnRoIGNvZGUgaXMgc2h5LXRvbWF0bw==");
+document.querySelector(".way-out-there").textContent = atob("VGhlIHNpeHRoIGNvZGUgaXMgcnVuYXdheS1iYWdlbA==");
+document.querySelector(".whisper").textContent = atob("VGhlIG5pbnRoIGNvZGUgaXMgdGlueS1kYW5jZXI=");
 
 // The emergency snack buttons: three decoys, and one button that listens.
 // Every click, Bubbles gets a little more annoyed.
