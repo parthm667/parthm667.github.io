@@ -1,5 +1,5 @@
 /* ============================================================
-   styles.css — The Great Class Scavenger Hunt
+   styles.css: The Great Class Scavenger Hunt
    Read carefully. CSS never lies, but it does hide things.
    ============================================================ */
 
@@ -72,10 +72,6 @@ p:last-child {
 .pill:hover {
   transform: translate(-1px, -1px);
   box-shadow: 5px 5px 0 rgba(23, 54, 74, 0.25);
-}
-
-.pill-green {
-  background: #2fa45f;
 }
 
 .pill-blue {
