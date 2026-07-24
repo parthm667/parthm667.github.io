@@ -27,6 +27,10 @@ dist-ssr
 desktop.ini
 Thumbs.db
 
+# Goose chase answer key — plaintext codes and puzzle content.
+# The published site only ever ships the encrypted build of this.
+tools/goose-chase-stages.mjs
+
 # Local AI/tooling session state — never commit
 .playwright-mcp/
 .omc/

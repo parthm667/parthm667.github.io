@@ -10,6 +10,7 @@ Two routes, one React app:
 Plus one plain-HTML page with no React at all:
 
 - `/scavenger-hunt` — a view-source scavenger hunt for students learning HTML/CSS (static files in `public/scavenger-hunt/`, copied into the build verbatim; also unlinked)
+- `/goose-chase` — the harder sequel: ten pieces of evidence chained so each one's puzzle is AES-encrypted under the previous one's answer, making it impossible to skip ahead. Built by `tools/build-goose-chase.mjs`; see `tools/README.md`
 
 ## Stack
 
