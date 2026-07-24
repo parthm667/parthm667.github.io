@@ -422,6 +422,14 @@ input:focus-visible {
 
 .footer__fine { font-size: 0.82rem; opacity: 0.85; }
 
+.footer__build {
+  margin-top: 1.2rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  opacity: 0.55;
+}
+
 /* ---------- victory ----------------------------------------------------- */
 
 .evidence--victory {
