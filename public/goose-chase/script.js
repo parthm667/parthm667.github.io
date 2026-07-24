@@ -1,11 +1,11 @@
 /* ==========================================================================
-   The Wild Goose Chase — the engine.
+   The Wild Goose Chase: the engine.
 
    Yes, you're allowed to read this. You won't find any codes in here, and
    that's the whole trick: every piece of evidence past the first is stored
    encrypted in chase-data.js. The key for evidence N is the CODE from
    evidence N-1, run through PBKDF2. So the browser genuinely cannot show you
-   evidence 07 until you've solved 06 — the words don't exist on your computer
+   evidence 07 until you've solved 06. The words don't exist on your computer
    until the right code decrypts them.
 
    Which means the only way forward is forward. Sorry. Go look at the page.
@@ -78,7 +78,7 @@
   }
 
   // Resolves with the stage payload, or rejects if the code is wrong. AES-GCM
-  // authenticates its ciphertext, so a wrong key doesn't decode to garbage —
+  // authenticates its ciphertext, so a wrong key doesn't decode to garbage:
   // it fails outright. The cipher is the answer checker.
   function unlock(code, blob) {
     return deriveKey(code, fromBase64(blob.s)).then(function (key) {
