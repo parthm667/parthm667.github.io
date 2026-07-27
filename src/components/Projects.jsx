@@ -28,7 +28,7 @@ const projects = [
     kind: 'GitHub',
     description: 'Public repository for Crypto HFT infrastructure.',
     stack: ['C++', 'Quant', 'HFT'],
-    github: 'https://github.com/sujaykonda/crupto-hft',
+    github: 'https://github.com/sujaykonda/crypto-hft',
   },
   {
     title: 'Autonomous Maze Navigating Robot',
