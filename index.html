@@ -1,34 +1,35 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-lights="off">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Parth Mhaske — Software Engineer</title>
+    <title>Parth Mhaske — Darkroom</title>
     <meta
       name="description"
-      content="Portfolio of Parth Mhaske — software engineer building across quant systems, robotics, and research computing at the University of Maryland."
+      content="Parth Mhaske. A darkroom: one roll of sixteen exposures covering simulation-heavy research, robotics, low-latency systems, film photography and a bicycle."
     />
     <meta name="author" content="Parth Mhaske" />
-    <meta name="theme-color" content="#faf8f3" />
+    <meta name="theme-color" content="#080706" />
     <link rel="canonical" href="https://parthm667.github.io/" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Parth Mhaske — Software Engineer" />
+    <meta property="og:title" content="Parth Mhaske — Darkroom" />
     <meta
       property="og:description"
-      content="Software engineer building across quant systems, robotics, and research computing."
+      content="One roll, sixteen exposures: research, robotics, low-latency systems, a heron and a bicycle."
     />
     <meta property="og:url" content="https://parthm667.github.io/" />
     <meta property="og:image" content="https://parthm667.github.io/parth-photo.webp" />
-    <meta name="twitter:card" content="summary" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- STIX Two Text + IBM Plex Mono set the portfolio; Newsreader + Manrope
-         are used by the /public_remediation page. -->
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,500;1,6..72,600&family=STIX+Two+Text:ital,wght@0,400..700;1,400..700&display=swap"
-    />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- The room's four faces are self-hosted: Bebas for anything that
+         would be printed on a film canister, Inter Tight for reading,
+         a mono for exposure data, Caveat for grease pencil. The two
+         used above the fold are preloaded; /public_remediation fetches
+         its own faces when that route mounts. -->
+    <link rel="preload" href="/fonts/bebas.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/inter-tight.woff2" as="font" type="font/woff2" crossorigin />
+
     <script>
       // SPA GitHub Pages fallback restore (rafgraph technique).
       // When 404.html redirects with /?/<original-path>, replay the URL
@@ -45,6 +46,22 @@
           );
         }
       }(window.location));
+    </script>
+    <script>
+      // Settle the room before first paint, so the safelight never
+      // flickers and a light-theme visitor never sees the dark one.
+      // Only the landing route is a darkroom.
+      (function () {
+        try {
+          var p = window.location.pathname;
+          if (p !== '/' && p !== '/index.html') return;
+          var root = document.documentElement;
+          root.dataset.room = 'darkroom';
+          var lit = localStorage.getItem('lights') === 'on';
+          root.dataset.lights = lit ? 'on' : 'off';
+          document.querySelector('meta[name="theme-color"]').content = lit ? '#cfc8b8' : '#080706';
+        } catch (e) {}
+      }());
     </script>
   </head>
   <body>
