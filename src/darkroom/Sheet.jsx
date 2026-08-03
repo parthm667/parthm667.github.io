@@ -33,7 +33,27 @@ export function Reel({ onOpen }) {
    enlarge it. */
 export function Sheet({ onOpen, openId, sheetRef }) {
   return (
-    <section className="dr-sheet dr-wrap" id="sheet" aria-label="Contact sheet" ref={sheetRef}>
+    <section className="dr-sheet dr-wrap" id="sheet" aria-labelledby="sheet-h" ref={sheetRef}>
+      {/* People read these strips as photographs of things and then
+          find out they are not, which reads as a bait rather than as
+          the drawing it is. Saying so up front costs four lines and
+          buys the whole conceit back. */}
+      <div className="dr-room-head dr-sheet-head">
+        <p className="dr-stock">CONTACT SHEET · ROLL 01 · {ROLL_META.frames} FRAMES</p>
+        <h2 id="sheet-h">The roll</h2>
+        <p>
+          Sixteen frames in the order they happened. Click any of them and it enlarges into the
+          full write-up: what the work was, the numbers, and the part that went wrong.
+        </p>
+        <p className="dr-sheet-disclosure">
+          None of these are photographs. Every frame is drawn from scratch in a canvas when the
+          page loads — no image files, no stock, no CDN. The photographs I actually take are at{' '}
+          <a href="https://parthmhaske.myportfolio.com/" target="_blank" rel="noreferrer">
+            parthmhaske.myportfolio.com&nbsp;↗
+          </a>
+        </p>
+      </div>
+
       {STRIPS.map((strip, si) => (
         <div className="dr-strip" key={si}>
           <div className="dr-perf" aria-hidden="true"></div>
@@ -90,11 +110,17 @@ export function Sheet({ onOpen, openId, sheetRef }) {
 }
 
 /* The same roll, written out. A contact sheet is for looking; this
-   is for reading, and for anything that cannot see the canvases. */
+   is for reading, and for anything that cannot see the canvases.
+
+   Folded shut by default. It is the third listing of the same
+   sixteen frames — after the sheet and the work ledger — and a
+   reader who has scrolled this far has met them twice already.
+   <details> keeps the text in the document for screen readers and
+   crawlers while costing a sighted reader one line. */
 export function Index({ onOpen }) {
   return (
-    <section className="dr-wrap dr-index">
-      <h2>Index of exposures</h2>
+    <details className="dr-wrap dr-index">
+      <summary>Index of exposures — all sixteen, as a list</summary>
       <ol className="dr-exposures">
         {ROLL.map((f) => (
           <li key={f.id}>
@@ -107,6 +133,6 @@ export function Index({ onOpen }) {
           </li>
         ))}
       </ol>
-    </section>
+    </details>
   )
 }

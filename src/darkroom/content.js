@@ -66,18 +66,14 @@ export const BENCH = [
   ['Building', 'A C++ order book I keep rewriting, because I keep finding out that the previous definition of "fast" was wrong.'],
   ['Stuck on', 'Getting the UAV model to agree with the two real landings I have footage of. It does not agree yet.'],
   ['Reading', 'Norton, Fighting Traffic. It is the book the whole street-design argument is with.'],
-  ['Looking for', 'Summer 2028 internships in quantitative research or systems.'],
   ['Unexposed', 'Frame 16. I left one on the roll on purpose.'],
 ]
 
-/* The bench itself, from the résumé's technical sections and the
-   public repositories. Not a list of things I have heard of. */
-export const APPARATUS = [
-  ['Languages', 'Python · C++ · C · Java · JavaScript · R · HTML/CSS · LaTeX'],
-  ['Libraries', 'NumPy · SciPy · scikit-learn · pandas · Matplotlib · TensorFlow'],
-  ['Tools', 'Git · GitHub · Jupyter · Linux/Bash · FastAPI · PostGIS · GeoPandas · React · Optuna'],
-  ['Methods', 'Monte Carlo · ODE modeling · PID control · sensor fusion · A* search · logistic regression · k-means · ABC calibration'],
-]
+/* The apparatus list that used to sit under "Self" is gone: it was
+   the same tools and methods the data sheet already lists, printed
+   a second time three screens further down. "Looking for" left the
+   bench for the same reason — it is in the hero, on the data sheet,
+   and in the correspondence room. */
 
 export const CHANNELS = [
   ['Email', 'pmhaske@umd.edu', 'mailto:pmhaske@umd.edu'],

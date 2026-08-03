@@ -20,11 +20,12 @@ import {
 } from './engine.js'
 
 /* `keep` marks the three a stranger on a phone actually needs. The
-   rest drop out of the rail below 560px. */
+   rest drop out of the rail below 560px. Order matches the page,
+   and the page now leads with the facts rather than the film. */
 const NAV = [
   { href: '#data', label: 'Data' },
-  { href: '#sheet', label: 'Sheet' },
   { href: '#work', label: 'Work', keep: true },
+  { href: '#sheet', label: 'Sheet' },
   { href: '#self', label: 'Self' },
   { href: '#contact', label: 'Contact', keep: true },
 ]
@@ -103,7 +104,7 @@ export default function Darkroom() {
 
   return (
     <div className="dr" ref={rootRef}>
-      <a className="dr-skip" href="#sheet">Skip to the frames</a>
+      <a className="dr-skip" href="#data">Skip to the data sheet</a>
 
       <div className="dr-safelight" aria-hidden="true"></div>
       <div className="dr-grain" aria-hidden="true"></div>
@@ -111,7 +112,7 @@ export default function Darkroom() {
       <div className="dr-dust" ref={dustRef} aria-hidden="true"></div>
 
       <header className="dr-rail">
-        <a className="dr-rail-id" href="#after-film">
+        <a className="dr-rail-id" href="#top">
           <b>PARTH MHASKE</b><span>DARKROOM</span>
         </a>
 
@@ -139,15 +140,22 @@ export default function Darkroom() {
         </button>
       </header>
 
+      {/* Order is the whole argument. Someone who opens this page cold
+          gets the name, the one-line answer and the three links before
+          anything moves; the facts and the work follow; and the film —
+          which used to be six screens of scrolling in front of the
+          door — now sits where it always belonged, as the lead-in to
+          the contact sheet it is about. Nothing was cut from it. It
+          just stopped being a toll. */}
       <main id="main">
-        <Film />
         <Hero />
         <DataSheet />
+        <Work onOpen={open} />
+        <Film />
         <Reel onOpen={open} />
         <Sheet onOpen={open} openId={openId} sheetRef={sheetRef} />
         <Index onOpen={open} />
         <Self />
-        <Work onOpen={open} />
         <Correspondence />
       </main>
 

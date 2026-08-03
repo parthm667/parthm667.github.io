@@ -1,4 +1,4 @@
-import { SHEET_META, DATA_SHEET, RESULTS, BENCH, APPARATUS, CHANNELS } from './content.js'
+import { SHEET_META, DATA_SHEET, RESULTS, BENCH, CHANNELS } from './content.js'
 import { WORK, byId } from './roll.js'
 
 /* DATA SHEET — the plain version.
@@ -81,15 +81,9 @@ export function Self() {
             ))}
           </dl>
 
-          <h3 className="dr-sr">The bench itself</h3>
-          <dl className="dr-apparatus">
-            {APPARATUS.map(([label, value]) => (
-              <div key={label}>
-                <dt>{label}</dt>
-                <dd>{value}</dd>
-              </div>
-            ))}
-          </dl>
+          {/* The apparatus list used to live here too, word for word
+              the same as "Works in" and "Methods" on the data sheet
+              two screens up. One copy, in the place people scan. */}
 
           <p className="dr-self-links">
             <a className="dr-btn" href="/resume.pdf" target="_blank" rel="noreferrer">Résumé ↗</a>

@@ -41,10 +41,16 @@
   --hand: 'Chinagraph', 'Comic Sans MS', cursive;
   --snap: 120ms cubic-bezier(0.2, 0.8, 0.3, 1);
   --ease: 420ms cubic-bezier(0.22, 1, 0.36, 1);
-  /* The film's length, and therefore where everything below it sits.
-     In svh so a phone's collapsing address bar does not re-flow six
-     screens of page underneath the reader mid-scroll. */
-  --film-scroll: 620vh;
+  /* The film's length. It was 620vh, which is six and a bit screens
+     of scrolling, and it used to sit in front of the door. Every
+     beat still plays — the film is a pure function of scroll
+     position, so shortening the track just means fewer turns of the
+     wheel per scene — but it now costs about three screens instead
+     of six, and it no longer costs them before the name.
+
+     In svh so a phone's collapsing address bar does not re-flow the
+     page underneath the reader mid-scroll. */
+  --film-scroll: 320vh;
   --film-stage: 100vh;
 
   position: relative;
@@ -356,7 +362,18 @@ html[data-lights='on'] .dr-btn:hover { background: #c2410c }
    NIGHT WORK — the short film you scrub with your scroll
    ============================================================= */
 @supports (height: 100svh) {
-  .dr { --film-scroll: 620svh; --film-stage: 100svh }
+  .dr { --film-scroll: 320svh; --film-stage: 100svh }
+}
+
+/* The band that announces the film. Without it the stage arrives
+   unexplained and reads as a loading screen. */
+.dr-film-intro { padding: clamp(2.4rem, 6vw, 4rem) 0 clamp(1.6rem, 4vw, 2.4rem) }
+.dr-film-intro h2 { color: var(--ink); margin: 0.3rem 0 0.9rem }
+.dr-film-intro p { max-width: 58ch; color: var(--ink-mute) }
+.dr-film-intro-skip { margin-top: 1.4rem }
+
+@media (prefers-reduced-motion: reduce) {
+  .dr-film-intro-skip { display: none }
 }
 
 .dr-film { position: relative; height: var(--film-scroll) }
@@ -557,6 +574,19 @@ html[data-lights='on'] .dr-btn:hover { background: #c2410c }
 .dr-hero-copy .dr-lede { margin-bottom: 1.3rem }
 .dr-sheet-hint { opacity: 0.75; margin: 0 }
 
+/* "What this is", in the first screen. Set as a note pinned to the
+   page rather than as body copy, so it reads as an aside and not as
+   another paragraph to get through. */
+.dr-premise {
+  margin: 2.2rem 0 1.4rem;
+  padding: 0.9rem 0 0.9rem 1.1rem;
+  border-left: 2px solid var(--safelight);
+  font-size: 0.94rem;
+  color: var(--ink-mute);
+}
+.dr-premise b { color: var(--ink); font-weight: 600 }
+.dr-premise a { color: var(--amber); text-underline-offset: 3px }
+
 @media (max-width: 700px) {
   .dr-sheet-hint { display: none }
 }
@@ -656,6 +686,18 @@ html[data-lights='on'] .dr-reel { background: #b9ad97; border-color: #a4977f }
 
 /* ── the contact sheet ─────────────────────────────────────── */
 .dr-sheet { display: grid; gap: clamp(1.6rem, 4vw, 2.8rem); padding-bottom: clamp(3rem, 8vw, 6rem) }
+.dr-sheet-head h2 { color: var(--ink); margin: 0.3rem 0 0.9rem }
+.dr-sheet-head p { max-width: 62ch; color: var(--ink-mute) }
+
+/* Says out loud that the frames are drawings. Marked as an aside so
+   it is legible as a statement of fact rather than as caption. */
+.dr-sheet-disclosure {
+  margin-top: 1rem;
+  padding-left: 1.1rem;
+  border-left: 2px solid var(--edge);
+  font-size: 0.9rem;
+}
+.dr-sheet-disclosure a { color: var(--amber); text-underline-offset: 3px }
 
 .dr-strip {
   position: relative;
@@ -835,8 +877,21 @@ html[data-lights='on'] .dr-perf {
 }
 
 /* ── index of exposures ────────────────────────────────────── */
+/* Folded by default — the third listing of the same sixteen frames
+   should cost one line, not a screen. */
 .dr-index { padding: clamp(2rem, 6vw, 4rem) 0 0; border-top: 1px solid var(--edge) }
-.dr-index h2 { color: var(--ink-mute); margin-bottom: 1.4rem }
+.dr-index > summary {
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  padding: 0.5rem 0;
+  transition: color var(--snap);
+}
+.dr-index > summary:hover { color: var(--amber) }
+.dr-index[open] > summary { margin-bottom: 1.4rem }
 .dr-exposures { list-style: none; margin: 0; padding: 0 }
 .dr-exposures li { border-bottom: 1px solid var(--edge) }
 

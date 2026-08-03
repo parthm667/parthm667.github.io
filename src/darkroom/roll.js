@@ -57,9 +57,10 @@ export const ROLL = [
       body: [
         'Digital would be easier and I would be worse at it. A roll is a budget, and a budget is the only thing that ever taught me to sit still in wet grass for forty minutes.',
         'This one came off a 64 km ride down the C&O towpath, which is why the camera comes along on the long ones. The two hobbies keep handing each other material.',
+        'To be clear about what you are looking at: the heron above is drawn, not scanned. I have the real frame, and it did not sit right against the rest of this page, so what is on the sheet is an illustration of the shot rather than the shot. The photographs themselves are on the photography site.',
       ],
       stat: [['LENS', '600mm'], ['STOP', 'f/4'], ['SPEED', '1/1600'], ['WAIT', '40 min']],
-      links: [['More prints', 'https://parthmhaske.myportfolio.com/']],
+      links: [['Photography site', 'https://parthmhaske.myportfolio.com/']],
     },
   },
   {

@@ -5,7 +5,13 @@ import { initNoir } from './noir.js'
    A short film you scrub with your scroll. Everything is a pure
    function of scroll position, which is why it plays backward too.
    Under reduced motion the stage never mounts and the fallback
-   below carries the same story in prose. */
+   below carries the same story in prose.
+
+   It used to open the page, unannounced, and take six screens of
+   scrolling to get through. Two things changed: it is announced
+   now — the band above the stage says what it is and offers the
+   way around it — and it is roughly half the scroll it was. Not a
+   frame of the film itself was cut. */
 export default function Film() {
   const filmRef = useRef(null)
 
@@ -15,16 +21,34 @@ export default function Film() {
   }, [])
 
   const skip = () => {
-    document.getElementById('after-film')?.scrollIntoView({ behavior: 'smooth' })
+    document.getElementById('sheet')?.scrollIntoView({ behavior: 'smooth' })
   }
 
   return (
-    <section
-      id="film"
-      className="dr-film"
-      ref={filmRef}
-      aria-label="Night work: a short film about the roll. Scroll to play."
-    >
+    <>
+      {/* Deliberately outside .dr-film: the stage's scroll mapping is
+          -top / (height - viewport) against that element, so anything
+          added inside it starts the film before the stage is on
+          screen. */}
+      <section className="dr-film-intro dr-wrap" id="film-intro" aria-labelledby="film-intro-h">
+        <p className="dr-stock">INTERLUDE · OPTIONAL · THREE SCREENS OF SCROLL</p>
+        <h2 id="film-intro-h">Night work</h2>
+        <p>
+          How the frames below got made: lights out, eight seconds under the enlarger, then
+          developer, stop, fix, wash, and the clothesline. It plays as you scroll, and it plays
+          backward if you scroll back up.
+        </p>
+        <p className="dr-film-intro-skip">
+          <a className="dr-btn ghost" href="#sheet">Skip to the contact sheet ↓</a>
+        </p>
+      </section>
+
+      <section
+        id="film"
+        className="dr-film"
+        ref={filmRef}
+        aria-label="Night work: a short film about the roll. Scroll to play."
+      >
       <div className="stage" aria-hidden="true">
         <canvas id="noir-bg"></canvas>
 
@@ -75,18 +99,13 @@ export default function Film() {
       {/* the same story, for readers, crawlers and reduced motion */}
       <div className="dr-film-fallback dr-wrap">
         <p className="dr-stock">NIGHT WORK · INT. DARKROOM · 2:47 A.M.</p>
-        <h1>Parth<br />Mhaske</h1>
         <p className="dr-lede">
           One night in the darkroom, developing a roll: lights out, eight seconds under the
-          enlarger, then developer, stop, fix, wash, and the clothesline.
-        </p>
-        <p>
-          Sixteen frames made it out of the tank. Nine of them are research and engineering work,
-          from UAV landing simulations at UT Austin&rsquo;s MASS Lab to a High Injury Network
-          generator that New Jersey towns use for federal safety grants. The data sheet and the
-          contact sheet are both below.
+          enlarger, then developer, stop, fix, wash, and the clothesline. Sixteen frames made it
+          out of the tank, and the contact sheet is below.
         </p>
       </div>
-    </section>
+      </section>
+    </>
   )
 }

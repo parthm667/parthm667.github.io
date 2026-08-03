@@ -12,7 +12,7 @@ export default function Hero() {
   useMotes(motesRef)
 
   return (
-    <section className="dr-hero dr-wrap" id="after-film">
+    <section className="dr-hero dr-wrap" id="top">
       <svg className="dr-enlarger" viewBox="-560 0 985 660" aria-hidden="true" fill="none">
         <defs>
           <linearGradient id="dr-beam" x1="0" y1="0" x2="0" y2="1">
@@ -71,28 +71,50 @@ export default function Hero() {
         </g>
       </svg>
 
+      {/* The eyebrow used to be film stock and ISO. Charming, and no
+          help at all to someone who does not yet know whose page this
+          is — so the plain facts go first and the stock goes to the
+          data line underneath. */}
       <div className="dr-hero-copy">
-        <p className="dr-stock">{ROLL_META.stock} · ISO {ROLL_META.iso} · DEVELOPED {ROLL_META.developed}</p>
+        <p className="dr-stock">
+          SOFTWARE ENGINEERING INTERN AT CORSHA · UMD, CS + APPLIED MATH, CLASS OF 2028
+        </p>
         <h1 className="lit">Parth<br />Mhaske</h1>
         <p className="dr-lede">
-          I study computer science and applied mathematics at the University of Maryland, and I
-          build simulations for systems that have to decide before they know enough.
+          I build simulations for systems that have to decide before they know enough — drones
+          landing in wind they can only estimate, robots driving mazes they cannot see, order books
+          with microseconds to commit.
         </p>
         <p>
-          Right now I am a software engineering intern at <strong>Corsha</strong>, doing backend
-          work on machine-identity authentication for operational technology networks. Before that:
-          UAV landing dynamics at UT Austin&rsquo;s MASS Lab, stochastic models of ranking data in a
-          computational social dynamics lab, and a light-scattering model for circumstellar dust in
-          Maryland&rsquo;s astronomy department.
+          Right now: backend work on machine-identity authentication at <strong>Corsha</strong>.
+          Before that, UAV landing dynamics at UT Austin&rsquo;s MASS Lab, stochastic ranking models
+          in a computational social dynamics lab, and circumstellar dust scattering in
+          Maryland&rsquo;s astronomy department. Looking for <strong>summer 2028 internships</strong> in
+          quantitative research or systems engineering.
         </p>
-        <p>
-          This page is one roll of film: sixteen exposures in the order they happened, which is why
-          a heron sits next to an order book. Nine of them are research or engineering work, and
-          every frame enlarges.
+
+        <p className="dr-self-links">
+          <a className="dr-btn" href="#work">The nine work frames ↓</a>
+          <a className="dr-btn ghost" href="/resume.pdf" target="_blank" rel="noreferrer">Résumé ↗</a>
+          <a className="dr-btn ghost" href="mailto:pmhaske@umd.edu">pmhaske@umd.edu</a>
         </p>
+
+        {/* Friends who opened this cold could not tell what they were
+            looking at, and the answer was buried at the bottom of the
+            page. It is two sentences. It goes at the top. */}
+        <p className="dr-premise">
+          <b>What this is:</b> a portfolio built as one roll of black-and-white film — sixteen
+          exposures in the order they happened, which is why a heron sits next to an order book.
+          Every image on it is drawn in code at the moment you load it, not photographed; the real
+          photographs live at{' '}
+          <a href="https://parthmhaske.myportfolio.com/" target="_blank" rel="noreferrer">
+            parthmhaske.myportfolio.com
+          </a>.
+        </p>
+
         <p className="dr-sheet-hint dr-data">
-          Hover a frame for the loupe · click a frame and it enlarges · there is dust on this
-          sheet, sorry
+          {ROLL_META.stock} · ISO {ROLL_META.iso} · DEVELOPED {ROLL_META.developed} · hover a frame
+          for the loupe · click one and it enlarges
         </p>
       </div>
     </section>
