@@ -147,7 +147,7 @@ export function Correspondence() {
         <h2>Correspondence</h2>
       </div>
       <p className="dr-lede">
-        I am looking for a summer 2027 internship in quantitative research or systems
+        I am looking for a summer 2028 internship in quantitative research or systems
         engineering, and I am happy to talk before then.
       </p>
       <p>

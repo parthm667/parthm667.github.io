@@ -17,7 +17,7 @@ export const DATA_SHEET = [
   ['Name', 'Parth Mhaske. College Park, Maryland.'],
   [
     'Studying',
-    'University of Maryland, College Park. Computer science and applied mathematics, class of 2027.',
+    'University of Maryland, College Park. Computer science and applied mathematics, class of 2028.',
   ],
   [
     'Now',
@@ -45,7 +45,7 @@ export const DATA_SHEET = [
   ],
   [
     'Looking for',
-    'Summer 2027 internships in quantitative research or systems engineering. Available to talk now.',
+    'Summer 2028 internships in quantitative research or systems engineering. Available to talk now.',
   ],
 ]
 
@@ -66,7 +66,7 @@ export const BENCH = [
   ['Building', 'A C++ order book I keep rewriting, because I keep finding out that the previous definition of "fast" was wrong.'],
   ['Stuck on', 'Getting the UAV model to agree with the two real landings I have footage of. It does not agree yet.'],
   ['Reading', 'Norton, Fighting Traffic. It is the book the whole street-design argument is with.'],
-  ['Looking for', 'Summer 2027 internships in quantitative research or systems.'],
+  ['Looking for', 'Summer 2028 internships in quantitative research or systems.'],
   ['Unexposed', 'Frame 16. I left one on the roll on purpose.'],
 ]
 
