@@ -31,23 +31,6 @@
     <link rel="preload" href="/fonts/inter-tight.woff2" as="font" type="font/woff2" crossorigin />
 
     <script>
-      // SPA GitHub Pages fallback restore (rafgraph technique).
-      // When 404.html redirects with /?/<original-path>, replay the URL
-      // before React mounts so BrowserRouter sees the right path.
-      (function (l) {
-        if (l.search[1] === '/') {
-          var decoded = l.search.slice(1).split('&').map(function (s) {
-            return s.replace(/~and~/g, '&');
-          }).join('?');
-          window.history.replaceState(
-            null,
-            null,
-            l.pathname.slice(0, -1) + decoded + l.hash
-          );
-        }
-      }(window.location));
-    </script>
-    <script>
       // Settle the room before first paint, so the safelight never
       // flickers and a light-theme visitor never sees the dark one.
       // Only the landing route is a darkroom.

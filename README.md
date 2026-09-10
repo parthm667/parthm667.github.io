@@ -1,6 +1,6 @@
 # parthm667.github.io
 
-Personal site of Parth Mhaske, deployed to GitHub Pages.
+Personal site of Parth Mhaske, deployed by Vercel to [mhaske.com](https://mhaske.com).
 
 Two routes, one React app:
 
@@ -126,5 +126,4 @@ npm install
 npm run dev       # local dev server
 npm run lint      # eslint
 npm run build     # production build to dist/
-npm run deploy    # build + publish dist/ to the gh-pages branch
 ```
