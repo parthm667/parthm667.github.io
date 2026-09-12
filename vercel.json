@@ -1,9 +1,21 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
-    { "source": "/nj-hin/api/:path*", "destination": "https://hin-api.mhaske.com/api/:path*" },
-    { "source": "/nj-hin", "destination": "https://hin.mhaske.com/nj-hin/" },
-    { "source": "/nj-hin/:path*", "destination": "https://hin.mhaske.com/nj-hin/:path*" },
-    { "source": "/((?!api/|nj-hin).*)", "destination": "/index.html" }
+    {
+      "source": "/nj-hin/api/(.*)",
+      "destination": "https://hin-api.mhaske.com/api/$1"
+    },
+    {
+      "source": "/nj-hin",
+      "destination": "https://hin.mhaske.com/nj-hin/"
+    },
+    {
+      "source": "/nj-hin/(.*)",
+      "destination": "https://hin.mhaske.com/nj-hin/$1"
+    },
+    {
+      "source": "/((?!api/|nj-hin).*)",
+      "destination": "/index.html"
+    }
   ]
 }
