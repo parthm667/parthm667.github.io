@@ -33,5 +33,7 @@ tools/goose-chase-stages.mjs
 
 # Local AI/tooling session state — never commit
 .playwright-mcp/
+test-results/
+playwright-report/
 .omc/
 .claude/settings.local.json

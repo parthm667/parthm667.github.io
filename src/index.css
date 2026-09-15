@@ -1,12 +1,4 @@
-/* ============================================================
-   Shared ground floor. Nothing here has a point of view — the
-   two routes bring their own:
-
-     /                     src/darkroom/darkroom.css  (scoped .dr)
-     /public_remediation   src/remediation/remediation.css (.rm)
-
-   Keep this file free of anything either route would have to undo.
-   ============================================================ */
+/* Shared reset. Page styles live in desktop.css and remediation.css. */
 
 *,
 *::before,
@@ -20,15 +12,12 @@ html {
   scroll-behavior: smooth;
 }
 
-/* The essay is a light document on purpose. Say so, or Chrome's
-   auto-dark-mode inverts a page that was tuned by hand. The darkroom
-   declares its own scheme (dark, and light when the lights go on). */
-html:not([data-room='darkroom']) {
+html:not([data-room]) {
   color-scheme: light;
 }
 
 body {
-  /* The essay's paper. The darkroom overrides this on <html>. */
+  /* Default paper background for the essay. */
   background: #f3efe6;
   color: #11201c;
   font-family: Georgia, 'Times New Roman', serif;
@@ -46,9 +35,8 @@ section[id] {
   scroll-margin-top: 4.5rem;
 }
 
-/* Paper grain for the essay only; the darkroom has its own, and two
-   grains is one too many. */
-html:not([data-room='darkroom']) body::after {
+/* Paper grain for the essay. */
+html:not([data-room]) body::after {
   content: '';
   position: fixed;
   inset: 0;
@@ -58,8 +46,8 @@ html:not([data-room='darkroom']) body::after {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.86' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-html:not([data-room='darkroom']) a:focus-visible,
-html:not([data-room='darkroom']) button:focus-visible {
+html:not([data-room]) a:focus-visible,
+html:not([data-room]) button:focus-visible {
   outline: 2px solid #b93511;
   outline-offset: 3px;
 }

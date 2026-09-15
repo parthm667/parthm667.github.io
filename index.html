@@ -1,48 +1,37 @@
 <!doctype html>
-<html lang="en" data-lights="off">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Parth Mhaske — Darkroom</title>
+    <title>parth mhaske</title>
     <meta
       name="description"
-      content="Parth Mhaske. A darkroom: one roll of sixteen exposures covering simulation-heavy research, robotics, low-latency systems, film photography and a bicycle."
+      content="parth mhaske. computer science and applied mathematics at umd. projects, research, robotics, and photography."
     />
-    <meta name="author" content="Parth Mhaske" />
-    <meta name="theme-color" content="#080706" />
-    <link rel="canonical" href="https://parthm667.github.io/" />
+    <meta name="author" content="parth mhaske" />
+    <meta name="theme-color" content="#101113" />
+    <link rel="canonical" href="https://mhaske.com/" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Parth Mhaske — Darkroom" />
+    <meta property="og:title" content="parth mhaske" />
     <meta
       property="og:description"
-      content="One roll, sixteen exposures: research, robotics, low-latency systems, a heron and a bicycle."
+      content="computer science and applied mathematics at umd. browse my projects, research, and other things i work on."
     />
-    <meta property="og:url" content="https://parthm667.github.io/" />
-    <meta property="og:image" content="https://parthm667.github.io/parth-photo.webp" />
+    <meta property="og:url" content="https://mhaske.com/" />
+    <meta property="og:image" content="https://mhaske.com/parth-photo.webp" />
     <meta name="twitter:card" content="summary_large_image" />
 
-    <!-- The room's four faces are self-hosted: Bebas for anything that
-         would be printed on a film canister, Inter Tight for reading,
-         a mono for exposure data, Caveat for grease pencil. The two
-         used above the fold are preloaded; /public_remediation fetches
-         its own faces when that route mounts. -->
-    <link rel="preload" href="/fonts/bebas.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/inter-tight.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/ubuntu-mono.ttf" as="font" type="font/ttf" crossorigin />
 
     <script>
-      // Settle the room before first paint, so the safelight never
-      // flickers and a light-theme visitor never sees the dark one.
-      // Only the landing route is a darkroom.
+      // Apply the desktop background before React mounts.
       (function () {
         try {
           var p = window.location.pathname;
           if (p !== '/' && p !== '/index.html') return;
           var root = document.documentElement;
-          root.dataset.room = 'darkroom';
-          var lit = localStorage.getItem('lights') === 'on';
-          root.dataset.lights = lit ? 'on' : 'off';
-          document.querySelector('meta[name="theme-color"]').content = lit ? '#cfc8b8' : '#080706';
+          root.dataset.room = 'desktop';
         } catch (e) {}
       }());
     </script>

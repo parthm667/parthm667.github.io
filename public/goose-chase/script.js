@@ -241,7 +241,7 @@
     var saved;
     try {
       saved = JSON.parse(localStorage.getItem(STORE) || "[]");
-    } catch (err) {
+    } catch {
       saved = [];
     }
     if (!Array.isArray(saved) || !saved.length) return Promise.resolve();
