@@ -1,0 +1,145 @@
+@font-face { font-family: 'Site Mono'; src: url('/fonts/mono.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'Ubuntu Mono'; src: url('/fonts/ubuntu-mono.ttf') format('truetype'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'Ubuntu Mono'; src: url('/fonts/ubuntu-mono-bold.ttf') format('truetype'); font-weight: 700; font-display: swap; }
+html[data-room='desktop'] { color-scheme: dark; background: #101113; scroll-behavior: auto; }
+html[data-room='desktop'] body { background: #101113; }
+.desktop { --desk-text: #dedee3; --desk-muted: #aaa; --desk-accent: #a3bdd8; --desk-mono: 'Ubuntu Mono', 'Site Mono', monospace; height: 100dvh; min-height: 0; overflow: hidden; color: var(--desk-text); background: #101113; font: 14px/1.5 'Segoe UI', system-ui, sans-serif; display: flex; flex-direction: column; }
+.desktop button, .desktop input { font: inherit; color: inherit; }
+.desktop button { cursor: pointer; border: 0; background: none; }
+.desktop button:disabled { opacity: .3; cursor: default; }
+.desktop a { text-decoration: none; }
+.desktop button:focus-visible, .desktop a:focus-visible, .desktop input:focus-visible { outline: 2px solid var(--desk-accent); outline-offset: 2px; }
+.desktop .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+.skip-to-content { position: fixed; top: -100px; left: 12px; z-index: 20; padding: 12px; background: #202020; }
+.skip-to-content:focus { top: 4px; }
+.desktop-header { width: 100%; flex: 0 0 46px; padding: 0 8px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; background: #191a1d; border-bottom: 1px solid #161616; box-shadow: inset 0 1px #ffffff08; }
+.window-session { grid-column: 2; font-size: 13px; font-weight: 600; max-width: 45vw; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.mode-switch { display: inline-flex; align-items: center; gap: 2px; justify-self: start; padding: 2px; border: 1px solid #1c1c1c; border-radius: 5px; background: #121315; }
+.mode-switch button { display: flex; align-items: center; justify-content: center; gap: 7px; padding: 5px 10px; border-radius: 3px; font-size: 12px; color: #bbb; }
+.mode-switch button[aria-pressed='true'] { background: #303136; color: #fff; box-shadow: inset 0 1px #ffffff10; }
+.mode-switch button:hover { background: #3b3b3b; color: #fff; }
+.header-links { justify-self: end; display: flex; gap: 4px; }
+.header-links a { display: grid; place-items: center; width: 32px; height: 32px; border: 1px solid #1d1d1d; background: #25262a; border-radius: 4px; color: #ddd; box-shadow: inset 0 1px #ffffff0a; }
+.header-links a:hover { background: #444; }
+.desktop-workspace { width: 100%; flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; }
+
+/* The terminal itself is an xterm character grid, including its input cursor. */
+.terminal-panel { position: relative; display: flex; flex: 1; min-width: 0; min-height: 0; background: #101113; }
+.terminal-panel[hidden] { display: none; }
+.terminal-host { position: absolute; inset: 4px 4px 4px 6px; overflow: hidden; }
+.terminal-host .xterm { height: 100%; }
+.terminal-host .xterm-viewport { background-color: #101113; }
+.terminal-host .xterm-helper-textarea { font-size: 16px; }
+.skip-intro { position: absolute; z-index: 4; right: 16px; bottom: 12px; padding: 4px 8px; border: 1px solid #555 !important; border-radius: 3px; color: #ddd !important; background: #25262a !important; font: 12px/1.4 'Segoe UI', sans-serif !important; }
+.skip-intro kbd { margin-left: 9px; font: inherit; color: #aaa; }
+
+/* Ubuntu Files */
+@font-face { font-family: 'Ubuntu UI'; src: url('/fonts/ubuntu-regular.ttf') format('truetype'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'Ubuntu UI'; src: url('/fonts/ubuntu-medium.ttf') format('truetype'); font-weight: 500 700; font-display: swap; }
+.desktop[data-view='explorer'] { --desk-accent: #e95420; font-family: 'Ubuntu UI', Ubuntu, sans-serif; }
+.desktop[data-view='explorer'] .desktop-header { background: #303030; border-bottom-color: #202020; }
+.desktop[data-view='explorer'] .mode-switch { background: #252525; border-color: #202020; }
+.desktop[data-view='explorer'] .mode-switch button[aria-pressed='true'] { background: #484848; }
+.desktop[data-view='explorer'] .header-links a { background: #383838; border-color: #262626; }
+.explorer-panel { --desk-accent: #e95420; display: flex; flex: 1; flex-direction: column; min-height: 0; min-width: 0; color: #f6f5f4; background: #242424; font: 13px/1.45 'Ubuntu UI', Ubuntu, sans-serif; }
+.explorer-header { display: flex; flex: 0 0 48px; min-width: 0; background: #303030; border-bottom: 1px solid #1d1d1d; box-shadow: inset 0 1px #ffffff05; }
+.explorer-sidebar-title { display: flex; align-items: center; justify-content: center; width: 200px; flex-shrink: 0; font-weight: 500; border-right: 1px solid #242424; }
+.explorer-location-tools { min-width: 0; flex: 1; display: flex; align-items: center; gap: 8px; padding: 5px 9px; }
+.explorer-location-tools button { display: flex; align-items: center; justify-content: center; border-radius: 6px; }
+.explorer-navigation { display: flex; flex-shrink: 0; gap: 2px; }
+.explorer-navigation button, .explorer-view-controls > button, .explorer-layout-switch button { width: 32px; height: 34px; padding: 0; }
+.explorer-location-tools button:hover:not(:disabled) { background: #ffffff10; }
+.explorer-breadcrumbs { display: flex; align-items: center; flex: 1; min-width: 0; height: 34px; padding: 0 3px; background: #383838; border: 1px solid #262626; border-radius: 7px; overflow: auto; scrollbar-width: none; white-space: nowrap; }
+.explorer-breadcrumbs > span { display: flex; align-items: center; flex-shrink: 0; gap: 2px; }
+.explorer-breadcrumbs > span > svg { color: #aaa7a5; }
+.explorer-breadcrumbs button { gap: 7px; height: 28px; padding: 0 8px; font-size: 13px; }
+.explorer-breadcrumbs button[aria-current] { font-weight: 500; color: #fff; }
+.explorer-search { display: flex; align-items: center; flex: 1; min-width: 0; gap: 7px; height: 34px; padding: 0 9px; border: 1px solid #e95420; border-radius: 7px; background: #242424; color: #b6b3b1; }
+.explorer-search input { min-width: 0; width: 100%; border: none; background: none; outline: none; font-size: 13px; color: #f6f5f4; }
+.explorer-search input::placeholder { color: #b6b3b1; }
+.explorer-search input:focus-visible { outline: none; }
+.explorer-search button { flex-shrink: 0; padding: 2px; }
+.explorer-view-controls { display: flex; align-items: center; flex-shrink: 0; gap: 4px; }
+.explorer-layout-switch { display: flex; border: 1px solid #242424; border-radius: 7px; overflow: hidden; }
+.explorer-layout-switch button { border-radius: 0; }
+.explorer-layout-switch button + button { border-left: 1px solid #242424; }
+.explorer-view-controls button[aria-pressed='true'] { background: #ffffff14; color: #fff; }
+.explorer-location-tools .sidebar-toggle { display: none; width: 30px; height: 34px; padding: 0; flex-shrink: 0; }
+.explorer-body { flex: 1; display: flex; min-height: 0; position: relative; }
+.explorer-sidebar { flex: 0 0 200px; padding: 9px 7px; border-right: 1px solid #1e1e1e; display: flex; flex-direction: column; gap: 2px; background: #303030; overflow-y: auto; }
+.explorer-sidebar > button { display: flex; align-items: center; flex-shrink: 0; gap: 11px; min-height: 40px; text-align: left; padding: 0 13px; border-radius: 6px; color: #f6f5f4; }
+.explorer-sidebar > button > span { overflow: hidden; text-overflow: ellipsis; }
+.explorer-sidebar > button > svg { flex-shrink: 0; color: #c9c5c2; }
+.explorer-sidebar > button:hover { background: #ffffff0c; }
+.explorer-sidebar .sidebar-active { background: #e95420; color: #fff; }
+.explorer-sidebar .sidebar-active:hover { background: #ee6230; }
+.explorer-sidebar .sidebar-active > svg { color: #fff; }
+.sidebar-divider { height: 1px; flex-shrink: 0; margin: 12px 7px; background: #ffffff18; }
+.sidebar-scrim { display: none; }
+.explorer-main { flex: 1; min-width: 0; overflow: auto; padding: 16px 20px 30px; scrollbar-color: #63615f #242424; }
+.explorer-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(126px, 1fr)); align-content: start; gap: 12px 8px; }
+.explorer-grid .explorer-file { min-height: 126px; padding: 10px 6px 12px; border: 1px solid transparent; border-radius: 8px; text-align: center; }
+.explorer-grid .explorer-filename { display: flex; flex-direction: column; align-items: center; gap: 9px; }
+.explorer-grid .explorer-filename > span { max-width: 100%; line-height: 1.3; font-size: 13px; overflow-wrap: anywhere; }
+.explorer-file:hover { background: #ffffff0b; }
+.explorer-file:focus-visible { background: #e954201b; }
+.file-icon { object-fit: contain; flex-shrink: 0; user-select: none; }
+.explorer-column-headings, .explorer-list .explorer-file { display: grid; grid-template-columns: minmax(180px, 1fr) 90px 150px; gap: 24px; text-align: left; }
+.explorer-column-headings { position: sticky; top: -16px; z-index: 1; padding: 9px 10px; color: #b6b3b1; background: #242424; border-bottom: 1px solid #ffffff14; font-size: 12px; }
+.explorer-list .explorer-file { width: 100%; min-height: 42px; padding: 8px 10px; align-items: center; border-radius: 5px; }
+.explorer-list .explorer-filename { display: flex; gap: 10px; align-items: center; min-width: 0; overflow-wrap: anywhere; }
+.explorer-filetype, .explorer-filesize { color: #b6b3b1; font-size: 12px; }
+.explorer-filesize, .explorer-column-headings > :nth-child(2) { text-align: right; }
+.explorer-empty { padding: 55px 15px; text-align: center; color: #b6b3b1; }
+.explorer-empty button { color: #f18c69; text-decoration: underline; }
+.document-preview { width: min(640px, calc(100vw - 32px)); max-height: min(760px, calc(100dvh - 60px)); margin: auto; padding: 0; overflow: hidden; border: 1px solid #55514e; border-radius: 11px; color: #f6f5f4; background: #242424; box-shadow: 0 15px 65px #0009; font: 14px/1.6 'Ubuntu UI', Ubuntu, sans-serif; }
+.document-preview[open] { display: flex; flex-direction: column; }
+.document-preview::backdrop { background: #0007; }
+.document-preview > header { display: flex; flex-shrink: 0; align-items: center; gap: 10px; min-height: 48px; padding: 7px 12px; border-bottom: 1px solid #1e1e1e; background: #383838; }
+.document-preview h2 { font: 500 14px/1.4 'Ubuntu UI', Ubuntu, sans-serif; }
+.document-preview header > button { margin-left: auto; width: 29px; height: 29px; display: grid; place-items: center; border-radius: 50%; background: #ffffff0c; }
+.document-preview header > button:hover { background: #ffffff20; }
+.document-body { padding: 24px; overflow-y: auto; }
+.document-description { margin-bottom: 20px; font-size: 12px; color: #b6b3b1; }
+.file-content { overflow-wrap: anywhere; }
+.file-content p { white-space: pre-wrap; min-height: .7em; }
+.document-preview .file-content { font-size: 14px; line-height: 1.7; color: #f6f5f4; }
+.file-content a { color: #f18c69; text-decoration: underline; text-underline-offset: 3px; }
+.file-open-link { margin-top: 12px; display: inline-flex; align-items: center; gap: 8px; }
+
+@media (max-width: 900px) {
+  .explorer-sidebar, .explorer-sidebar-title { flex-basis: 176px; width: 176px; }
+  .explorer-location-tools { gap: 5px; padding-inline: 6px; }
+  .explorer-view-controls { gap: 2px; }
+  .explorer-main { padding: 12px 14px 25px; }
+  .explorer-column-headings, .explorer-list .explorer-file { grid-template-columns: minmax(160px, 1fr) 110px; gap: 10px; }
+  .explorer-column-headings > :last-child, .explorer-list .explorer-filetype { display: none; }
+}
+@media (max-width: 700px) {
+  .explorer-sidebar-title { display: none; }
+  .explorer-location-tools .sidebar-toggle { display: flex; }
+  .explorer-sidebar { display: none; }
+  .explorer-sidebar.sidebar-open { display: flex; position: absolute; z-index: 3; top: 0; left: 0; bottom: 0; width: 200px; box-shadow: 8px 0 24px #0006; }
+  .sidebar-scrim { display: block; position: absolute; z-index: 2; inset: 0; width: 100%; height: 100%; background: #0005 !important; }
+  .explorer-navigation { gap: 0; }
+  .explorer-navigation button, .explorer-view-controls > button, .explorer-layout-switch button { width: 28px; }
+  .explorer-breadcrumbs { padding: 0 2px; }
+  .explorer-breadcrumbs button { padding: 0 6px; font-size: 12px; }
+  .explorer-search { padding: 0 5px; gap: 4px; }
+  .explorer-search > svg { display: none; }
+  .explorer-grid { grid-template-columns: repeat(auto-fill, minmax(105px, 1fr)); gap: 8px; }
+  .explorer-grid .explorer-file { min-height: 122px; padding-inline: 3px; }
+  .explorer-main { padding: 14px 10px 24px; }
+  .explorer-column-headings, .explorer-list .explorer-file { grid-template-columns: minmax(130px, 1fr) 90px; }
+  .explorer-list .explorer-file { padding: 8px 5px; }
+  .explorer-filetype { font-size: 11px; }
+  .document-preview { max-height: calc(100dvh - 30px); width: calc(100vw - 20px); }
+  .document-body { padding: 20px; }
+}
+@media (max-width: 640px) {
+  .desktop-header { flex-basis: 43px; padding: 0 5px; gap: 5px; grid-template-columns: 1fr auto; }
+  .window-session { display: none; }
+  .mode-switch button { padding: 5px 8px; font-size: 11px; }
+  .header-links a { width: 28px; height: 28px; }
+  .terminal-host { inset: 3px; }
+}
