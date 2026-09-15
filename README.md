@@ -1,6 +1,6 @@
 ﻿# parthm667.github.io
 
-Parth Mhaske's personal site. React + Vite, hosted on GitHub Pages.
+Parth Mhaske's personal site. React + Vite, deployed by Vercel to [mhaske.com](https://mhaske.com).
 
 ## Homepage
 
@@ -67,8 +67,8 @@ The résumé is `public/resume.pdf`.
 - `/scavenger-hunt/`: HTML/CSS scavenger hunt.
 - `/goose-chase/`: encrypted puzzle sequence. See `tools/README.md`.
 
-GitHub Pages routing uses `public/404.html` and the restore script in
-`index.html`.
+Vercel routing lives in `vercel.json`, including the `/nj-hin` app and API proxies.
+Other app routes fall back to `index.html`.
 
 ## Development
 
@@ -87,4 +87,4 @@ npx playwright install chromium --only-shell
 npm run test:e2e
 ```
 
-`npm run deploy` builds and publishes to the `gh-pages` branch.
+Vercel creates preview deployments for pull requests and deploys `main` to production.

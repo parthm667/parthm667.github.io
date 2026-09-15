@@ -3,16 +3,13 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://parthm667.github.io",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
     "test": "node --test tests/*.test.mjs",
     "test:e2e": "playwright test",
-    "preview": "vite preview",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@xterm/addon-fit": "^0.11.0",
