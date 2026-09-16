@@ -25,7 +25,7 @@ export const FEATURED_WORK = [
     title: 'agent evaluation',
     path: `${HOME}/experience/nuntius.txt`,
     detail: 'evaluating multi-step tool use in ai agents',
-    evidence: 'evaluation infrastructure · nuntius',
+    evidence: 'evaluation infrastructure · nuntius (yc s25)',
   },
 ]
 
@@ -145,10 +145,10 @@ python / scikit-learn / tf-idf / gridsearchcv`),
   ]),
   folder('experience', 'agent evaluation, backend systems, and robotics', [
     file('nuntius.txt', 'evaluation infrastructure and agent behavior',
-      `agent evaluation at nuntius
+      `agent evaluation at nuntius (yc s25)
 software engineer · november 2025–may 2026
 
-at nuntius, i worked on evaluation systems for ai agents that use tools to complete multi-step tasks. i contributed to evaluation infrastructure, test data, and analysis of agent behavior.
+at nuntius (yc s25), i worked on evaluation systems for ai agents that use tools to complete multi-step tasks. i contributed to evaluation infrastructure, test data, and analysis of agent behavior.
 
 the practical question was how to tell whether an agent completed the task it was given. i worked on making those evaluations repeatable and investigating where an agent's behavior differed from the expected outcome. this connected the evaluation tooling to the failures we needed to understand.
 
@@ -178,7 +178,7 @@ i also worked on autonomous routines and match strategy, connecting the robot's 
     link('road_design.url', 'street design and road safety', '/public_remediation'),
   ]),
   file('about.txt', 'a little about me',
-    'hey, i’m parth.\n\ni study computer science and applied mathematics at the university of maryland. class of 2028.\n\ni work on trading systems, simulations, and agent evaluation. i wrote a first-author aiaa paper on uav suspension design, analyzed 604,578 polymarket trader records, and contributed to agent evaluation at nuntius.\n\ni’m looking for summer 2027 internships in software engineering, quantitative research, or systems engineering. outside of that, i ride bikes and photograph birds.'),
+    'hey, i’m parth.\n\ni study computer science and applied mathematics at the university of maryland. class of 2028.\n\ni work on trading systems, simulations, and agent evaluation. i wrote a first-author aiaa paper on uav suspension design, analyzed 604,578 polymarket trader records, and contributed to agent evaluation at nuntius (yc s25).\n\ni’m looking for summer 2027 internships in software engineering, quantitative research, or systems engineering. outside of that, i ride bikes and photograph birds.'),
   file('contact.txt', 'email, github, and linkedin',
     'email: mailto:pmhaske@umd.edu\ngithub: https://github.com/parthm667\nlinkedin: https://linkedin.com/in/pmhaske/\n\nfeel free to reach out.'),
   link('resume.pdf', 'my résumé', '/resume.pdf'),
