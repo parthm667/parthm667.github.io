@@ -81,7 +81,7 @@ export const APPARATUS = [
 
 export const CHANNELS = [
   ['Email', 'pmhaske@umd.edu', 'mailto:pmhaske@umd.edu'],
-  ['LinkedIn', 'linkedin.com/in/parthmhaske667', 'https://linkedin.com/in/parthmhaske667'],
+  ['LinkedIn', 'linkedin.com/in/pmhaske/', 'https://linkedin.com/in/pmhaske/'],
   ['GitHub', 'github.com/parthm667', 'https://github.com/parthm667'],
   ['Photography', 'parthmhaske.myportfolio.com', 'https://parthmhaske.myportfolio.com/'],
 ]

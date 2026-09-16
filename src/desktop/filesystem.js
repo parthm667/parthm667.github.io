@@ -46,7 +46,7 @@ export const filesystem = folder('parth', 'parth mhaske', [
   file('about.txt', 'a little about me',
     'hey, i’m parth.\n\ni study computer science and applied mathematics at the university of maryland, college park. class of 2028.\n\ni work on systems, robotics, and simulation. outside of that, i ride bikes and photograph birds.\n\ni’m looking for summer 2027 internships in software engineering, quantitative research, or systems engineering.'),
   file('contact.txt', 'email, github, and linkedin',
-    'email: mailto:pmhaske@umd.edu\ngithub: https://github.com/parthm667\nlinkedin: https://linkedin.com/in/parthmhaske667\n\nfeel free to reach out.'),
+    'email: mailto:pmhaske@umd.edu\ngithub: https://github.com/parthm667\nlinkedin: https://linkedin.com/in/pmhaske/\n\nfeel free to reach out.'),
   link('resume.pdf', 'my résumé', '/resume.pdf'),
   link('photography.url', 'birds and other photos', 'https://parthmhaske.myportfolio.com/'),
 ])
