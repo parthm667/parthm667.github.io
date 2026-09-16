@@ -12,21 +12,26 @@ export const FEATURED_WORK = [
   {
     title: 'uav suspension',
     path: `${HOME}/research/uav-suspension/readme.md`,
-    detail: 'finding spring and damping settings for uncertain landings',
+    detail: '1,000/1,000 sampled landings passed; mean peak force 24.6% below the modeled limit.',
     evidence: 'first-author paper · aiaa aviation 2026',
   },
   {
     title: 'polymarket',
     path: `${HOME}/projects/polymarket/readme.md`,
-    detail: 'comparing volume, specialization, and trader outcomes',
+    detail: 'top volume decile: positive mean pnl. lower nine: negative mean pnl. volume/pnl correlation flips sign when ranked.',
     evidence: '604,578 trader records · analysis + notebook',
   },
   {
-    title: 'agent evaluation',
-    path: `${HOME}/experience/nuntius.txt`,
-    detail: 'evaluating multi-step tool use in ai agents',
-    evidence: 'evaluation infrastructure · nuntius (yc s25)',
+    title: 'c++ trading systems',
+    path: `${HOME}/projects/order-book/readme.md`,
+    detail: '110 ns p99 internal tick-to-order benchmark; excludes network and exchange latency.',
+    evidence: 'c++ · smith investment fund',
   },
+]
+
+export const MORE_WORK = [
+  { title: 'corsha', path: `${HOME}/experience/corsha.txt`, detail: '10,000+ logs/sec in testing' },
+  { title: 'nuntius (yc s25)', path: `${HOME}/experience/nuntius.txt`, detail: 'agent environments and evaluation' },
 ]
 
 export const filesystem = folder('parth', 'parth mhaske', [
@@ -148,13 +153,13 @@ python / scikit-learn / tf-idf / gridsearchcv`),
       `agent evaluation at nuntius (yc s25)
 software engineer · november 2025–may 2026
 
-at nuntius (yc s25), i worked on evaluation systems for ai agents that use tools to complete multi-step tasks. i contributed to evaluation infrastructure, test data, and analysis of agent behavior.
+at nuntius (yc s25), i built agentic environments with synthetic data generation and automatic evaluation pipelines. the goal was to test whether models could use tools correctly over multiple turns, where a mistake in one step can affect the steps that follow.
 
-the practical question was how to tell whether an agent completed the task it was given. i worked on making those evaluations repeatable and investigating where an agent's behavior differed from the expected outcome. this connected the evaluation tooling to the failures we needed to understand.
+to evaluate that behavior, i designed a reward signal for tool-call correctness in multi-turn settings. the work combined building the environments and test data with checking how the models used tools across a full task.
 
-implementation details and internal results are confidential.
+i also analyzed failures in frontier models and conducted penetration testing to find edge cases. those results gave us specific failures to investigate and use in hardening work.
 
-python / evaluation infrastructure / failure analysis`),
+python / synthetic data / agentic environments / tool-call evaluation / failure analysis`),
     file('corsha.txt', 'software engineering intern',
       `corsha
 software engineering intern · may–august 2026

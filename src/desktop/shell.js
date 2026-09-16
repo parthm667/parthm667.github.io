@@ -1,4 +1,4 @@
-import { HOME, FEATURED_WORK, resolvePath, getNode, listDirectory, parentPath } from './filesystem.js'
+import { HOME, FEATURED_WORK, MORE_WORK, resolvePath, getNode, listDirectory, parentPath } from './filesystem.js'
 import { EASTER_EGG_COMMANDS, easterEgg } from './easterEggs.js'
 
 const aliases = {
@@ -36,6 +36,8 @@ const help = `look around
   overview              selected work, with links
   view polymarket       open a project writeup
   view uav              read the paper + see the figure
+  view order-book       c++ trading platform
+  view corsha           backend services and log ingestion
   view nuntius          agent evaluation work
   ls                    list files and folders
   ls -la                list all files with details
@@ -125,6 +127,7 @@ const projectShortcuts = {
   uav: `${HOME}/research/uav-suspension/readme.md`,
   polymarket: `${HOME}/projects/polymarket/readme.md`,
   nuntius: `${HOME}/experience/nuntius.txt`,
+  corsha: `${HOME}/experience/corsha.txt`,
   'order-book': `${HOME}/projects/order-book/readme.md`,
 }
 
@@ -150,7 +153,7 @@ function executeSingle(raw, cwd = HOME) {
   const takesPath = ['ls', 'cd', 'cat', 'open', 'view', 'tree', 'explorer'].includes(command)
   if (args.length > (takesPath ? 1 : 0)) return error('that is too many arguments. use quotes around paths with spaces, or type help.')
   if (command === 'help') return text(help)
-  if (command === 'overview') return { ...result, lines: [{ type: 'overview', entries: FEATURED_WORK }] }
+  if (command === 'overview') return { ...result, lines: [{ type: 'overview', entries: FEATURED_WORK, more: MORE_WORK }] }
   if (command === 'clear') return { ...result, clear: true }
   if (command === 'pwd') return text(cwd)
   if (command === 'whoami') return text('parth mhaske\ncs + applied math at umd, class of 2028.\nread about.txt for a little more.')

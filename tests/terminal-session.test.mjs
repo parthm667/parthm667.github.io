@@ -70,14 +70,17 @@ test('clear removes pending output while preserving input that follows it', asyn
   session.dispose()
 })
 
-test('typing during the intro skips animation and preserves the text and Enter', async () => {
+test('startup writes the overview immediately and preserves input before that write settles', async () => {
   const { terminal, session } = createSession()
+  terminal.delay = 20
   session.booting = true
-  const intro = session.startIntro(false)
+  const startup = session.start()
+  assert.equal(terminal.writes.length, 1)
+  assert.ok(terminal.writes[0].includes('overview'))
+  assert.ok(terminal.writes[0].includes('file explorer is in the top left.'))
   session.input('pwd\r')
   assert.equal(session.editor.history.at(-1), 'pwd')
-  assert.equal(session.skipRequested, true)
-  await intro
+  await startup
   await session.whenIdle()
   assert.ok(terminal.writes.join('').includes(`${HOME}\r\n`))
   session.dispose()

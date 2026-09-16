@@ -58,16 +58,27 @@ test('paste stays inert and wrapped Unicode edits do not lose the command', asyn
   await expect(screen(page)).not.toContainText('cannot find:')
 })
 
-test('typing and Enter during the intro skip it without dropping the command', async ({ page }) => {
+test('cold-load input before startup settles opens the requested reader at four times CPU slowdown', async ({ page }) => {
+  const cdp = await page.context().newCDPSession(page)
+  await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 })
   await page.emulateMedia({ reducedMotion: 'no-preference' })
+  await page.addInitScript(() => {
+    new MutationObserver((_, observer) => {
+      const textarea = document.querySelector('textarea[aria-label="terminal command"]')
+      if (!textarea) return
+      observer.disconnect()
+      window.startupInputState = document.querySelector('[data-booting]')?.getAttribute('data-booting')
+      textarea.focus()
+      textarea.dispatchEvent(new InputEvent('beforeinput', { inputType: 'insertText', data: 'view uav', bubbles: true, cancelable: true }))
+      textarea.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true, cancelable: true }))
+    }).observe(document, { subtree: true, childList: true, attributes: true })
+  })
   await page.reload()
-  await expect(page.getByRole('region', { name: 'linux terminal' })).toHaveAttribute('data-booting', 'true')
-  await input(page).focus()
-  await page.keyboard.insertText('pwd')
-  await page.keyboard.press('Enter')
+  expect(await page.evaluate(() => window.startupInputState)).toBe('true')
   await ready(page)
-  await expect(screen(page)).toContainText('pwd')
-  await expect(screen(page)).toContainText('/home/parth')
+  await expect(screen(page)).toContainText('view uav')
+  await expect(page.getByRole('dialog')).toBeVisible()
+  await expect(page.getByRole('dialog')).toBeFocused()
 })
 
 test('Tab completes commands, paths and quoted command chains without leaving the terminal', async ({ page }) => {

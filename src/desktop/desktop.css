@@ -30,8 +30,6 @@ html[data-room='desktop'] body { background: #101113; }
 .terminal-host .xterm { height: 100%; }
 .terminal-host .xterm-viewport { background-color: #101113; }
 .terminal-host .xterm-helper-textarea { font-size: 16px; }
-.skip-intro { position: absolute; z-index: 4; right: 16px; bottom: 12px; padding: 4px 8px; border: 1px solid #555 !important; border-radius: 3px; color: #ddd !important; background: #25262a !important; font: 12px/1.4 'Segoe UI', sans-serif !important; }
-.skip-intro kbd { margin-left: 9px; font: inherit; color: #aaa; }
 
 /* Ubuntu Files */
 @font-face { font-family: 'Ubuntu UI'; src: url('/fonts/ubuntu-regular.ttf') format('truetype'); font-weight: 400; font-display: swap; }

@@ -67,7 +67,6 @@ export default function Terminal({ cwd, active, onNavigate, onMode, onPreview })
       onBootComplete: () => {
         if (disposed) return
         setBooting(false)
-        if (session.active && window.matchMedia('(pointer: fine)').matches) terminal.focus()
       },
     })
     sessionRef.current = session
@@ -90,11 +89,6 @@ export default function Terminal({ cwd, active, onNavigate, onMode, onPreview })
       physicalKey = event.key !== 'Unidentified' && event.keyCode !== 229
       if (event.key === 'Tab' && event.shiftKey) return false
       if (event.ctrlKey && event.key.toLowerCase() === 'c' && terminal.hasSelection()) return false
-      if (session.booting && event.key === 'Escape') {
-        event.preventDefault()
-        session.skipIntro()
-        return false
-      }
       return true
     })
     const resize = () => {
@@ -106,11 +100,10 @@ export default function Terminal({ cwd, active, onNavigate, onMode, onPreview })
     observer.observe(hostRef.current)
     const motionChanged = () => {
       terminal.options.cursorBlink = !reducedMotion.matches
-      if (reducedMotion.matches) session.skipIntro()
     }
     reducedMotion.addEventListener('change', motionChanged)
     document.fonts.ready.then(resize)
-    session.startIntro(reducedMotion.matches)
+    session.start()
     if (window.matchMedia('(pointer: fine)').matches) terminal.focus()
     return () => {
       disposed = true
@@ -138,6 +131,5 @@ export default function Terminal({ cwd, active, onNavigate, onMode, onPreview })
 
   return <section className="terminal-panel" aria-label="linux terminal" hidden={!active} data-booting={booting}>
     <div className="terminal-host" ref={hostRef} />
-    {booting && <button className="skip-intro" onClick={() => sessionRef.current?.skipIntro()}>skip intro</button>}
   </section>
 }

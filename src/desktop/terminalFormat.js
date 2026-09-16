@@ -70,7 +70,8 @@ export function formatOutput(line, columns) {
       wrapWords(entry.evidence, columns, '  '),
       wrapWords(entry.detail, columns, '  '),
     ].join('\r\n')).join('\r\n\r\n')
-    return `parth mhaske\r\ncs + applied math, umd '28.\r\n\r\n${work}\r\n\r\n${wrapWords('click a title to read. or type view uav / polymarket / nuntius.', columns)}\r\n${wrapWords('ls explores everything. help shows commands. cat contact.txt to get in touch.', columns)}`
+    const more = (line.more ?? []).map(entry => `${hyperlink(`${ANSI.blue}${safeTerminalText(entry.title)}${ANSI.reset}`, `portfolio-view:${encodeURIComponent(entry.path)}`)}\r\n${wrapWords(entry.detail, columns, '  ')}`).join('\r\n')
+    return `parth mhaske\r\ncs + applied math, umd '28.\r\n\r\n${work}\r\n\r\n${more}\r\n\r\n${wrapWords('click a title to read. or type view uav / polymarket / order-book.', columns)}\r\n${wrapWords('ls explores everything. help shows commands. cat contact.txt to get in touch.', columns)}`
   }
   if (line.type === 'listing') return formatListing(line, columns)
   if (line.type === 'link') {
