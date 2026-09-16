@@ -153,11 +153,11 @@ python / scikit-learn / tf-idf / gridsearchcv`),
       `agent evaluation at nuntius (yc s25)
 software engineer · november 2025–may 2026
 
-at nuntius (yc s25), i built agentic environments with synthetic data generation and automatic evaluation pipelines. the goal was to test whether models could use tools correctly over multiple turns, where a mistake in one step can affect the steps that follow.
+at nuntius (yc s25), i built agentic environments with synthetic data generation and automatic evaluation pipelines to test how models use tools over multiple turns.
 
-to evaluate that behavior, i designed a reward signal for tool-call correctness in multi-turn settings. the work combined building the environments and test data with checking how the models used tools across a full task.
+i designed a reward signal for tool-call correctness in multi-turn settings.
 
-i also analyzed failures in frontier models and conducted penetration testing to find edge cases. those results gave us specific failures to investigate and use in hardening work.
+i also analyzed model failures and conducted penetration testing for frontier labs.
 
 python / synthetic data / agentic environments / tool-call evaluation / failure analysis`),
     file('corsha.txt', 'software engineering intern',
