@@ -29,7 +29,6 @@ export class TerminalSession {
     this.idleWaiters = new Set()
     this.pasting = false
     this.pasteText = ''
-    this.skipRequested = false
     this.clearPending = false
     this.requestedDirectory = null
   }
@@ -114,42 +113,14 @@ export class TerminalSession {
     this.redraw()
   }
 
-  async startIntro(reducedMotion = false) {
-    this.skipRequested ||= reducedMotion
-    const pause = milliseconds => new Promise(resolve => {
-      this.wakeIntro = resolve
-      this.introTimer = setTimeout(resolve, milliseconds)
-    })
-    const type = async (text, delay) => {
-      const chars = Array.from(text)
-      const started = performance.now()
-      let index = 0
-      while (index < chars.length && !this.disposed) {
-        const next = this.skipRequested ? chars.length : Math.min(chars.length, Math.floor((performance.now() - started) / delay) + 1)
-        if (next > index) {
-          this.terminal.write(chars.slice(index, next).join(''))
-          index = next
-        }
-        if (index < chars.length) await pause(16)
-      }
-      await this.write('')
-    }
-    // Scripted startup only. Ordinary input updates the editor synchronously.
-    await this.write('\x1b[?2004h')
-    await this.write('file explorer is in the top left.\r\n\r\n')
-    await this.write(formatPrompt(HOME))
-    await type('overview', 32)
-    await this.write(`\r\n${formatOutput(executeCommand('overview', HOME).lines[0], this.terminal.cols)}\r\n\r\n`)
+  async start() {
+    // Input already updates the model while this single startup write settles.
+    const overview = formatOutput(executeCommand('overview', HOME).lines[0], this.terminal.cols)
+    await this.write(`\x1b[?2004hfile explorer is in the top left.\r\n\r\n${formatPrompt(HOME)}overview\r\n${overview}\r\n\r\n`)
     if (this.disposed) return
     this.booting = false
     await this.draw()
     if (!this.disposed) this.onBootComplete?.()
-  }
-
-  skipIntro() {
-    this.skipRequested = true
-    clearTimeout(this.introTimer)
-    this.wakeIntro?.()
   }
 
   record(record) {
@@ -207,7 +178,6 @@ export class TerminalSession {
 
   input(data) {
     if (!this.active || this.disposed || !data) return
-    if (this.booting) this.skipIntro()
     let index = 0
     while (index < data.length) {
       if (this.pasting) {
@@ -258,7 +228,6 @@ export class TerminalSession {
 
   dispose() {
     this.disposed = true
-    this.skipIntro()
     if (this.frame !== null) {
       if (this.useFrames) cancelAnimationFrame(this.frame)
       else clearTimeout(this.frame)
