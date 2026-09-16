@@ -41,6 +41,13 @@ export default function Action() {
             bring your town and your name. Edit anything you'd like before
             sending.
           </p>
+          <p>
+            For New Jersey roads, you can also explore crash records before
+            writing your letter.
+          </p>
+          <a className="rm-track-link" href="/nj-hin/">
+            Explore the NJ High Injury Network
+          </a>
           <LetterBuilder />
         </motion.article>
 
