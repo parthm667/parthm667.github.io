@@ -12,20 +12,20 @@ export const FEATURED_WORK = [
   {
     title: 'uav suspension',
     path: `${HOME}/research/uav-suspension/readme.md`,
-    detail: 'choosing a suspension under uncertain touchdown conditions',
+    detail: 'finding spring and damping settings for uncertain landings',
     evidence: 'first-author paper · aiaa aviation 2026',
   },
   {
     title: 'polymarket',
     path: `${HOME}/projects/polymarket/readme.md`,
-    detail: 'what a snapshot can tell us about trader behavior',
+    detail: 'comparing volume, specialization, and trader outcomes',
     evidence: '604,578 trader records · analysis + notebook',
   },
   {
     title: 'agent evaluation',
     path: `${HOME}/experience/nuntius.txt`,
-    detail: 'checking tool use against actions and actual outcomes',
-    evidence: '6 agentic environments · nuntius',
+    detail: 'evaluating multi-step tool use in ai agents',
+    evidence: 'evaluation infrastructure · nuntius',
   },
 ]
 
@@ -35,46 +35,54 @@ export const filesystem = folder('parth', 'parth mhaske', [
       `c++ trading systems
 smith investment fund
 
-the problem
-a trading engine has to move market updates through strategy logic and risk checks without letting network handling stall the decision path. it also needs a way to replay the same input when a strategy behaves unexpectedly.
+i worked on a c++ engine for crypto.com that takes market updates, runs strategy logic, and checks orders before execution. these parts need to exchange data without making the strategy wait on network handling, so the engine uses boost.beast and lock-free multi-producer, single-consumer queues.
 
-what i built
-i worked on a c++ engine for crypto.com using boost.beast and lock-free multi-producer, single-consumer queues. the strategy interface is event-driven: each strategy subclasses strategybase and emits signals. a thread-safe order book maintains market state, while a pre-trade risk manager validates order flow before execution.
+i built an event-driven strategy interface in which each strategy subclasses strategybase and emits signals. a thread-safe order book maintains market state, and a pre-trade risk manager checks order flow before execution. this gives each strategy the same path from market data to an order.
 
-how i check it
-a jsonl replay backtester feeds recorded events through strategy logic. this gives us a repeatable input stream for checking behavior without depending on a live market.
-
-measurement boundary
-110 ns p99 in an internal tick-to-order benchmark. this measures the internal processing path and excludes network and exchange latency.
+to check strategy behavior on repeatable inputs, i used a jsonl replay backtester. the internal tick-to-order benchmark reached 110 ns p99, excluding network and exchange latency. replay testing checks what the strategy does; the benchmark measures how long that internal processing takes.
 
 c++ / boost.beast / concurrent queues / replay testing`,
       'https://github.com/sujaykonda/crypto-hft', {
         links: [{ label: 'source', href: 'https://github.com/sujaykonda/crypto-hft' }],
       }),
     project('maze-robot', 'a* planning, sensor fusion, and pid control',
-      'maze-solving robot\nscience olympiad robot tour, 2023–2024\n\ni built a robot that follows a planned route using encoders and an imu, without wall sensors. the a* planner penalizes turns, and the robot runs cascaded pid at 1 khz on a 16 × 16 grid.\n\nthird place at the 2024 national tournament.\n\npython / a* / pid / sensor fusion',
+      `maze-solving robot
+science olympiad robot tour, 2023–2024
+
+i built a robot to follow a planned route through a maze without wall sensors. since it could not use the walls to correct its position, the route planner and motion controller had to work from encoders and an imu.
+
+i used a* to plan routes on a 16 × 16 grid, with an added cost for turns. this let the planner account for turning instead of considering only the number of steps. the robot then followed the route using sensor fusion and cascaded pid control at 1 khz.
+
+we placed third at the 2024 national tournament. the project brought the planning and control problems together: finding a route was only useful if the robot could follow it.
+
+python / a* / pid / sensor fusion`,
       'https://github.com/parthm667/RobotTourMazeSolver'),
     project('polymarket', '604,578 trader records: behavior, clustering, and limits',
       `polymarket trader analysis
 604,578 trader records · september 2025
 
-the question
-what separates profitable accounts? i started with 41 features per trader, covering activity, topic concentration, volume, and execution proxies. the first constraint mattered: this was a performance snapshot, not a sequence of trades.
+given 604,578 trader records with 41 features each, i wanted to figure out what separated profitable traders from everyone else. however, the data was a snapshot of performance, so i couldn't use it to predict what an account would do next. instead, i looked at which behaviors were associated with profit in this dataset.
 
-the approach
-volume had a pearson correlation of 0.41 with pnl. splitting accounts into volume deciles showed what that summary hid: the top decile had positive average pnl, while the other nine were negative. i then examined topic concentration and trading behavior rather than treating volume as an edge by itself.
+the first thing i did was look at correlations. volume had a pearson correlation of 0.41 with pnl, which seemed like the obvious place to start. i then split traders into volume deciles: the top decile had positive average pnl, while the lower nine lost money on average. so the overall correlation wasn't enough to explain what worked across the rest of the accounts.
 
-the september report uses k-means to group six behavioral features into four clusters, then compares their outcomes. the notebook also explores other specifications and correlation measures. the volume relationship changes sign when measured by ranks rather than raw values—a reason to inspect the distribution before trusting a single coefficient.
+i moved to topic concentration, activity, and execution proxies. to see whether these appeared together in the same traders, the september report groups six behavioral features into four clusters using k-means and compares their outcomes. the notebook also tests other specifications. for volume, even the correlation changes sign when using ranks instead of raw values, so the choice of measure matters.
 
-what this does not establish
-these are descriptive associations, not a validated trading signal. a snapshot cannot establish causality or future returns. a score that already contains profit also cannot independently explain profit. a stronger test would use time-separated data and outcomes the features have not already seen.
+the remaining question is whether these patterns predict later performance. the rebalancing score already includes profit per volume, so correlating it with that same quantity doesn't independently test an edge. that needs time-separated data, with behavior measured before the outcome.
 
 python / pandas / scipy / scikit-learn`,
       'https://github.com/parthm667/PolymarketAnalysis', {
         links: [{ label: 'notebook and report', href: 'https://github.com/parthm667/PolymarketAnalysis' }],
       }),
     project('nj-hin-generator', 'mapping serious crashes on new jersey roads',
-      'new jersey high injury network generator\n\ni built a tool that assigns crashes to road segments, tests for unusually high crash counts, adds equity data, and exports maps and tables for municipal safety planning and ss4a grant applications.\n\nfastapi / postgis / geopandas / react / leaflet',
+      `new jersey high injury network generator
+
+i built this tool to help municipalities identify road segments with unusually high crash counts. a list of crash locations does not directly answer that question, so i joined njdot crash records to openstreetmap road geometries in postgis and aggregated the crashes by segment.
+
+i then used poisson tests to flag high-crash corridors across 568 new jersey municipalities, combining five open data sources. the tool also adds equity data and exports maps and tables for municipal safety planning and safe streets and roads for all grant applications.
+
+the output gives a municipality specific corridors to examine and the crash data behind each one. deciding which street changes to make still requires looking at the conditions on those roads.
+
+fastapi / postgis / geopandas / react / leaflet`,
       'https://github.com/parthm667/nj-hin-generator'),
   ]),
   folder('research', 'simulation, modeling, and scientific computing', [
@@ -82,17 +90,13 @@ python / pandas / scipy / scikit-learn`,
       `uav suspension optimization
 first-author paper · aiaa aviation 2026
 
-the problem
-a heavy paramotor can reach the ground with pitch, roll, and touchdown speed all different from the nominal case. i worked with christian claudel at ut austin to model that impact and choose spring and damping parameters across uncertain conditions.
+a heavy paramotor can carry large payloads, but the forces during a harsh landing can damage its frame. i worked with christian claudel at ut austin to determine which spring and damping settings would keep the suspension within its limits across uncertain touchdown conditions.
 
-the modeling decision
-wheel contact changes during impact. four wheels produce 16 possible contact configurations. the model tracks vertical motion, pitch, and roll as individual suspensions engage, rather than assuming all four wheels hit together.
+we modeled vertical motion, pitch, and roll with a spring-mass-damper system. since the wheels can touch down at different times, the model switches between 16 possible wheel-contact configurations. this lets us calculate the force on each suspension as it engages, using a small-angle approximation and vertical forces.
 
-the result
-the paper evaluates 5,000 spring/damping combinations with 1,000 sampled trials per combination. a trial fails when the suspension bottoms out or exceeds force, attitude, or settling limits. the selected configuration passes 1,000 of 1,000 sampled trials; ties are broken by lower average maximum force.
+we then evaluated 5,000 spring/damping combinations with 1,000 sampled trials per combination. a trial fails if the suspension bottoms out or exceeds the force, attitude, or settling limits. several configurations passed 1,000 of 1,000 sampled trials, so success count alone did not determine which one to choose.
 
-the limits
-that result depends on the model's small-angle approximation, vertical-force assumptions, and sampled touchdown range. it is not a field-tested guarantee. the useful output is a region of suspension settings that balances bottoming-out against impact force—and the assumptions a physical test needs to challenge.
+we selected a spring constant of 21,216 newtons per meter and damping coefficient of 484.56 newton-seconds per meter using the lowest average maximum force as the tie-break. its average maximum force was 5,057 newtons, below the modeled threshold of 6,708 newtons. this gives a suspension choice with more force margin under the sampled conditions. physical testing is still needed to check those modeled outcomes.
 
 suspension parameter optimization in a paramotor uav using monte carlo analysis
 parth mhaske and christian claudel
@@ -102,7 +106,7 @@ python / c++ / hybrid dynamics / monte carlo`,
         media: [{
           src: '/work/uav-suspension-sweep.png',
           alt: 'spring stiffness and damping sweep, with a band of moderate damping and higher stiffness producing the most successful simulated landings',
-          caption: 'successful trials out of 1,000 per sampled suspension configuration. original figure 7 from mhaske and claudel, aiaa 2026-4336.',
+          caption: 'spring stiffness and damping, colored by successful trials out of 1,000 for each sampled configuration. figure 7, mhaske and claudel, aiaa 2026-4336.',
         }],
         links: [
           { label: 'read the paper', href: 'https://doi.org/10.2514/6.2026-4336' },
@@ -110,55 +114,71 @@ python / c++ / hybrid dynamics / monte carlo`,
         ],
       }),
     project('circumstellar-dust', 'light-scattering models at umd',
-      'circumstellar dust\nastronomy, university of maryland\n\ni worked on a forward model of light scattered by synthetic dust grains. we compared the predicted photometry and polarimetry with observations to study grain properties.\n\npython / monte carlo / scientific computing'),
+      `circumstellar dust
+astronomy, university of maryland
+
+we use scattered light to study dust grains that we cannot examine directly. to connect those observations to grain properties, i worked on a forward model that calculates how synthetic grains scatter light.
+
+we compared the predicted photometry and polarimetry, or brightness and polarization, with observations. this lets us test whether a proposed set of grain properties produces the light we actually measure.
+
+python / monte carlo / scientific computing`),
     project('popularity-bias', 'modeling how rankings affect online markets',
-      'popularity bias in online markets\ncomputational social dynamics lab\n\ni worked on stochastic simulations of choice under social influence. we ran monte carlo parameter sweeps and calibrated the models against ranking data using approximate bayesian computation.\n\nagent-based modeling / monte carlo / abc calibration'),
+      `popularity bias in online markets
+computational social dynamics lab
+
+when people choose from a ranked list, the existing ranking can affect what they choose next. i worked on stochastic simulations to study how this social influence changes the rankings that emerge.
+
+we ran monte carlo sweeps across the model parameters, then used approximate bayesian computation to calibrate the simulations against observed ranking data. this compares simulated outcomes with the data to find parameter settings that reproduce its patterns.
+
+the comparison connects a proposed choice process to an observed ranking. matching that ranking is a test of the model, rather than proof that the same process caused it.
+
+agent-based modeling / monte carlo / abc calibration`),
     project('literature-classification', 'classifying 35,000+ research papers',
-      'literature classification\npopulation biology laboratory, iiser pune\n\ni built a classification pipeline for 35,000+ papers using tf-idf features, logistic regression, and an svm. i tuned the models with cross-validation and cleaned missing and duplicated bibliographic metadata.\n\npython / scikit-learn / tf-idf / gridsearchcv'),
+      `literature classification
+population biology laboratory, iiser pune
+
+i built a classification pipeline for a collection of more than 35,000 research papers. the records included missing and duplicated bibliographic metadata, so i cleaned those records as part of preparing the corpus for classification.
+
+to represent the text, i used tf-idf features, which weight terms by how often they appear in a paper relative to the collection. i then trained logistic regression and svm models and tuned them with cross-validation. this let me compare model settings on held-out examples rather than only on the papers used to fit them.
+
+python / scikit-learn / tf-idf / gridsearchcv`),
   ]),
   folder('experience', 'agent evaluation, backend systems, and robotics', [
-    file('nuntius.txt', 'agent environments and tool-use evaluation',
+    file('nuntius.txt', 'evaluation infrastructure and agent behavior',
       `agent evaluation at nuntius
 software engineer · november 2025–may 2026
 
-the problem
-an agent can give a plausible final answer while leaving the environment in the wrong state. i built agentic environments, synthetic data, and automatic evaluation pipelines for multi-step tool use. my work covered six environments, with custom rewards for tool-call correctness and failure analysis.
+at nuntius, i worked on evaluation systems for ai agents that use tools to complete multi-step tasks. i contributed to evaluation infrastructure, test data, and analysis of agent behavior.
 
-the evaluation decision
-in the browser environment, the reward checks two things separately: did the agent complete the essential actions, and did it reach the required final state? missing either makes the attempt fail. after those checks, extra tool calls reduce the score, keeping correctness and efficiency distinct.
+the practical question was how to tell whether an agent completed the task it was given. i worked on making those evaluations repeatable and investigating where an agent's behavior differed from the expected outcome. this connected the evaluation tooling to the failures we needed to understand.
 
-checking the benchmark itself
-i also worked on multi-turn tasks and their validation. an oracle run checks that a task is solvable before an agent's failure is treated as useful evidence. an inconsistent task or a broken evaluator can otherwise make a capable model look bad.
+implementation details and internal results are confidential.
 
-scope
-the work lives in private team repositories. this summary describes my environment and evaluation contributions without exposing internal tasks or treating results on one task set as a universal model failure rate.
-
-python / synthetic environments / tool-use evaluation / failure analysis`),
+python / evaluation infrastructure / failure analysis`),
     file('corsha.txt', 'software engineering intern',
       `corsha
 software engineering intern · may–august 2026
 
-partner integration
-i built and tested a go service that infers partner api versions during handshake, removing manual version setup across deployments.
+i worked on backend services and deployment automation at corsha. partner integrations required manual api version setup, so i built a go service that infers the version during handshake. the handshake took 80 ms, removing that configuration step across 6+ deployments.
 
-ingestion under load
-i built a separate real-time data-ingestion service with disk-backed queues. buffering incoming logs separates traffic spikes from core api processing and gives queued data a durable home.
+log ingestion raised a different problem: incoming traffic could spike while the core api still needed to serve requests. i built a separate ingestion service with disk-backed queues to buffer those spikes. in testing, it sustained 10,000+ logs per second with no data loss, keeping incoming data in durable storage while it waited to be processed.
 
-deployment
-i automated strongswan ipsec deployment with kubernetes helm, including certificate rotation without manual restarts.
-
-results
-80 ms handshake across 6+ deployments. in testing, the ingestion service sustained 10,000+ logs per second with no data loss.
+i also automated strongswan ipsec deployment using kubernetes helm. this removed the need for manual restarts during certificate rotation, so routine certificate changes no longer required that deployment step.
 
 go / disk-backed queues / kubernetes / helm / ipsec`),
     file('frc-1923.txt', 'electrical director, frc team 1923',
-      'frc team 1923\nelectrical director\n\ni led electrical system design and diagnostics, including can wiring, encoder signals, and connectors. i also worked on autonomous routines and match strategy.'),
+      `frc team 1923
+electrical director
+
+i led electrical system design and diagnostics for the robot, including can wiring, encoder signals, and connectors. these connections carry the commands and measurements that the control code depends on, so checking the electrical system was part of finding why the robot behaved differently from what the code requested.
+
+i also worked on autonomous routines and match strategy, connecting the robot's hardware and control behavior to what we planned to attempt in a match.`),
   ]),
   folder('writing', 'an essay on street design', [
     link('road_design.url', 'street design and road safety', '/public_remediation'),
   ]),
   file('about.txt', 'a little about me',
-    'hey, i’m parth.\n\ncomputer science + applied mathematics at the university of maryland. class of 2028.\n\ni build systems and study how they fail: uav suspension models, trading infrastructure, and evaluations for agents that use tools. my work includes a first-author aiaa paper, an analysis of 604,578 polymarket trader records, and six agentic environments at nuntius.\n\ni’m looking for summer 2027 internships in software engineering, quantitative research, or systems engineering. outside of that, i ride bikes and photograph birds.'),
+    'hey, i’m parth.\n\ni study computer science and applied mathematics at the university of maryland. class of 2028.\n\ni work on trading systems, simulations, and agent evaluation. i wrote a first-author aiaa paper on uav suspension design, analyzed 604,578 polymarket trader records, and contributed to agent evaluation at nuntius.\n\ni’m looking for summer 2027 internships in software engineering, quantitative research, or systems engineering. outside of that, i ride bikes and photograph birds.'),
   file('contact.txt', 'email, github, and linkedin',
     'email: mailto:pmhaske@umd.edu\ngithub: https://github.com/parthm667\nlinkedin: https://linkedin.com/in/pmhaske/\n\nfeel free to reach out.'),
   link('resume.pdf', 'my résumé', '/resume.pdf'),

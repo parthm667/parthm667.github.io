@@ -11,7 +11,7 @@ test('overview prose wraps at word boundaries on phone-width terminals', () => {
   const output = formatOutput(executeCommand('overview').lines[0], 38)
   assert.match(output, /portfolio-view:/)
   for (const line of plain(output).split('\r\n')) assert.ok(line.length <= 38, line)
-  assert.ok(plain(output).includes('touchdown'))
+  assert.ok(plain(output).includes('landings'))
   assert.ok(plain(output).includes('polymarket'))
 })
 

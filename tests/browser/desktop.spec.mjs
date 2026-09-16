@@ -32,7 +32,7 @@ test('featured work opens a sourced reader with the real figure and returns to t
   await ready(page)
   await expect(screen(page)).toContainText('first-author paper')
   await expect(screen(page)).toContainText('604,578 trader records')
-  await expect(screen(page)).toContainText('6 agentic environments')
+  await expect(screen(page)).toContainText('evaluation infrastructure')
   await command(page, 'view uav')
   const reader = page.getByRole('dialog')
   await expect(reader).toBeVisible()
@@ -45,7 +45,8 @@ test('featured work opens a sourced reader with the real figure and returns to t
   await page.keyboard.press('Escape')
   await expect(page.getByRole('textbox', { name: 'terminal command' })).toBeFocused()
   await command(page, 'nuntius')
-  await expect(reader).toContainText('essential actions')
+  await expect(reader).toContainText('implementation details and internal results are confidential.')
+  await expect(reader).not.toContainText('browser environment')
   await expect(reader).not.toContainText('88%')
 })
 
