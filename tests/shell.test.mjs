@@ -3,6 +3,41 @@ import assert from 'node:assert/strict'
 import { HOME, filesystem, resolvePath, getNode, listDirectory, parentPath, breadcrumbs } from '../src/desktop/filesystem.js'
 import { executeCommand, completeCommand } from '../src/desktop/shell.js'
 
+test('chains preserve cwd, respect quotes, and short-circuit failed && commands', () => {
+  const chain = executeCommand('cd ../../research && ls', `${HOME}/projects/order-book`)
+  assert.equal(chain.cwd, `${HOME}/research`)
+  assert.equal(chain.lines[0].type, 'listing')
+  const failed = executeCommand('cd missing && cd projects && pwd')
+  assert.equal(failed.cwd, HOME)
+  assert.equal(failed.lines.length, 1)
+  assert.equal(failed.lines[0].type, 'error')
+  const recovered = executeCommand('cd missing && ls; pwd')
+  assert.equal(recovered.lines[1].text, HOME)
+  assert.match(executeCommand('cowsay "a && b; c"').lines[0].text, /a && b; c/)
+  assert.match(executeCommand('ls | cat').lines[0].text, /pipes/)
+  const cleared = executeCommand('pwd; clear; ls')
+  assert.equal(cleared.clear, true)
+  assert.equal(cleared.lines.length, 1)
+  assert.equal(cleared.lines[0].type, 'listing')
+})
+
+test('featured work and visual readers resolve real files from any folder', () => {
+  const work = executeCommand('overview').lines[0]
+  assert.equal(work.type, 'overview')
+  assert.equal(work.entries.length, 3)
+  for (const entry of work.entries) assert.equal(getNode(entry.path).type, 'file')
+  for (const shortcut of ['uav', 'polymarket', 'nuntius']) {
+    const result = executeCommand(`view ${shortcut}`, `${HOME}/writing`)
+    assert.equal(getNode(result.previewPath).type, 'file')
+    assert.equal(result.cwd, `${HOME}/writing`)
+  }
+  assert.equal(executeCommand('view projects/order-book').previewPath, `${HOME}/projects/order-book/readme.md`)
+  assert.equal(executeCommand('order-book', `${HOME}/projects`).cwd, `${HOME}/projects/order-book`)
+  assert.equal(executeCommand('view missing').lines[0].type, 'error')
+  assert.equal(executeCommand('view writing').lines[0].type, 'error')
+  assert.ok(completeCommand('view nun').includes('view nuntius'))
+})
+
 test('home exposes the personal site sections', () => {
   assert.equal(HOME, '/home/parth')
   assert.equal(filesystem.type, 'folder')
@@ -105,7 +140,7 @@ test('clear asks the UI to clear output', () => {
 
 test('empty commands are quiet and invalid syntax has a useful error', () => {
   assert.deepEqual(executeCommand('   ', HOME), { cwd: HOME, lines: [] })
-  for (const command of ['cd "projects', 'cat', 'open', 'cd projects research', 'ls; alert(1)', 'fetch("https://example.com")']) {
+  for (const command of ['cd "projects', 'cat', 'open', 'cd projects research', 'ls &&', 'fetch("https://example.com")']) {
     const result = executeCommand(command, HOME)
     assert.equal(result.lines[0].type, 'error', command)
     assert.ok(result.lines[0].text.length > 10)

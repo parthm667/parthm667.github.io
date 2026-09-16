@@ -3,10 +3,12 @@ import { FileUser, Folder, Mail, Terminal as TerminalIcon } from 'lucide-react'
 import { HOME } from './filesystem'
 import Explorer from './Explorer'
 import Terminal from './Terminal'
+import FilePreview from './FilePreview'
 import './desktop.css'
 
 export default function Desktop() {
   const [mode, setMode] = useState('terminal')
+  const [preview, setPreview] = useState(null)
   const [navigation, setNavigation] = useState({ paths: [HOME], index: 0 })
   const cwd = navigation.paths[navigation.index]
 
@@ -18,8 +20,8 @@ export default function Desktop() {
   }, [])
 
   function navigate(path) {
-    if (!path || path === cwd) return
-    setNavigation(previous => ({ paths: [...previous.paths.slice(0, previous.index + 1), path], index: previous.index + 1 }))
+    if (!path) return
+    setNavigation(previous => path === previous.paths[previous.index] ? previous : ({ paths: [...previous.paths.slice(0, previous.index + 1), path], index: previous.index + 1 }))
   }
 
   return <div className="desktop" data-view={mode}>
@@ -33,8 +35,9 @@ export default function Desktop() {
       <div className="header-links"><a href="/resume.pdf" aria-label="résumé" title="résumé"><FileUser size={16} /></a><a href="mailto:pmhaske@umd.edu" aria-label="email parth" title="email parth"><Mail size={16} /></a></div>
     </header>
     <main className="desktop-workspace" id="workspace" tabIndex={-1}>
-      <Terminal cwd={cwd} active={mode === 'terminal'} onNavigate={navigate} onMode={setMode} />
-      {mode === 'explorer' && <Explorer key={cwd} cwd={cwd} onNavigate={navigate} canBack={navigation.index > 0} canForward={navigation.index < navigation.paths.length - 1} onBack={() => setNavigation(previous => ({ ...previous, index: previous.index - 1 }))} onForward={() => setNavigation(previous => ({ ...previous, index: previous.index + 1 }))} />}
+      <Terminal cwd={cwd} active={mode === 'terminal'} onNavigate={navigate} onMode={setMode} onPreview={setPreview} />
+      <Explorer active={mode === 'explorer'} cwd={cwd} onNavigate={navigate} onPreview={setPreview} canBack={navigation.index > 0} canForward={navigation.index < navigation.paths.length - 1} onBack={() => setNavigation(previous => ({ ...previous, index: previous.index - 1 }))} onForward={() => setNavigation(previous => ({ ...previous, index: previous.index + 1 }))} />
     </main>
+    {preview && <FilePreview path={preview} onClose={() => setPreview(null)} />}
   </div>
 }

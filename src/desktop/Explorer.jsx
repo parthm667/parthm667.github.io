@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { ArrowDownAZ, ArrowLeft, ArrowRight, ArrowUp, ChevronRight, FileText, FileUser, Folder, Home, LayoutGrid, List, PanelLeft, Search, X } from 'lucide-react'
 import { HOME, breadcrumbs, filesystem, getNode, listDirectory, parentPath } from './filesystem'
-import { FileContent, FileIcon } from './FileContent'
+import { FileIcon } from './FileContent'
 
 function fileType(node) {
   return node.type === 'folder' ? 'file folder' : node.name.endsWith('.pdf') ? 'pdf document' : node.type === 'link' ? 'shortcut' : 'text document'
@@ -13,15 +13,14 @@ function fileSize(node) {
   return `${new TextEncoder().encode(node.content).length} b`
 }
 
-export default function Explorer({ cwd, onNavigate, onBack, onForward, canBack, canForward }) {
-  const [query, setQuery] = useState('')
+export default function Explorer({ active, cwd, onNavigate, onPreview, onBack, onForward, canBack, canForward }) {
+  const [search, setSearch] = useState({ path: cwd, query: '' })
+  const query = search.path === cwd ? search.query : ''
+  const setQuery = query => setSearch({ path: cwd, query })
   const [searching, setSearching] = useState(false)
   const [layout, setLayout] = useState('grid')
-  const [selected, setSelected] = useState(null)
   const [reverse, setReverse] = useState(false)
   const [sidebar, setSidebar] = useState(false)
-  const previewRef = useRef(null)
-  const previewTriggerRef = useRef(null)
   const searchRef = useRef(null)
   const searchToggleRef = useRef(null)
   const nodes = listDirectory(cwd)
@@ -29,24 +28,13 @@ export default function Explorer({ cwd, onNavigate, onBack, onForward, canBack, 
     .sort((a, b) => (a.type === 'folder' ? 0 : 1) - (b.type === 'folder' ? 0 : 1) || a.name.localeCompare(b.name) * (reverse ? -1 : 1))
   const current = getNode(cwd)
 
-  useEffect(() => {
-    if (selected && previewRef.current) {
-      previewRef.current.showModal()
-      previewRef.current.focus()
-    }
-  }, [selected])
-
   useEffect(() => { if (searching) searchRef.current?.focus() }, [searching])
 
-  function navigate(path) { setQuery(''); setSelected(null); setSidebar(false); onNavigate(path) }
-  function open(node, trigger) {
+  function navigate(path) { setQuery(''); setSidebar(false); onNavigate(path) }
+  function open(node, event) {
+    if (event.detail > 1) return
     if (node.type === 'folder') navigate(`${cwd}/${node.name}`)
-    else { previewTriggerRef.current = trigger; setSelected(node) }
-  }
-  function closePreview() {
-    previewRef.current?.close()
-    setSelected(null)
-    previewTriggerRef.current?.focus()
+    else onPreview(`${cwd}/${node.name}`)
   }
   function toggleSearch() {
     setSearching(!searching)
@@ -54,7 +42,7 @@ export default function Explorer({ cwd, onNavigate, onBack, onForward, canBack, 
     if (searching) searchToggleRef.current?.focus()
   }
 
-  return <section className="explorer-panel" aria-label="file explorer">
+  return <section className="explorer-panel" hidden={!active} aria-label="file explorer">
     <header className="explorer-header">
       <div className="explorer-sidebar-title">files</div>
       <div className="explorer-location-tools">
@@ -81,16 +69,15 @@ export default function Explorer({ cwd, onNavigate, onBack, onForward, canBack, 
         {filesystem.children.filter(node => node.type === 'folder').map(node => <button key={node.name} className={cwd.startsWith(`${HOME}/${node.name}`) ? 'sidebar-active' : ''} onClick={() => navigate(`${HOME}/${node.name}`)}><Folder size={18} aria-hidden="true" /><span>{node.name}</span></button>)}
         <div className="sidebar-divider" />
         {['about.txt', 'contact.txt', 'resume.pdf'].map(name => {
-          const node = getNode(`${HOME}/${name}`)
           const Icon = name === 'resume.pdf' ? FileUser : FileText
-          return <button key={name} aria-label={`open ${name}`} onClick={event => open(node, event.currentTarget)}><Icon size={18} aria-hidden="true" /><span>{name === 'resume.pdf' ? 'résumé' : name.replace('.txt', '')}</span></button>
+          return <button key={name} aria-label={`open ${name}`} onClick={event => { if (event.detail <= 1) onPreview(`${HOME}/${name}`) }}><Icon size={18} aria-hidden="true" /><span>{name === 'resume.pdf' ? 'résumé' : name.replace('.txt', '')}</span></button>
         })}
       </nav>
       <div className="explorer-main">
         <h1 className="sr-only">{cwd === HOME ? 'home' : current?.name}</h1>
         {layout === 'list' && <div className="explorer-column-headings" aria-hidden="true"><span>name</span><span>size</span><span>type</span></div>}
         <div className={`explorer-files ${layout === 'grid' ? 'explorer-grid' : 'explorer-list'}`}>
-          {visible.map(node => <button className="explorer-file" key={node.name} aria-label={`${node.name} ${fileType(node)} ${node.description}`} title={node.description} onClick={event => open(node, event.currentTarget)}>
+          {visible.map(node => <button className="explorer-file" key={node.name} aria-label={`${node.name} ${fileType(node)} ${node.description}`} title={node.description} onClick={event => open(node, event)}>
             <span className="explorer-filename"><FileIcon node={node} size={layout === 'grid' ? 76 : 24} /><span>{node.name}</span></span>
             {layout === 'list' && <><span className="explorer-filesize">{fileSize(node)}</span><span className="explorer-filetype">{fileType(node)}</span></>}
           </button>)}
@@ -98,13 +85,5 @@ export default function Explorer({ cwd, onNavigate, onBack, onForward, canBack, 
         {!visible.length && <p className="explorer-empty">no files match “{query}”. <button onClick={() => setQuery('')}>clear search</button></p>}
       </div>
     </div>
-    {selected && <dialog className="document-preview" ref={previewRef} tabIndex={-1} aria-label={`preview of ${selected.name}`} onCancel={event => { event.preventDefault(); closePreview() }} onClick={event => {
-      if (event.target !== event.currentTarget) return
-      const bounds = event.currentTarget.getBoundingClientRect()
-      if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) closePreview()
-    }}>
-      <header><FileIcon node={selected} size={23} /><h2>{selected.name}</h2><button onClick={closePreview} aria-label="close preview" title="close preview"><X size={18} /></button></header>
-      <div className="document-body"><p className="document-description">{selected.description}</p><FileContent node={selected} /></div>
-    </dialog>}
   </section>
 }

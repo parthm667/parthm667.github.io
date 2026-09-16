@@ -15,14 +15,22 @@ export function FileLink({ href, children, className }) {
 
 export function FileContent({ node }) {
   if (!node) return null
+  const lines = node.content?.split('\n') ?? []
   return <div className="file-content">
-    {node.content && node.content.split('\n').map((line, index) => (
-      <p key={index}>{line.split(/(https?:\/\/[^\s]+|mailto:[^\s]+)/g).map((part, partIndex) => (
+    {lines.map((line, index) => {
+      if (!line) return <div className="file-paragraph-break" key={index} />
+      const Tag = index === 0 ? 'h3' : lines[index - 1] === '' && lines[index + 1] && line.length < 45 && !line.includes('/') ? 'h4' : 'p'
+      return <Tag key={index}>{line.split(/(https?:\/\/[^\s]+|mailto:[^\s]+)/g).map((part, partIndex) => (
         /^(https?:\/\/|mailto:)/.test(part)
           ? <FileLink href={part} key={partIndex}>{part.toLowerCase()}</FileLink>
           : part
-      ))}</p>
-    ))}
+      ))}</Tag>
+    })}
+    {node.media?.map(media => <figure key={media.src}>
+      <a href={media.src} target="_blank" rel="noopener noreferrer" aria-label="open full-size figure"><img src={media.src} alt={media.alt} width="2250" height="1500" /></a>
+      <figcaption>{media.caption}</figcaption>
+    </figure>)}
+    {node.links?.length > 0 && <nav className="document-links" aria-label="sources">{node.links.map(link => <FileLink key={link.href} href={link.href}>{link.label} <ExternalLink size={13} aria-hidden="true" /></FileLink>)}</nav>}
     {node.href && <FileLink href={node.href} className="file-open-link">
       {node.name.endsWith('.pdf') ? 'open résumé' : 'open link'} <ExternalLink size={14} aria-hidden="true" />
     </FileLink>}

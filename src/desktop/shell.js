@@ -1,10 +1,10 @@
-import { HOME, resolvePath, getNode, listDirectory, parentPath } from './filesystem.js'
+import { HOME, FEATURED_WORK, resolvePath, getNode, listDirectory, parentPath } from './filesystem.js'
 import { EASTER_EGG_COMMANDS, easterEgg } from './easterEggs.js'
 
 const aliases = {
   help: 'help', ls: 'ls', cd: 'cd', pwd: 'pwd', cat: 'cat',
   open: 'open', 'xdg-open': 'open', clear: 'clear', whoami: 'whoami',
-  tree: 'tree', explorer: 'explorer', rm: 'rm',
+  tree: 'tree', explorer: 'explorer', rm: 'rm', overview: 'overview', work: 'overview', view: 'view',
   ...Object.fromEntries(EASTER_EGG_COMMANDS.map(command => [command, command])),
 }
 
@@ -33,6 +33,10 @@ function tokenize(raw, allowUnclosed = false) {
 }
 
 const help = `look around
+  overview              selected work, with links
+  view polymarket       open a project writeup
+  view uav              read the paper + see the figure
+  view nuntius          agent evaluation work
   ls                    list files and folders
   ls -la                list all files with details
   cd projects           go into a folder
@@ -49,7 +53,7 @@ const help = `look around
   explorer              switch to file explorer
 
 tab completes commands, folders, and filenames. ↑ / ↓ recall commands.
-use quotes around paths with spaces.
+use quotes around paths with spaces. chain commands with && or ;.
 a few other commands work too.`
 
 function treeLines(node, indent = '') {
@@ -79,7 +83,52 @@ function missingPathHint(entered, command, input, cwd) {
   return `did you mean: ${entered} ${/\s/.test(target) ? `"${target}"` : target}? press tab to complete names.`
 }
 
+// Parse only the small shell language this portfolio supports. Quoted operators
+// are ordinary text; no command is ever passed to a real shell.
+function splitCommands(raw) {
+  const commands = []
+  let quote = null, start = 0, operator = null
+  for (let index = 0; index < raw.length; index++) {
+    const char = raw[index]
+    if (quote) { if (char === quote) quote = null; continue }
+    if (char === '"' || char === "'") { quote = char; continue }
+    if (char === ';' || (char === '&' && raw[index + 1] === '&')) {
+      const command = raw.slice(start, index).trim()
+      if (!command) return { error: 'missing command before the separator.' }
+      commands.push({ command, operator })
+      operator = char === ';' ? ';' : '&&'
+      if (operator === '&&') index++
+      start = index + 1
+    } else if ('|&<>'.includes(char)) return { error: 'pipes, redirects, and background jobs are not supported here. use && to run commands in order.' }
+  }
+  if (quote) return { error: 'missing closing quote. put paths with spaces inside matching quotes.' }
+  const last = raw.slice(start).trim()
+  if (!last && operator === '&&') return { error: 'missing command after &&.' }
+  if (last) commands.push({ command: last, operator })
+  return { commands }
+}
+
 export function executeCommand(raw, cwd = HOME) {
+  const parsed = splitCommands(raw)
+  if (parsed.error) return { cwd, lines: [{ type: 'error', text: parsed.error }] }
+  let result = { cwd, lines: [] }, failed = false
+  for (const { command, operator } of parsed.commands) {
+    if (operator === '&&' && failed) continue
+    const next = executeSingle(command, result.cwd)
+    failed = next.lines.some(line => line.type === 'error')
+    result = { ...result, ...next, lines: [...(next.clear ? [] : result.lines), ...next.lines] }
+  }
+  return result
+}
+
+const projectShortcuts = {
+  uav: `${HOME}/research/uav-suspension/readme.md`,
+  polymarket: `${HOME}/projects/polymarket/readme.md`,
+  nuntius: `${HOME}/experience/nuntius.txt`,
+  'order-book': `${HOME}/projects/order-book/readme.md`,
+}
+
+function executeSingle(raw, cwd = HOME) {
   const result = { cwd, lines: [] }
   const error = text => ({ ...result, lines: [{ type: 'error', text }] })
   const text = value => ({ ...result, lines: [{ type: 'text', text: value }] })
@@ -91,23 +140,30 @@ export function executeCommand(raw, cwd = HOME) {
   if (!command) {
     const path = resolvePath(entered, cwd)
     if (!rawArgs.length && path && getNode(path)?.type === 'folder') return { ...result, cwd: path }
+    if (!rawArgs.length && Object.hasOwn(projectShortcuts, entered)) return executeSingle(`view ${entered}`, cwd)
     return error(`command not found: ${entered}. type help to see what works here.`)
   }
   if (command === 'rm') return text('nice try. i still need those files. nothing was deleted.')
   if (EASTER_EGG_COMMANDS.includes(command)) return text(easterEgg(command, rawArgs))
   if (command === 'ls' && rawArgs.some(arg => arg.startsWith('-') && !/^-[la]+$/.test(arg))) return error('unknown ls option. try ls, ls -l, ls -a, or ls -la.')
   const args = command === 'ls' ? rawArgs.filter(arg => !/^-[la]+$/.test(arg)) : rawArgs
-  const takesPath = ['ls', 'cd', 'cat', 'open', 'tree', 'explorer'].includes(command)
+  const takesPath = ['ls', 'cd', 'cat', 'open', 'view', 'tree', 'explorer'].includes(command)
   if (args.length > (takesPath ? 1 : 0)) return error('that is too many arguments. use quotes around paths with spaces, or type help.')
   if (command === 'help') return text(help)
+  if (command === 'overview') return { ...result, lines: [{ type: 'overview', entries: FEATURED_WORK }] }
   if (command === 'clear') return { ...result, clear: true }
   if (command === 'pwd') return text(cwd)
   if (command === 'whoami') return text('parth mhaske\ncs + applied math at umd, class of 2028.\nread about.txt for a little more.')
-  if ((command === 'cat' || command === 'open') && !args[0]) return error(`usage: ${command} <file or path>. try ${command} about.txt.`)
-  const path = resolvePath(args[0] ?? (command === 'cd' ? '~' : '.'), cwd)
+  if (['cat', 'open', 'view'].includes(command) && !args[0]) return error(`usage: ${command} <file or path>. try ${command} about.txt.`)
+  let path = command === 'view' && Object.hasOwn(projectShortcuts, args[0]) ? projectShortcuts[args[0]] : resolvePath(args[0] ?? (command === 'cd' ? '~' : '.'), cwd)
   if (!path) return error('that path is outside this home directory or contains invalid characters. try cd ~.')
-  const node = getNode(path)
+  let node = getNode(path)
   if (!node) return error(`cannot find: ${args[0]}. ${missingPathHint(entered, command, args[0], cwd)}`)
+  if (command === 'view') {
+    if (node.type === 'folder') { path = `${path}/readme.md`; node = getNode(path) }
+    if (!node) return error('this folder has no readme. use ls to see its files.')
+    return { ...result, previewPath: path }
+  }
   if (command === 'cd' || command === 'explorer') {
     if (node.type !== 'folder') return error(`${node.name} is a file. use open "${args[0]}" to read it.`)
     return { ...result, cwd: path, ...(command === 'explorer' ? { mode: 'explorer' } : {}) }
@@ -124,7 +180,7 @@ export function executeCommand(raw, cwd = HOME) {
 export function completeCommand(raw, cwd = HOME) {
   if (!/\s/.test(raw.trimStart())) {
     return [
-      ...Object.keys(aliases).filter(command => command.startsWith(raw.trim())),
+      ...[...Object.keys(aliases), ...Object.keys(projectShortcuts)].filter(command => command.startsWith(raw.trim())),
       ...completeCommand(`cd ${raw.trim()}`, cwd).map(suggestion => suggestion.slice(3)),
     ]
   }
@@ -133,17 +189,18 @@ export function completeCommand(raw, cwd = HOME) {
   const command = aliases[entered]
   const options = command === 'ls' ? rawArgs.filter(arg => /^-[la]+$/.test(arg)) : []
   const args = command === 'ls' ? rawArgs.filter(arg => !/^-[la]+$/.test(arg)) : rawArgs
-  if (!['ls', 'cd', 'cat', 'open', 'tree', 'explorer'].includes(command) || args.length > 1) return []
+  if (!['ls', 'cd', 'cat', 'open', 'view', 'tree', 'explorer'].includes(command) || args.length > 1) return []
   const partial = args[0] ?? ''
   const separator = partial.lastIndexOf('/')
   const prefix = partial.slice(0, separator + 1)
   const name = partial.slice(separator + 1)
   const directory = resolvePath(prefix || '.', cwd)
   if (!directory) return []
-  return listDirectory(directory)
+  const shortcuts = command === 'view' && !prefix ? Object.keys(projectShortcuts).filter(key => key.startsWith(name)).map(key => `view ${key}`) : []
+  return [...shortcuts, ...listDirectory(directory)
     .filter(node => node.name.startsWith(name) && (!['cd', 'explorer'].includes(command) || node.type === 'folder'))
     .map(node => {
       const path = `${prefix}${node.name}${node.type === 'folder' ? '/' : ''}`
       return `${[entered, ...options].join(' ')} ${/\s/.test(path) ? `"${path}"` : path}`
-    })
+    })]
 }
