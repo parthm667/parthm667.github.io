@@ -217,7 +217,7 @@ test('ls is names-only, ls -l has Unix metadata, and files remain safe', async (
   await command(page, 'cd missing')
   await expect(screen(page)).toContainText('cannot find: missing')
   await command(page, 'cat about.txt')
-  await expect(screen(page)).toContainText('class of 2027')
+  await expect(screen(page)).toContainText('class of 2028')
 })
 
 test('existing essay and static assets remain reachable', async ({ page, request }) => {

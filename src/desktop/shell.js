@@ -102,7 +102,7 @@ export function executeCommand(raw, cwd = HOME) {
   if (command === 'help') return text(help)
   if (command === 'clear') return { ...result, clear: true }
   if (command === 'pwd') return text(cwd)
-  if (command === 'whoami') return text('parth mhaske\ncs + applied math at umd, class of 2027.\nread about.txt for a little more.')
+  if (command === 'whoami') return text('parth mhaske\ncs + applied math at umd, class of 2028.\nread about.txt for a little more.')
   if ((command === 'cat' || command === 'open') && !args[0]) return error(`usage: ${command} <file or path>. try ${command} about.txt.`)
   const path = resolvePath(args[0] ?? (command === 'cd' ? '~' : '.'), cwd)
   if (!path) return error('that path is outside this home directory or contains invalid characters. try cd ~.')
