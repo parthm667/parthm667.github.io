@@ -85,7 +85,7 @@ function missingPathHint(entered, command, input, cwd) {
 
 // Parse only the small shell language this portfolio supports. Quoted operators
 // are ordinary text; no command is ever passed to a real shell.
-function splitCommands(raw) {
+function splitCommands(raw, incomplete = false) {
   const commands = []
   let quote = null, start = 0, operator = null
   for (let index = 0; index < raw.length; index++) {
@@ -101,11 +101,11 @@ function splitCommands(raw) {
       start = index + 1
     } else if ('|&<>'.includes(char)) return { error: 'pipes, redirects, and background jobs are not supported here. use && to run commands in order.' }
   }
-  if (quote) return { error: 'missing closing quote. put paths with spaces inside matching quotes.' }
+  if (quote && !incomplete) return { error: 'missing closing quote. put paths with spaces inside matching quotes.' }
   const last = raw.slice(start).trim()
-  if (!last && operator === '&&') return { error: 'missing command after &&.' }
+  if (!last && operator === '&&' && !incomplete) return { error: 'missing command after &&.' }
   if (last) commands.push({ command: last, operator })
-  return { commands }
+  return { commands, completionStart: start }
 }
 
 export function executeCommand(raw, cwd = HOME) {
@@ -178,6 +178,17 @@ function executeSingle(raw, cwd = HOME) {
 }
 
 export function completeCommand(raw, cwd = HOME) {
+  const parsed = splitCommands(raw, true)
+  if (parsed.error) return []
+  if (parsed.completionStart) {
+    const prefix = raw.slice(0, parsed.completionStart)
+    const current = raw.slice(parsed.completionStart)
+    const spacing = current.match(/^\s*/)[0]
+    // The shell is a pure virtual model: previewing its cwd cannot open a
+    // reader, switch views, or execute anything on the visitor's computer.
+    const directory = executeCommand(prefix.replace(/(?:;|&&)\s*$/, ''), cwd).cwd
+    return completeCommand(current.trimStart(), directory).map(match => `${prefix}${spacing}${match}`)
+  }
   if (!/\s/.test(raw.trimStart())) {
     return [
       ...[...Object.keys(aliases), ...Object.keys(projectShortcuts)].filter(command => command.startsWith(raw.trim())),
