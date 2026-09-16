@@ -42,6 +42,7 @@ html[data-room='desktop'] body { background: #101113; }
 .desktop[data-view='explorer'] .mode-switch button[aria-pressed='true'] { background: #484848; }
 .desktop[data-view='explorer'] .header-links a { background: #383838; border-color: #262626; }
 .explorer-panel { --desk-accent: #e95420; display: flex; flex: 1; flex-direction: column; min-height: 0; min-width: 0; color: #f6f5f4; background: #242424; font: 13px/1.45 'Ubuntu UI', Ubuntu, sans-serif; }
+.explorer-panel[hidden] { display: none; }
 .explorer-header { display: flex; flex: 0 0 48px; min-width: 0; background: #303030; border-bottom: 1px solid #1d1d1d; box-shadow: inset 0 1px #ffffff05; }
 .explorer-sidebar-title { display: flex; align-items: center; justify-content: center; width: 200px; flex-shrink: 0; font-weight: 500; border-right: 1px solid #242424; }
 .explorer-location-tools { min-width: 0; flex: 1; display: flex; align-items: center; gap: 8px; padding: 5px 9px; }
@@ -92,17 +93,26 @@ html[data-room='desktop'] body { background: #101113; }
 .explorer-filesize, .explorer-column-headings > :nth-child(2) { text-align: right; }
 .explorer-empty { padding: 55px 15px; text-align: center; color: #b6b3b1; }
 .explorer-empty button { color: #f18c69; text-decoration: underline; }
-.document-preview { width: min(640px, calc(100vw - 32px)); max-height: min(760px, calc(100dvh - 60px)); margin: auto; padding: 0; overflow: hidden; border: 1px solid #55514e; border-radius: 11px; color: #f6f5f4; background: #242424; box-shadow: 0 15px 65px #0009; font: 14px/1.6 'Ubuntu UI', Ubuntu, sans-serif; }
+.document-preview { width: min(800px, calc(100vw - 32px)); max-height: calc(100dvh - 60px); margin: auto; padding: 0; overflow: hidden; border: 1px solid #55514e; border-radius: 11px; color: #f6f5f4; background: #242424; box-shadow: 0 15px 65px #0009; font: 14px/1.6 'Ubuntu UI', Ubuntu, sans-serif; }
 .document-preview[open] { display: flex; flex-direction: column; }
+.document-preview:focus { outline: none; }
 .document-preview::backdrop { background: #0007; }
 .document-preview > header { display: flex; flex-shrink: 0; align-items: center; gap: 10px; min-height: 48px; padding: 7px 12px; border-bottom: 1px solid #1e1e1e; background: #383838; }
-.document-preview h2 { font: 500 14px/1.4 'Ubuntu UI', Ubuntu, sans-serif; }
+.document-preview h2 { min-width: 0; overflow-wrap: anywhere; font: 500 13px/1.4 var(--desk-mono); }
 .document-preview header > button { margin-left: auto; width: 29px; height: 29px; display: grid; place-items: center; border-radius: 50%; background: #ffffff0c; }
 .document-preview header > button:hover { background: #ffffff20; }
-.document-body { padding: 24px; overflow-y: auto; }
+.document-body { padding: 32px 40px; overflow-y: auto; }
 .document-description { margin-bottom: 20px; font-size: 12px; color: #b6b3b1; }
 .file-content { overflow-wrap: anywhere; }
 .file-content p { white-space: pre-wrap; min-height: .7em; }
+.file-content h3 { font-weight: 500; font-size: 23px; line-height: 1.35; margin: 0 0 8px; }
+.file-content h4 { font-size: 12px; font-weight: 500; color: #b6b3b1; margin: 2px 0 7px; }
+.file-paragraph-break { height: 18px; }
+.file-content figure { margin: 28px 0; }
+.file-content figure img { width: 100%; height: auto; background: #fff; border-radius: 3px; }
+.file-content figcaption { margin-top: 10px; color: #bbb; font-size: 12px; line-height: 1.5; }
+.document-links { display: flex; flex-wrap: wrap; gap: 12px 24px; margin-top: 24px; padding-top: 18px; border-top: 1px solid #ffffff20; }
+.document-links a { display: inline-flex; align-items: center; gap: 8px; }
 .document-preview .file-content { font-size: 14px; line-height: 1.7; color: #f6f5f4; }
 .file-content a { color: #f18c69; text-decoration: underline; text-underline-offset: 3px; }
 .file-open-link { margin-top: 12px; display: inline-flex; align-items: center; gap: 8px; }

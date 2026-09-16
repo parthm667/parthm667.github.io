@@ -7,6 +7,14 @@ import { LineEditor } from '../src/desktop/terminalInput.js'
 
 const plain = value => value.replace(/\x1b\][^\x07]*\x07/g, '').replace(/\x1b\[[0-9;]*[A-Za-z]/g, '')
 
+test('overview prose wraps at word boundaries on phone-width terminals', () => {
+  const output = formatOutput(executeCommand('overview').lines[0], 38)
+  assert.match(output, /portfolio-view:/)
+  for (const line of plain(output).split('\r\n')) assert.ok(line.length <= 38, line)
+  assert.ok(plain(output).includes('touchdown'))
+  assert.ok(plain(output).includes('polymarket'))
+})
+
 test('normal ls is compact filenames with no descriptions or table heading', () => {
   const output = plain(formatListing({ entries: listDirectory(HOME), path: HOME }, 100))
   assert.match(output, /projects/)
@@ -22,10 +30,11 @@ test('narrow ls layouts retain every name and fit one column', () => {
   assert.equal(output.split('\r\n').length, listDirectory(HOME).length)
 })
 
-test('ls -l carries long format and prints Unix metadata', () => {
+test('ls -l prints permissions and actual content counts without invented dates', () => {
   const listing = executeCommand('ls -l', HOME).lines[0]
   assert.equal(listing.longFormat, true)
-  assert.match(plain(formatListing(listing, 100)), /drwxr-xr-x\s+2 parth parth\s+4096 jul 29 2026 projects/)
+  assert.match(plain(formatListing(listing, 100)), /drwxr-xr-x\s+4 items projects/)
+  assert.doesNotMatch(plain(formatListing(listing, 100)), /jul 29|4096/)
   assert.equal(executeCommand('ls', HOME).lines[0].longFormat, false)
 })
 

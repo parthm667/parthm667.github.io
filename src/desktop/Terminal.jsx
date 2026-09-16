@@ -5,20 +5,24 @@ import { WebLinksAddon } from '@xterm/addon-web-links'
 import { TerminalSession } from './terminalSession.js'
 import '@xterm/xterm/css/xterm.css'
 
-export default function Terminal({ cwd, active, onNavigate, onMode }) {
+export default function Terminal({ cwd, active, onNavigate, onMode, onPreview }) {
   const hostRef = useRef(null)
   const sessionRef = useRef(null)
   const fitRef = useRef(null)
-  const callbacksRef = useRef({ onNavigate, onMode })
+  const callbacksRef = useRef({ onNavigate, onMode, onPreview })
   const initialCwd = useRef(cwd)
   const [booting, setBooting] = useState(true)
 
-  useEffect(() => { callbacksRef.current = { onNavigate, onMode } }, [onNavigate, onMode])
+  useEffect(() => { callbacksRef.current = { onNavigate, onMode, onPreview } }, [onNavigate, onMode, onPreview])
 
   useEffect(() => {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
     let disposed = false
     const openLink = (_event, uri) => {
+      if (uri.startsWith('portfolio-view:')) {
+        sessionRef.current?.previewVirtualLink(uri)
+        return
+      }
       if (uri.startsWith('portfolio:')) {
         sessionRef.current?.openVirtualLink(uri)
         return
@@ -59,6 +63,7 @@ export default function Terminal({ cwd, active, onNavigate, onMode }) {
       cwd: initialCwd.current,
       onNavigate: path => callbacksRef.current.onNavigate(path),
       onMode: mode => callbacksRef.current.onMode(mode),
+      onPreview: path => callbacksRef.current.onPreview?.(path),
       onBootComplete: () => {
         if (disposed) return
         setBooting(false)
@@ -68,12 +73,24 @@ export default function Terminal({ cwd, active, onNavigate, onMode }) {
     sessionRef.current = session
     fitRef.current = fit
     const dataListener = terminal.onData(data => session.input(data))
+    let physicalKey = false
+    // xterm suppresses input-only insertText events in screen-reader mode.
+    // Handle virtual keyboards/bulk insertion without duplicating physical keys
+    // or IME composition, both of which already arrive through xterm.onData.
+    const inputOnly = event => {
+      if (event.inputType !== 'insertText' || !event.data || event.isComposing || physicalKey) return
+      event.preventDefault()
+      session.input(event.data)
+    }
+    terminal.textarea.addEventListener('beforeinput', inputOnly)
     terminal.attachCustomKeyEventHandler(event => {
       if (!session.active) return false
+      if (event.type === 'keyup') physicalKey = false
       if (event.type !== 'keydown') return true
+      physicalKey = event.key !== 'Unidentified' && event.keyCode !== 229
       if (event.key === 'Tab' && event.shiftKey) return false
       if (event.ctrlKey && event.key.toLowerCase() === 'c' && terminal.hasSelection()) return false
-      if (session.booting && (event.key === 'Escape' || event.key === 'Enter')) {
+      if (session.booting && event.key === 'Escape') {
         event.preventDefault()
         session.skipIntro()
         return false
@@ -100,6 +117,7 @@ export default function Terminal({ cwd, active, onNavigate, onMode }) {
       observer.disconnect()
       reducedMotion.removeEventListener('change', motionChanged)
       dataListener.dispose()
+      terminal.textarea?.removeEventListener('beforeinput', inputOnly)
       session.dispose()
       terminal.dispose()
       sessionRef.current = null

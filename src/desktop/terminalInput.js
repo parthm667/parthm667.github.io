@@ -1,5 +1,7 @@
 import { safeTerminalText } from './terminalFormat.js'
 
+export const MAX_INPUT_LENGTH = 1024
+
 export class LineEditor {
   constructor() {
     this.history = []
@@ -17,12 +19,13 @@ export class LineEditor {
   }
 
   set(value) {
-    this.characters = Array.from(value)
+    this.characters = Array.from(value.slice(0, MAX_INPUT_LENGTH * 2)).slice(0, MAX_INPUT_LENGTH)
     this.cursor = this.characters.length
   }
 
   insert(value) {
-    const characters = Array.from(safeTerminalText(value.replace(/\r\n?|\n|\t/g, ' ')))
+    const available = MAX_INPUT_LENGTH - this.characters.length
+    const characters = Array.from(safeTerminalText(value.slice(0, MAX_INPUT_LENGTH * 2).replace(/\r\n?|\n|\t/g, ' '))).slice(0, available)
     this.characters.splice(this.cursor, 0, ...characters)
     this.cursor += characters.length
     this.completion = null
