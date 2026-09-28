@@ -1,5 +1,17 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "redirects": [
+    {
+      "source": "/vigil",
+      "destination": "https://github.com/parthm667/vigil",
+      "permanent": false
+    },
+    {
+      "source": "/clarify",
+      "destination": "https://github.com/parthm667/clarify",
+      "permanent": false
+    }
+  ],
   "rewrites": [
     {
       "source": "/nj-hin/api/(.*)",
