@@ -19,6 +19,8 @@ html[data-room='resume-picker'] body{background:#f0f4f9;color:#172b46;font-famil
 .rp-intro{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:32px}
 .rp-intro p{color:var(--rp-muted);margin-top:10px;font-size:16px}
 .rp-private{display:flex;align-items:center;gap:7px;color:var(--rp-muted);font-size:12px;padding-top:12px;white-space:nowrap}
+.rp-tool-links{display:flex;flex-direction:column;align-items:flex-end;gap:9px}
+.rp-tool-links>a{font-size:12px;color:var(--rp-accent);text-underline-offset:4px}
 .rp-button{display:inline-flex;justify-content:center;align-items:center;gap:9px;min-height:43px;border:1px solid var(--rp-line);border-radius:6px;background:#fff;color:var(--rp-ink);padding:10px 16px;font-weight:500;cursor:pointer;text-decoration:none;line-height:1.3}
 .rp-button:hover{background:#edf2fa}
 .rp-button:disabled{opacity:.55;cursor:default}
@@ -126,6 +128,35 @@ html[data-room='resume-picker'] body{background:#f0f4f9;color:#172b46;font-famil
 .rp-gate-panel>.rp-error{margin:17px 0 0;color:#a32626}
 .rp-gate-panel>.rp-gate-foot{font-size:11px;border-top:1px solid var(--rp-line);margin-top:26px;padding-top:20px}
 .rp-gate-panel .rp-status{margin-top:28px;font-size:13px}
+.rp-answers{border:1px solid var(--rp-line);border-radius:10px;padding:30px;background:#fff;margin:24px 0 28px;scroll-margin-top:24px}
+.rp-answers>.rp-section-heading{margin-bottom:15px}
+.rp-answer-intro{font-size:14px;margin-bottom:9px}
+.rp-answers>.rp-field-help{margin-bottom:25px}
+.rp-answer-workspace{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:30px}
+.rp-answer-form{min-width:0}
+.rp-answer-form .rp-api-key{margin-bottom:12px}
+.rp-answer-form .rp-answer-error{margin-top:18px;margin-bottom:0}
+.rp-draft-panel{min-width:0;background:#f7f9fd;border:1px solid var(--rp-line);border-radius:7px;padding:22px;align-self:start}
+.rp-draft-panel textarea{min-height:290px;margin-bottom:12px;background:#fff}
+.rp-draft-empty{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:15px;min-height:330px;color:var(--rp-muted);font-size:14px;max-width:52ch}
+.rp-draft-empty>.rp-field-help{margin:0;max-width:48ch}
+.rp-draft-empty>svg{color:#7b8da7}
+.rp-draft-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.rp-draft-actions output{font-size:12px;color:var(--rp-muted);font-variant-numeric:tabular-nums}
+.rp-draft-actions .rp-button{font-size:12px;min-height:37px;padding:8px 11px;white-space:nowrap}
+.rp-over-limit{font-size:12px;color:#a32626;margin-bottom:13px;line-height:1.65}
+.rp-copy-status{font-size:12px;margin:12px 0;color:#4b607c}
+.rp-confirmation{border-left:3px solid #bd8a18;background:#fff8e9;padding:15px 16px;margin-bottom:20px;color:#745311;overflow-wrap:anywhere}
+.rp-confirmation h3{font-size:14px;margin-bottom:10px}
+.rp-confirmation ul{padding-left:18px;font-size:13px;line-height:1.75}
+.rp-confirmation p{font-size:12px;margin-top:12px}
+.rp-answer-sources{margin-top:19px}
+.rp-answer-sources>ul{list-style:none;display:grid;gap:19px;padding-bottom:17px;font-size:12px;overflow-wrap:anywhere}
+.rp-answer-sources strong{font-size:12px;font-weight:500;color:#4b607c}
+.rp-answer-sources blockquote{margin-top:8px;border-left:2px solid #bdcadd;padding-left:11px;line-height:1.75;white-space:pre-wrap}
+.rp-model-note{font-size:10px;color:var(--rp-muted);overflow-wrap:anywhere;margin-top:10px}
+.rp-story-bank{border-top:1px solid var(--rp-line);padding-top:10px}
 .rp-sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-@media(max-width:900px){.rp-workspace{grid-template-columns:minmax(0,1fr)}.rp-library{border-left:0;border-top:1px solid var(--rp-line)}.rp-preview-details pre{max-height:300px}.rp-library-foot{margin-top:22px}.rp-recommendation{grid-template-columns:150px minmax(0,1fr);gap:22px}}
+@media(max-width:900px){.rp-workspace{grid-template-columns:minmax(0,1fr)}.rp-library{border-left:0;border-top:1px solid var(--rp-line)}.rp-preview-details pre{max-height:300px}.rp-library-foot{margin-top:22px}.rp-recommendation{grid-template-columns:150px minmax(0,1fr);gap:22px}.rp-answer-workspace{grid-template-columns:minmax(0,1fr);gap:25px}.rp-draft-empty{min-height:180px}}
 @media(max-width:560px){.rp-header{padding:13px 15px}.rp-brand{font-size:13px;gap:8px}.rp-brand>span{width:28px;height:28px;font-size:11px}.rp-quiet{padding:9px 4px;font-size:12px;gap:6px}.rp-main{padding:27px 15px 12px}.rp-intro{display:block;margin-bottom:24px}.rp-intro p{font-size:14px;margin-top:8px}.rp-private{padding-top:14px}.rp-input-section,.rp-library{padding:22px 18px}.rp-section-heading{gap:10px}.rp-section-heading h2{font-size:18px}.rp-section-heading>.rp-muted{font-size:10px;max-width:82px}.rp-options{grid-template-columns:1fr;gap:15px}.rp-page .rp-jd{min-height:230px}.rp-analyze-row .rp-primary{flex:1}.rp-resume-tabs button{padding:10px 7px}.rp-results{padding:22px 17px;margin-top:20px}.rp-results>.rp-section-heading{align-items:flex-start}.rp-results>.rp-section-heading>.rp-tag{font-size:10px}.rp-eligibility{padding:15px 12px;gap:10px}.rp-eligibility h3{font-size:15px}.rp-recommendation{grid-template-columns:1fr;gap:13px;margin:24px 0}.rp-recommendation h3{font-size:30px}.rp-findings-grid{grid-template-columns:1fr;gap:23px;margin:27px 0}.rp-concepts{grid-template-columns:1fr}.rp-gate{padding:22px 18px}.rp-gate-panel{padding:26px 23px;margin-top:60px}.rp-gate-panel h1{font-size:26px}.rp-empty{justify-content:flex-start;padding:28px 4px;font-size:13px}.rp-footer{padding:12px 18px 25px}.rp-limitations{padding:17px}}
+@media(max-width:560px){.rp-tool-links{flex-direction:row;align-items:center;justify-content:space-between;gap:14px;margin-top:14px}.rp-tool-links .rp-private{padding-top:0;font-size:11px}.rp-tool-links>a{font-size:11px}.rp-answers{padding:22px 17px}.rp-answers>.rp-section-heading{align-items:flex-start}.rp-answers>.rp-section-heading>.rp-tag{font-size:10px}.rp-draft-panel{padding:16px}.rp-draft-actions{flex-wrap:wrap;align-items:center;row-gap:11px}.rp-draft-actions output{font-size:11px}.rp-draft-actions .rp-button{min-height:42px}.rp-answer-intro{font-size:13px}.rp-answers>.rp-field-help{margin-bottom:23px}}

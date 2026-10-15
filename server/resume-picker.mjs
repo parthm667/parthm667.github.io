@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { promisify } from 'node:util';
 import { getVercelOidcToken } from '@vercel/oidc';
 import { analyzeJob, scoreAnalysis } from '../src/resume-picker/analysis.js';
+import { draftApplicationAnswer, validateAnswerInput } from './application-answer.mjs';
 
 const deriveKey = promisify(pbkdf2);
 const SESSION_MS = 8 * 60 * 60 * 1000;
@@ -16,7 +17,7 @@ const PRIVATE_HEADERS = {
   'X-Robots-Tag': 'noindex, nofollow, noarchive',
   'X-Content-Type-Options': 'nosniff',
 };
-const METHODS = { session: 'GET', login: 'POST', logout: 'POST', resumes: 'GET', pdf: 'GET', analyze: 'POST' };
+const METHODS = { session: 'GET', login: 'POST', logout: 'POST', resumes: 'GET', pdf: 'GET', analyze: 'POST', answer: 'POST' };
 
 function json(data, status = 200, headers = {}) {
   return Response.json(data, { status, headers: { ...PRIVATE_HEADERS, ...headers } });
@@ -109,7 +110,7 @@ async function resolveAIAuth(apiKey, getOidcToken) {
   return typeof token === 'string' && token.trim() ? { provider: 'vercel-gateway', token: token.trim() } : null;
 }
 
-async function analyzeWithAI(input, auth) {
+async function requestAIJson(messages, auth, { maxCompletionTokens = 12000, signal = AbortSignal.timeout(45000) } = {}) {
   try {
     const configuredModel = process.env.OPENAI_MODEL || DEFAULT_AI_MODEL;
     const gateway = auth.provider === 'vercel-gateway';
@@ -117,13 +118,13 @@ async function analyzeWithAI(input, auth) {
     const response = await fetch(gateway ? 'https://ai-gateway.vercel.sh/v1/chat/completions' : 'https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${auth.token}` },
-      signal: AbortSignal.timeout(45000),
+      signal,
       body: JSON.stringify({
         model,
         ...(model.replace(/^openai\//, '') === DEFAULT_AI_MODEL ? { reasoning_effort: 'none' } : {}),
         ...(gateway ? { providerOptions: { gateway: { only: ['openai'] } } } : {}),
-        store: false, response_format: { type: 'json_object' }, temperature: .1, max_completion_tokens: 12000,
-        messages: [{ role: 'system', content: AI_INSTRUCTIONS }, { role: 'user', content: JSON.stringify({ JD: input.jd, RESUMES: input.resumes, USER_FACTS: input.facts, companyType: input.companyType }) }],
+        store: false, response_format: { type: 'json_object' }, temperature: .1, max_completion_tokens: maxCompletionTokens,
+        messages,
       }),
     });
     if (!response.ok) {
@@ -134,11 +135,18 @@ async function analyzeWithAI(input, auth) {
     }
     const result = await readJson(response, 2 * 1024 * 1024);
     if (result.choices?.[0]?.finish_reason !== 'stop' || typeof result.choices[0].message?.content !== 'string') throw new Error('Incomplete model response.');
-    return { ...scoreAnalysis(JSON.parse(result.choices[0].message.content), input.resumes, input.facts), mode: 'ai', model: typeof result.model === 'string' ? result.model : model, provider: auth.provider };
+    return { data: JSON.parse(result.choices[0].message.content), model: typeof result.model === 'string' ? result.model : model, provider: auth.provider };
   } catch (error) {
     if (error.status === 503) throw error;
-    throw fail('AI analysis failed or returned invalid evidence. Retry or use local analysis.', 502);
+    throw fail('AI request failed or returned invalid output. Retry after checking AI access.', 502);
   }
+}
+
+async function analyzeWithAI(input, auth) {
+  const completion = await requestAIJson([{ role: 'system', content: AI_INSTRUCTIONS }, { role: 'user', content: JSON.stringify({ JD: input.jd, RESUMES: input.resumes, USER_FACTS: input.facts, companyType: input.companyType }) }], auth);
+  try {
+    return { ...scoreAnalysis(completion.data, input.resumes, input.facts), mode: 'ai', model: completion.model, provider: completion.provider };
+  } catch { throw fail('AI analysis failed or returned invalid evidence. Retry or use local analysis.', 502); }
 }
 
 export function createResumePickerHandler({ pack, now = Date.now, getOidcToken = getVercelOidcToken } = {}) {
@@ -184,7 +192,7 @@ export function createResumePickerHandler({ pack, now = Date.now, getOidcToken =
       if (!data) return json({ error: 'Sign in to continue.' }, 401);
       if (action === 'resumes') {
         const auth = await resolveAIAuth(undefined, getOidcToken);
-        return json({ resumes: textResumes(data), files: Object.fromEntries(Object.entries(data.resumes).map(([name, resume]) => [name, resume.filename])), facts: data.facts || '', aiAvailable: Boolean(auth), aiModel: process.env.OPENAI_MODEL || DEFAULT_AI_MODEL, aiProvider: auth?.provider || null });
+        return json({ resumes: textResumes(data), files: Object.fromEntries(Object.entries(data.resumes).map(([name, resume]) => [name, resume.filename])), facts: data.facts || '', storyBank: data.storyBank || '', aiAvailable: Boolean(auth), aiModel: process.env.OPENAI_MODEL || DEFAULT_AI_MODEL, aiProvider: auth?.provider || null });
       }
       if (action === 'pdf') {
         const name = url.searchParams.get('resume');
@@ -194,13 +202,20 @@ export function createResumePickerHandler({ pack, now = Date.now, getOidcToken =
         return new Response(Buffer.from(resume.pdf, 'base64'), { headers: { ...PRIVATE_HEADERS, 'Content-Type': 'application/pdf', 'Content-Disposition': `attachment; filename="${filename}"` } });
       }
       const body = await readJson(request);
+      if (action === 'answer') {
+        const input = validateAnswerInput(body, data.facts || '');
+        const signal = AbortSignal.timeout(50000);
+        const auth = await resolveAIAuth(body.apiKey, getOidcToken);
+        if (!auth) return json({ error: 'AI answers need Vercel AI Gateway access or an OpenAI API key. Configure AI access or enter a key.' }, 503);
+        return json(await draftApplicationAnswer(input, { storyBank: data.storyBank || '', resumes: textResumes(data) }, (messages, options) => requestAIJson(messages, auth, options), { signal }));
+      }
       if (typeof body.jd !== 'string' || !body.jd.trim() || body.jd.length > 30000) throw fail('Provide a job description of 1 to 30,000 characters.', 400);
       if (body.facts !== undefined && (typeof body.facts !== 'string' || body.facts.length > 5000)) throw fail('User facts must be at most 5,000 characters.', 400);
       if (body.companyType !== undefined && (typeof body.companyType !== 'string' || body.companyType.length > 200)) throw fail('Choose a valid company type.', 400);
       if (body.mode !== undefined && !['local', 'ai'].includes(body.mode)) throw fail('Choose local or AI analysis.', 400);
       if (body.apiKey !== undefined && (typeof body.apiKey !== 'string' || body.apiKey.length > 512 || /[\r\n]/.test(body.apiKey))) throw fail('Provide a valid API key.', 400);
       const input = { jd: body.jd, facts: body.facts ?? data.facts ?? '', companyType: body.companyType || '', resumes: textResumes(data) };
-      if (body.mode !== 'ai') return json(analyzeJob(input));
+      if (body.mode === 'local') return json(analyzeJob(input));
       const auth = await resolveAIAuth(body.apiKey, getOidcToken);
       if (!auth) return json({ error: 'AI analysis needs Vercel AI Gateway access or an OpenAI API key. Configure Gateway authentication, enter a key, or use local analysis.' }, 503);
       return json(await analyzeWithAI(input, auth));

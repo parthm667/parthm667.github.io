@@ -6,9 +6,10 @@ import { fileURLToPath } from 'node:url'
 
 // PDF sources remain outside the repository. Only encrypted data is published.
 const sourceDirectory = process.argv[2]
+const storyBankPath = process.argv[3]
 const password = process.env.RESUME_PICKER_BUILD_PASSWORD
 if (!sourceDirectory || !password) {
-  throw new Error('Usage: set RESUME_PICKER_BUILD_PASSWORD, then node tools/pack-resume-picker.mjs <PDF directory>')
+  throw new Error('Usage: set RESUME_PICKER_BUILD_PASSWORD, then node tools/pack-resume-picker.mjs <PDF directory> [story-bank.txt]')
 }
 const resumes = {}
 for (const variant of ['SWE', 'AI', 'Defense', 'QD', 'Quant']) {
@@ -25,6 +26,7 @@ for (const variant of ['SWE', 'AI', 'Defense', 'QD', 'Quant']) {
 const payload = {
   sessionSecret: randomBytes(32).toString('hex'),
   resumes,
+  storyBank: storyBankPath ? (await readFile(resolve(storyBankPath), 'utf8')).trim() : '',
   facts: 'Citizenship / work authorization / sponsorship: not confirmed. Education / enrollment: not confirmed (the PDFs list a B.S. in Computer Science and Applied Mathematics at the University of Maryland). Graduation date needs confirmation: the SWE, AI, Defense and QD PDFs show May 2028; the Quant PDF shows May 2029. Only use a graduation date that is truthful for this application. Clearance, internship availability, location and willingness to relocate: not confirmed.',
 }
 const salt = randomBytes(32)
@@ -37,4 +39,4 @@ const pack = { version: 1, iterations, salt: salt.toString('base64'), iv: iv.toS
 const destination = fileURLToPath(new URL('../server/data/resumes.enc.json', import.meta.url))
 await mkdir(dirname(destination), { recursive: true })
 await writeFile(destination, `${JSON.stringify(pack)}\n`)
-console.log(`Encrypted ${Object.keys(resumes).length} PDFs and their extracted text into server/data/resumes.enc.json`)
+console.log(`Encrypted ${Object.keys(resumes).length} PDFs, extracted text${payload.storyBank ? ', and story bank' : ''} into server/data/resumes.enc.json`)

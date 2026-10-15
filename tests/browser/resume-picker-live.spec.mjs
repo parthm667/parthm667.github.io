@@ -16,6 +16,8 @@ test('real lock, five protected PDFs, scoring, and logout work together', async 
   await page.getByLabel('Password', { exact: true }).fill(password)
   await page.getByRole('button', { name: /unlock/i }).click()
   await expect(page.getByLabel('Job description', { exact: false })).toBeVisible()
+  await expect(page.getByLabel('Analysis method')).toHaveValue('ai')
+  await page.getByLabel('Analysis method').selectOption('local')
   const library = await page.request.get(api('resumes'))
   expect(library.status()).toBe(200)
   expect(library.headers()['cache-control']).toContain('no-store')

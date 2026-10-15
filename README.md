@@ -97,13 +97,23 @@ Coverage and cosine are always calculated in code, and model quotes must
 appear on the exact resume. Authenticated API metadata reports the selected
 provider and model without credentials.
 
+AI-assisted comparison is selected by default. Application answers use the
+five resumes, encrypted story bank and writing preferences, the current job
+description when supplied, and any extra notes. Drafts support word or character
+limits, source quotations, editable text, and copying. Missing or conflicting
+facts are flagged for confirmation. The story bank does not add evidence to
+individual resume scores. Questions and drafts stay in page memory and are
+cleared when locking the workspace.
+
 To refresh the bundled resumes, put these five PDFs in an external directory:
 `ParthMhaskeSWEResume.pdf`, `ParthMhaskeAIResume.pdf`,
 `ParthMhaskeDefenseResume.pdf`, `ParthMhaskeQDResume.pdf`, and
 `ParthMhaskeQuantResume.pdf`. Install `pdftotext`, set
 `RESUME_PICKER_BUILD_PASSWORD` in the shell, and run
-`node tools/pack-resume-picker.mjs <directory>`. Repacking also invalidates old
-sessions. Keep plaintext inputs and the password outside Git.
+`node tools/pack-resume-picker.mjs <directory> <story-bank.txt>`. Include the
+story-bank file when refreshing the bundle; omitting it creates a bundle without
+a story bank. Repacking also invalidates old sessions. Keep plaintext inputs and
+the password outside Git.
 
 `npm run dev` serves the same API locally through a Vite development adapter.
 `npm run preview` previews static assets only; production API checks require

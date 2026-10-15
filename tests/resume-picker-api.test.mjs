@@ -11,6 +11,7 @@ const cipher = createCipheriv('aes-256-gcm', key, iv);
 const payload = {
   sessionSecret: randomBytes(32).toString('hex'),
   facts: 'Graduating in 2027.',
+  storyBank: 'I built a road safety tool for local volunteers.',
   resumes: Object.fromEntries(['SWE', 'AI', 'Defense', 'QD', 'Quant'].map(name => [name, {
     filename: `${name}.pdf`, text: 'Built Python services and REST APIs.',
     pdf: Buffer.from('%PDF-1.4\nfixture\n%%EOF').toString('base64'),
@@ -51,8 +52,8 @@ async function login(handler) {
 test('protected data and analysis require a valid authenticated session', async () => {
   const handler = createHandler({ });
   assert.deepEqual(await (await handler(request('session'))).json(), { authenticated: false });
-  for (const action of ['resumes', 'pdf&resume=SWE', 'analyze']) {
-    const options = action === 'analyze' ? { method: 'POST', body: { jd: 'Python developer' } } : {};
+  for (const action of ['resumes', 'pdf&resume=SWE', 'analyze', 'answer']) {
+    const options = ['analyze', 'answer'].includes(action) ? { method: 'POST', body: { jd: 'Python developer', question: 'What have you built?' } } : {};
     assert.equal((await handler(request(action, options))).status, 401);
   }
 });
@@ -69,6 +70,7 @@ test('correct PIN unlocks only API-scoped private cookies and original PDF bytes
   assert.equal(data.resumes.SWE, 'Built Python services and REST APIs.');
   assert.equal(data.files.Quant, 'Quant.pdf');
   assert.equal(data.facts, 'Graduating in 2027.');
+  assert.equal(data.storyBank, 'I built a road safety tool for local volunteers.');
   assert.equal(data.sessionSecret, undefined);
   assert.equal(data.resumes.SWE.pdf, undefined);
   const pdf = await handler(request('pdf&resume=SWE', { cookie }));
@@ -385,11 +387,98 @@ test('Gateway authentication and billing failures return actionable errors witho
   const cookie = await login(handler);
   for (const [status, messagePattern] of [[401, /Gateway.*auth/i], [403, /Gateway.*auth/i], [402, /billing|credit|BYOK/i]]) {
     globalThis.fetch = async () => Response.json({ error: { message: 'private-upstream-secret' } }, { status });
-    const response = await handler(request('analyze', { method: 'POST', cookie, body: { jd: 'Python required.', mode: 'ai' } }));
-    assert.equal(response.status, 503);
-    const error = await response.text();
-    assert.match(error, messagePattern);
-    assert.equal(error.includes('private-upstream-secret'), false);
-    assert.equal(error.includes('private-oidc-fixture'), false);
+    for (const action of ['analyze', 'answer']) {
+      const response = await handler(request(action, { method: 'POST', cookie, body: { jd: 'Python required.', mode: 'ai', question: 'What have you built?' } }));
+      assert.equal(response.status, 503);
+      const error = await response.text();
+      assert.match(error, messagePattern);
+      assert.equal(error.includes('private-upstream-secret'), false);
+      assert.equal(error.includes('private-oidc-fixture'), false);
+    }
   }
+});
+
+test('analysis defaults to AI and excludes story-bank text from technical scoring', async t => {
+  const previousFetch = globalThis.fetch;
+  t.after(() => { globalThis.fetch = previousFetch; });
+  const handler = createHandler({ getOidcToken: async () => 'default-ai-token' });
+  const cookie = await login(handler);
+  let sent;
+  globalThis.fetch = async (_url, options) => {
+    sent = JSON.parse(options.body);
+    return Response.json({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify(successfulModelOutput()) } }] });
+  };
+  const response = await handler(request('analyze', { method: 'POST', cookie, body: { jd: 'Python required.' } }));
+  assert.equal(response.status, 200);
+  assert.equal((await response.json()).mode, 'ai');
+  assert.equal(sent.model, 'openai/gpt-6-luna');
+  assert.equal(sent.messages[1].content.includes(payload.storyBank), false);
+});
+
+test('application answers use the authenticated Gateway transport and all profile sources', async t => {
+  const previousFetch = globalThis.fetch;
+  t.after(() => { globalThis.fetch = previousFetch; });
+  const handler = createHandler({ getOidcToken: async () => 'answer-oidc-fixture' });
+  const cookie = await login(handler);
+  let sent;
+  let target;
+  globalThis.fetch = async (url, options) => {
+    target = url;
+    sent = JSON.parse(options.body);
+    return Response.json({ model: 'openai/gpt-6-luna', choices: [{ finish_reason: 'stop', message: { content: JSON.stringify({ answer: 'I built a road safety tool.', sources: [{ source: 'story-bank', quote: 'I built a road safety tool' }], needsConfirmation: [] }) } }] });
+  };
+  const response = await handler(request('answer', { method: 'POST', cookie, body: { question: 'What have you built?', limit: { unit: 'words', max: 20 }, notes: 'I focused on data cleanup.', facts: 'I study computer science.' } }));
+  assert.equal(response.status, 200);
+  assert.match(response.headers.get('cache-control'), /no-store/);
+  const result = await response.json();
+  assert.equal(result.answer, 'I built a road safety tool.');
+  assert.equal(result.wordCount, 6);
+  assert.equal(result.characterCount, 27);
+  assert.equal(result.model, 'openai/gpt-6-luna');
+  assert.equal(result.provider, 'vercel-gateway');
+  assert.equal(JSON.stringify(result).includes('answer-oidc-fixture'), false);
+  assert.equal(target, 'https://ai-gateway.vercel.sh/v1/chat/completions');
+  assert.equal(sent.model, 'openai/gpt-6-luna');
+  assert.equal(sent.reasoning_effort, 'none');
+  assert.equal(sent.max_completion_tokens, 6000);
+  const supplied = JSON.parse(sent.messages[1].content);
+  assert.equal(supplied.sources['story-bank'], payload.storyBank);
+  for (const name of ['SWE', 'AI', 'Defense', 'QD', 'Quant']) assert.equal(supplied.sources[`resume:${name}`], payload.resumes[name].text);
+  assert.equal(supplied.sources['user-notes'], 'I focused on data cleanup.');
+  assert.equal(supplied.sources['user-facts'], 'I study computer science.');
+});
+
+test('answer inputs and auth fail before any external request and never use local fallback', async t => {
+  const previousFetch = globalThis.fetch;
+  t.after(() => { globalThis.fetch = previousFetch; });
+  let tokenReads = 0;
+  let calls = 0;
+  const handler = createHandler({ getOidcToken: async () => { tokenReads++; return null; } });
+  const cookie = await login(handler);
+  globalThis.fetch = async () => { calls++; throw new Error('External requests forbidden for invalid inputs.'); };
+  for (const body of [{ question: '' }, { question: 'x'.repeat(8001) }, { question: 'Question', limit: { unit: 'words', max: 0 } }, { question: 'Question', mode: 'local' }, { question: 'Question', notes: 'x'.repeat(10001) }]) {
+    assert.equal((await handler(request('answer', { method: 'POST', cookie, body }))).status, 400);
+  }
+  assert.equal(tokenReads, 0);
+  assert.equal((await handler(request('answer', { cookie }))).status, 405);
+  assert.equal((await handler(request('answer', { method: 'POST', cookie, origin: 'https://evil.test', body: { question: 'Question' } }))).status, 403);
+  assert.equal((await handler(request('answer', { method: 'POST', cookie, body: { question: 'What have you built?' } }))).status, 503);
+  assert.equal(calls, 0);
+});
+
+test('an oversized application answer retries once on one shared deadline then fails without clipping', async t => {
+  const previousFetch = globalThis.fetch;
+  t.after(() => { globalThis.fetch = previousFetch; });
+  const handler = createHandler({ getOidcToken: async () => 'answer-oidc-fixture' });
+  const cookie = await login(handler);
+  const signals = [];
+  globalThis.fetch = async (_url, options) => {
+    signals.push(options.signal);
+    return Response.json({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify({ answer: 'I built a road safety tool.', sources: [{ source: 'story-bank', quote: 'I built a road safety tool' }], needsConfirmation: [] }) } }] });
+  };
+  const response = await handler(request('answer', { method: 'POST', cookie, body: { question: 'What have you built?', limit: { unit: 'words', max: 2 } } }));
+  assert.equal(response.status, 422);
+  assert.equal(signals.length, 2);
+  assert.equal(signals[0], signals[1]);
+  assert.match((await response.json()).error, /length|limit/i);
 });

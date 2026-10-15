@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
-import { ArrowDownToLine, Check, ChevronRight, FileText, LockKeyhole, LogOut, Search, ShieldCheck } from 'lucide-react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { ArrowDownToLine, Check, ChevronRight, Copy, FileText, LockKeyhole, LogOut, PenLine, Search, ShieldCheck } from 'lucide-react'
 import './resume-picker.css'
 
 const API = '/api/resume-picker'
@@ -66,29 +66,56 @@ export default function ResumePicker() {
   const [jd, setJd] = useState('')
   const [facts, setFacts] = useState('')
   const [companyType, setCompanyType] = useState('auto')
-  const [mode, setMode] = useState('local')
+  const [mode, setMode] = useState('ai')
   const [apiKey, setApiKey] = useState('')
   const [activeResume, setActiveResume] = useState('SWE')
   const [result, setResult] = useState(null)
   const [error, setError] = useState('')
   const [analyzing, setAnalyzing] = useState(false)
+  const [question, setQuestion] = useState('')
+  const [answerNotes, setAnswerNotes] = useState('')
+  const [answerMax, setAnswerMax] = useState('200')
+  const [answerUnit, setAnswerUnit] = useState('words')
+  const [answerDraft, setAnswerDraft] = useState('')
+  const [answerData, setAnswerData] = useState(null)
+  const [answerLoading, setAnswerLoading] = useState(false)
+  const [answerError, setAnswerError] = useState('')
+  const [copyStatus, setCopyStatus] = useState('')
   const analysisController = useRef(null)
+  const answerController = useRef(null)
   const resultRef = useRef(null)
+  const answerWords = answerDraft.trim() ? answerDraft.trim().split(/\s+/u).length : 0
+  const answerCharacters = Array.from(answerDraft).length
+  const draftOverLimit = answerMax !== '' && (answerUnit === 'words' ? answerWords : answerCharacters) > Number(answerMax)
 
-  function relock(message = '') {
+  const invalidateAnswer = useCallback(() => {
+    answerController.current?.abort()
+    setAnswerLoading(false)
+    setAnswerDraft('')
+    setAnswerData(null)
+    setAnswerError('')
+    setCopyStatus('')
+  }, [])
+
+  const relock = useCallback((message = '') => {
     analysisController.current?.abort()
+    invalidateAnswer()
     setAuthenticated(false)
     setLibrary(null)
     setJd('')
     setFacts('')
     setApiKey('')
     setPassword('')
-    setMode('local')
+    setMode('ai')
     setCompanyType('auto')
     setResult(null)
     setAnalyzing(false)
+    setQuestion('')
+    setAnswerNotes('')
+    setAnswerMax('200')
+    setAnswerUnit('words')
     setError(message)
-  }
+  }, [invalidateAnswer])
 
   useEffect(() => {
     const previous = document.documentElement.dataset.room
@@ -102,6 +129,7 @@ export default function ResumePicker() {
     return () => {
       controller.abort()
       analysisController.current?.abort()
+      answerController.current?.abort()
       document.title = previousTitle
       if (previous === undefined) delete document.documentElement.dataset.room
       else document.documentElement.dataset.room = previous
@@ -112,15 +140,16 @@ export default function ResumePicker() {
     if (!authenticated) return
     const controller = new AbortController()
     request('resumes', undefined, controller.signal).then(data => {
+      if (controller.signal.aborted) return
       setLibrary(data)
       setFacts(data.facts || '')
     }).catch(error => {
-      if (error.name === 'AbortError') return
+      if (controller.signal.aborted || error.name === 'AbortError') return
       if (error.status === 401) relock('Your session expired. Unlock to continue.')
       else setError(error.message)
     }).finally(() => { if (!controller.signal.aborted) setLoadingLibrary(false) })
     return () => controller.abort()
-  }, [authenticated])
+  }, [authenticated, relock])
 
   async function login(event) {
     event.preventDefault()
@@ -136,12 +165,52 @@ export default function ResumePicker() {
     finally { setLoggingIn(false) }
   }
 
-  function change(setter, value) {
+  function change(setter, value, affectsAnswer = true) {
     analysisController.current?.abort()
     setAnalyzing(false)
     setResult(null)
     setError('')
+    if (affectsAnswer) invalidateAnswer()
     setter(value)
+  }
+
+  function changeAnswer(setter, value) {
+    invalidateAnswer()
+    setter(value)
+  }
+
+  async function draftAnswer(event) {
+    event.preventDefault()
+    if (answerLoading || !question.trim()) return
+    invalidateAnswer()
+    const controller = new AbortController()
+    answerController.current = controller
+    setAnswerLoading(true)
+    try {
+      const data = await request('answer', {
+        question, jd, facts, companyType, notes: answerNotes,
+        limit: answerMax === '' ? null : { unit: answerUnit, max: Number(answerMax) },
+        ...(apiKey ? { apiKey } : {}),
+      }, controller.signal)
+      if (controller.signal.aborted) return
+      if (!data.answer?.trim() && !data.needsConfirmation?.length) throw new Error('No draft or clarification was returned. Add relevant facts and try again.')
+      setAnswerData(data)
+      setAnswerDraft(data.answer || '')
+    } catch (error) {
+      if (controller.signal.aborted || error.name === 'AbortError') return
+      if (error.status === 401) relock('Your session expired. Unlock to continue.')
+      else setAnswerError(error.message)
+    } finally { if (!controller.signal.aborted) setAnswerLoading(false) }
+  }
+
+  async function copyAnswer() {
+    setCopyStatus('')
+    try {
+      await navigator.clipboard.writeText(answerDraft)
+      setCopyStatus('Answer copied.')
+    } catch {
+      setCopyStatus('Copy failed. Select the draft text and copy it manually.')
+    }
   }
 
   async function analyze(event) {
@@ -158,7 +227,7 @@ export default function ResumePicker() {
       setResult(data)
       requestAnimationFrame(() => resultRef.current?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start' }))
     } catch (error) {
-      if (error.name === 'AbortError') return
+      if (controller.signal.aborted || error.name === 'AbortError') return
       if (error.status === 401) relock('Your session expired. Unlock to continue.')
       else setError(error.message)
     } finally { if (!controller.signal.aborted) setAnalyzing(false) }
@@ -182,13 +251,13 @@ export default function ResumePicker() {
 
   return <div className="rp-page">
     <header className="rp-header"><a className="rp-brand" href="/"><span>PM</span>Parth Mhaske</a><button className="rp-button rp-quiet" onClick={logout}><LogOut size={16} aria-hidden="true" />Lock workspace</button></header>
-    <main className="rp-main"><div className="rp-intro"><div><h1>Resume picker</h1><p>One job description. Five perspectives on your experience.</p></div><span className="rp-private"><LockKeyhole size={13} aria-hidden="true" />Private workspace</span></div>
+    <main className="rp-main"><div className="rp-intro"><div><h1>Resume picker</h1><p>One job description. Five perspectives on your experience.</p></div><div className="rp-tool-links"><span className="rp-private"><LockKeyhole size={13} aria-hidden="true" />Private workspace</span><a href="#application-answers">Application answers</a></div></div>
       {error && <div className="rp-error" role="alert">{error}</div>}
       {!library ? <div className="rp-loading" role="status">{loadingLibrary ? 'Loading your five resumes…' : 'Loading your resume library…'}{error && <button className="rp-button" onClick={() => window.location.reload()}>Reload workspace</button>}</div> : <>
         <div className="rp-workspace"><section className="rp-input-section" aria-labelledby="rp-job-title"><div className="rp-section-heading"><h2 id="rp-job-title">The opportunity</h2><span className="rp-muted">All five resumes compared</span></div>
           <form onSubmit={analyze}><label htmlFor="rp-jd">Job description <span className="rp-required">Required</span></label><textarea id="rp-jd" className="rp-jd" placeholder="Paste the full job description, including eligibility and required skills…" required value={jd} onChange={event => change(setJd, event.target.value)} />
             <label htmlFor="rp-facts">Your eligibility facts</label><p className="rp-field-help" id="rp-facts-help">Use current, truthful facts about education, graduation, work authorization, location, and availability. Unstated facts remain uncertain.</p><textarea id="rp-facts" aria-describedby="rp-facts-help" value={facts} onChange={event => change(setFacts, event.target.value)} placeholder="Add relevant eligibility facts…" rows={4} />
-            <div className="rp-options"><div><label htmlFor="rp-company">Company context</label><select id="rp-company" value={companyType} onChange={event => change(setCompanyType, event.target.value)}><option value="auto">Detect from description</option><option value="large company">Large company</option><option value="startup">Startup</option><option value="quant">Quant / hedge fund</option><option value="defense">Defense / aerospace</option><option value="AI lab">AI lab / AI-native</option><option value="robotics">Robotics / autonomy</option></select></div><div><label htmlFor="rp-mode">Analysis method</label><select id="rp-mode" value={mode} onChange={event => change(setMode, event.target.value)}><option value="local">Local analysis</option><option value="ai">AI-assisted analysis</option></select></div></div>
+            <div className="rp-options"><div><label htmlFor="rp-company">Company context</label><select id="rp-company" value={companyType} onChange={event => change(setCompanyType, event.target.value)}><option value="auto">Detect from description</option><option value="large company">Large company</option><option value="startup">Startup</option><option value="quant">Quant / hedge fund</option><option value="defense">Defense / aerospace</option><option value="AI lab">AI lab / AI-native</option><option value="robotics">Robotics / autonomy</option></select></div><div><label htmlFor="rp-mode">Analysis method</label><select id="rp-mode" value={mode} onChange={event => change(setMode, event.target.value, false)}><option value="ai">AI-assisted analysis</option><option value="local">Local analysis</option></select></div></div>
             <p className="rp-field-help">{mode === 'local' ? 'Runs on this site’s server with fixed rules. No OpenAI request. Human ranking is unavailable.' : 'Sends the job description, all five resume texts, and your eligibility facts to OpenAI for analysis.'}</p>
             {mode === 'ai' && !library.aiAvailable && <div className="rp-api-key"><label htmlFor="rp-api-key">OpenAI API key</label><input id="rp-api-key" type="password" autoComplete="off" spellCheck="false" required value={apiKey} onChange={event => change(setApiKey, event.target.value)} /><p className="rp-field-help">Kept only while this page is open. It is not saved in your browser.</p></div>}
             <div className="rp-analyze-row"><button className="rp-button rp-primary" type="submit" disabled={analyzing || !jd.trim()}><Search size={17} aria-hidden="true" />{analyzing ? 'Comparing resumes…' : 'Compare resumes'}</button>{analyzing && <button className="rp-button rp-quiet" type="button" onClick={() => { analysisController.current?.abort(); setAnalyzing(false) }}>Cancel</button>}</div><p className="rp-memory-note">Job descriptions, edits, and API keys stay in this page’s memory. Reloading clears them.</p>
@@ -204,8 +273,36 @@ export default function ResumePicker() {
         }}>{type}</button>)}</div>
           <div id="rp-resume-preview" role="tabpanel" aria-labelledby={`rp-tab-${activeResume}`} tabIndex="0"><div className="rp-resume-meta"><FileText size={21} aria-hidden="true" /><div><h3>{DESCRIPTIONS[activeResume]}</h3><p>{library.files?.[activeResume]}</p></div></div><a className="rp-download" href={`${API}?action=pdf&resume=${encodeURIComponent(activeResume)}`} target="_blank" rel="noopener noreferrer"><ArrowDownToLine size={15} aria-hidden="true" />Open protected PDF</a><details className="rp-preview-details"><summary>Read extracted resume text</summary><pre>{library.resumes?.[activeResume] || 'No resume text available.'}</pre></details></div>
           <div className="rp-library-foot"><ShieldCheck size={17} aria-hidden="true" /><p>Eligibility comes first. A strong technical score never overrides a hard screen.</p></div>
+          <details className="rp-preview-details rp-story-bank"><summary>Read saved story bank</summary><pre>{library.storyBank || 'No saved story bank is available.'}</pre></details>
         </aside></div>
         <div ref={resultRef} className="rp-result-anchor">{result ? <Results result={result} /> : <div className="rp-empty" role="status"><div><Search size={20} aria-hidden="true" /></div><p>{analyzing ? 'Reading requirements and checking visible resume evidence…' : 'Paste a job description to see the comparison.'}</p></div>}</div>
+        <section id="application-answers" className="rp-answers" aria-labelledby="rp-answers-title">
+          <div className="rp-section-heading"><h2 id="rp-answers-title">Application answers</h2><span className="rp-tag">AI-assisted drafting</span></div>
+          <p className="rp-answer-intro">Draft an answer using all five PDFs and your saved story bank. The current job description, eligibility facts, company context, and extra notes are included. A job description is optional here.</p>
+          <p className="rp-field-help">Your question and these source texts are sent to the configured AI provider. Review the draft and its sources before copying it into an application.</p>
+          <div className="rp-answer-workspace">
+            <form className="rp-answer-form" onSubmit={draftAnswer}>
+              <label htmlFor="rp-question">Application question <span className="rp-required">Required</span></label>
+              <textarea id="rp-question" required maxLength={8000} value={question} onChange={event => changeAnswer(setQuestion, event.target.value)} placeholder="Paste the question you need to answer…" rows={4} />
+              <label htmlFor="rp-answer-notes">Extra notes or confirmed facts <span className="rp-required">Optional</span></label>
+              <textarea id="rp-answer-notes" maxLength={10000} value={answerNotes} onChange={event => changeAnswer(setAnswerNotes, event.target.value)} placeholder="Add company specifics, personal context, or facts the saved sources do not cover…" rows={4} />
+              <div className="rp-options"><div><label htmlFor="rp-answer-max">Maximum length</label><input id="rp-answer-max" type="number" min="1" max={answerUnit === 'words' ? 5000 : 20000} step="1" value={answerMax} onChange={event => changeAnswer(setAnswerMax, event.target.value)} placeholder="No limit" aria-describedby="rp-answer-limit-help" /></div><div><label htmlFor="rp-answer-unit">Length unit</label><select id="rp-answer-unit" value={answerUnit} onChange={event => changeAnswer(setAnswerUnit, event.target.value)}><option value="words">Words</option><option value="characters">Characters</option></select></div></div>
+              <p className="rp-field-help" id="rp-answer-limit-help">Leave maximum length blank for no limit. Up to 5,000 words or 20,000 characters.</p>
+              {!library.aiAvailable && <div className="rp-api-key"><label htmlFor="rp-answer-key">OpenAI API key for answers</label><input id="rp-answer-key" type="password" autoComplete="off" spellCheck="false" value={apiKey} onChange={event => change(setApiKey, event.target.value)} /><p className="rp-field-help">Kept only while this page is open. It is not saved in your browser.</p></div>}
+              <div className="rp-analyze-row"><button className="rp-button rp-primary" type="submit" disabled={answerLoading || !question.trim()}><PenLine size={17} aria-hidden="true" />{answerLoading ? 'Drafting answer…' : answerData ? 'Regenerate answer' : 'Draft answer'}</button>{answerLoading && <button className="rp-button rp-quiet" type="button" onClick={() => { answerController.current?.abort(); setAnswerLoading(false) }}>Cancel draft</button>}</div>
+              <p className="rp-memory-note">Questions, notes, and drafts are not saved. Reloading or locking clears them.</p>
+              {answerError && <p className="rp-error rp-answer-error" role="alert">{answerError}</p>}
+            </form>
+            <div className="rp-draft-panel" aria-busy={answerLoading}>
+              {answerLoading ? <p className="rp-draft-empty" role="status">Reading your sources and drafting within the requested length…</p> : answerData ? <>
+                {answerData.needsConfirmation?.length > 0 && <div className="rp-confirmation" role="status"><h3>{answerDraft ? 'Confirm before using' : 'More facts needed'}</h3><ul>{answerData.needsConfirmation.map((item, index) => <li key={index}>{item}</li>)}</ul><p>Add confirmed details in Extra notes, then draft again.</p></div>}
+                {answerDraft || answerData.answer ? <><label htmlFor="rp-answer-draft">Editable answer draft</label><textarea id="rp-answer-draft" value={answerDraft} onChange={event => { setAnswerDraft(event.target.value); setCopyStatus('') }} rows={12} aria-describedby="rp-draft-counts rp-draft-limit" /><div className="rp-draft-actions"><output id="rp-draft-counts" aria-live="polite">{answerWords} words · {answerCharacters} characters</output><button className="rp-button" type="button" onClick={copyAnswer} disabled={!answerDraft.trim()}><Copy size={15} aria-hidden="true" />Copy answer</button></div><p id="rp-draft-limit" className={draftOverLimit ? 'rp-over-limit' : 'rp-field-help'}>{draftOverLimit ? `Your edited draft exceeds the ${answerMax}-${answerUnit === 'words' ? 'word' : 'character'} limit. Shorten it before submitting.` : answerMax === '' ? 'No length limit set.' : `Requested maximum: ${answerMax} ${answerUnit}.`}</p>{copyStatus && <p className="rp-copy-status" role="status">{copyStatus}</p>}</> : null}
+                <details className="rp-details rp-answer-sources"><summary>Sources for generated draft <span>{answerData.sources?.length || 0}</span></summary><p className="rp-field-help">These quotes support the generated version. Recheck sources after editing.</p>{answerData.sources?.length ? <ul>{answerData.sources.map((source, index) => <li key={index}><strong>{source.source}</strong><blockquote>{source.quote}</blockquote></li>)}</ul> : <p className="rp-details-empty">No supporting quotes returned. Confirm the facts before using an answer.</p>}</details>
+                {answerData.model && <p className="rp-model-note">Generated with {answerData.model}{answerData.provider ? ` via ${answerData.provider}` : ''}.</p>}
+              </> : <div className="rp-draft-empty"><PenLine size={22} aria-hidden="true" /><p>Your editable draft will appear here.</p><p className="rp-field-help">Start with a question. Extra facts help when the saved sources do not contain the answer.</p></div>}
+            </div>
+          </div>
+        </section>
       </>}
     </main><footer className="rp-footer">Built for a truthful fit. Review the evidence before you apply.</footer>
   </div>
