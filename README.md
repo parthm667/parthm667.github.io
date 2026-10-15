@@ -81,12 +81,21 @@ Forms and results stay in memory rather than browser storage.
 
 Local analysis works without an API key and explicitly reports its limits:
 dictionary-based concept matching, conservative evidence, and no recruiter
-story ranking. Optional AI analysis uses OpenAI with an ephemeral key entered
-in the app, or `OPENAI_API_KEY` configured on Vercel. The default is `gpt-6-luna`
-with reasoning disabled; `OPENAI_MODEL` can override the model. Selecting AI
-analysis sends the JD, resume text, and eligibility facts to OpenAI; keys are
-not persisted. Coverage and cosine are
-always calculated in code, and model quotes must appear on the exact resume.
+story ranking. AI analysis uses an ephemeral OpenAI key entered in the app,
+then `OPENAI_API_KEY`, or otherwise Vercel AI Gateway. Gateway authenticates
+with `AI_GATEWAY_API_KEY` when configured, or the current Vercel OIDC token
+resolved on every request. Team BYOK credentials configured in the Vercel
+dashboard are selected by Gateway without copying provider keys into the app.
+Gateway requests restrict routing to OpenAI. Its authentication and billing
+errors identify the settings that need attention.
+
+The default is `gpt-6-luna` with reasoning disabled (`openai/gpt-6-luna` through
+Gateway); `OPENAI_MODEL` can override the model. Selecting AI sends the JD,
+resume text, and eligibility facts to OpenAI, through Vercel when Gateway is
+used. Keys and tokens are not returned to the browser or persisted by the app.
+Coverage and cosine are always calculated in code, and model quotes must
+appear on the exact resume. Authenticated API metadata reports the selected
+provider and model without credentials.
 
 To refresh the bundled resumes, put these five PDFs in an external directory:
 `ParthMhaskeSWEResume.pdf`, `ParthMhaskeAIResume.pdf`,

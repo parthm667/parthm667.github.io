@@ -1,4 +1,4 @@
-import test from 'node:test';
+import test, { beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { createCipheriv, pbkdf2Sync, randomBytes } from 'node:crypto';
 import { createResumePickerHandler } from '../server/resume-picker.mjs';
@@ -18,6 +18,21 @@ const payload = {
 };
 const ciphertext = Buffer.concat([cipher.update(JSON.stringify(payload)), cipher.final()]);
 const pack = { version: 1, iterations: 310000, salt: salt.toString('base64'), iv: iv.toString('base64'), tag: cipher.getAuthTag().toString('base64'), ciphertext: ciphertext.toString('base64') };
+const AI_ENV = ['OPENAI_MODEL', 'OPENAI_API_KEY', 'AI_GATEWAY_API_KEY', 'VERCEL_OIDC_TOKEN', 'VERCEL'];
+let previousEnv;
+beforeEach(() => {
+  previousEnv = Object.fromEntries(AI_ENV.map(name => [name, process.env[name]]));
+  for (const name of AI_ENV) delete process.env[name];
+});
+afterEach(() => {
+  for (const name of AI_ENV) {
+    if (previousEnv[name] === undefined) delete process.env[name];
+    else process.env[name] = previousEnv[name];
+  }
+});
+function createHandler(options = {}) {
+  return createResumePickerHandler({ pack, getOidcToken: async () => null, ...options });
+}
 function request(action, { method = 'GET', body, cookie, origin = 'https://example.test' } = {}) {
   const headers = new Headers();
   if (cookie) headers.set('cookie', cookie);
@@ -34,7 +49,7 @@ async function login(handler) {
 }
 
 test('protected data and analysis require a valid authenticated session', async () => {
-  const handler = createResumePickerHandler({ pack });
+  const handler = createHandler({ });
   assert.deepEqual(await (await handler(request('session'))).json(), { authenticated: false });
   for (const action of ['resumes', 'pdf&resume=SWE', 'analyze']) {
     const options = action === 'analyze' ? { method: 'POST', body: { jd: 'Python developer' } } : {};
@@ -43,7 +58,7 @@ test('protected data and analysis require a valid authenticated session', async 
 });
 
 test('correct PIN unlocks only API-scoped private cookies and original PDF bytes', async () => {
-  const handler = createResumePickerHandler({ pack });
+  const handler = createHandler({ });
   const response = await handler(request('login', { method: 'POST', body: { password } }));
   assert.equal(response.status, 200);
   const setCookie = response.headers.get('set-cookie');
@@ -64,7 +79,7 @@ test('correct PIN unlocks only API-scoped private cookies and original PDF bytes
 });
 
 test('wrong PIN is generic and a sixth attempt is rate limited', async () => {
-  const handler = createResumePickerHandler({ pack });
+  const handler = createHandler({ });
   for (let index = 0; index < 5; index++) {
     const response = await handler(request('login', { method: 'POST', body: { password: 'wrong' } }));
     assert.equal(response.status, 401);
@@ -77,9 +92,9 @@ test('wrong PIN is generic and a sixth attempt is rate limited', async () => {
 
 test('forged and expired cookies cannot reveal resumes, including after a cold start', async () => {
   let now = 1000000;
-  const handler = createResumePickerHandler({ pack, now: () => now });
+  const handler = createHandler({ now: () => now });
   const cookie = await login(handler);
-  const coldHandler = createResumePickerHandler({ pack, now: () => now });
+  const coldHandler = createHandler({ now: () => now });
   assert.equal((await coldHandler(request('resumes', { cookie }))).status, 200);
   const [name, raw] = cookie.split('=');
   const [encoded, signature] = raw.split('.');
@@ -92,7 +107,7 @@ test('forged and expired cookies cannot reveal resumes, including after a cold s
 });
 
 test('private responses forbid caching and cross-origin mutation requests fail', async () => {
-  const handler = createResumePickerHandler({ pack });
+  const handler = createHandler({ });
   const response = await handler(request('session'));
   assert.match(response.headers.get('cache-control'), /no-store/);
   assert.match(response.headers.get('x-robots-tag'), /noindex/);
@@ -102,7 +117,7 @@ test('private responses forbid caching and cross-origin mutation requests fail',
 });
 
 test('analysis validates input size and supports local analysis without an AI key', async () => {
-  const handler = createResumePickerHandler({ pack });
+  const handler = createHandler({ });
   const cookie = await login(handler);
   for (const body of [{ jd: '' }, { jd: 'a'.repeat(30001) }, { jd: 'Python developer', facts: 'a'.repeat(5001) }, { jd: 'Python developer', mode: 'other' }]) {
     assert.equal((await handler(request('analyze', { method: 'POST', body, cookie }))).status, 400);
@@ -114,7 +129,7 @@ test('analysis validates input size and supports local analysis without an AI ke
 });
 
 test('logout clears the scoped cookie', async () => {
-  const handler = createResumePickerHandler({ pack });
+  const handler = createHandler({ });
   const cookie = await login(handler);
   const response = await handler(request('logout', { method: 'POST', cookie }));
   assert.equal(response.status, 200);
@@ -125,7 +140,7 @@ test('loopback development can set a cookie even with production NODE_ENV', asyn
   const previous = process.env.NODE_ENV;
   process.env.NODE_ENV = 'production';
   try {
-    const handler = createResumePickerHandler({ pack });
+    const handler = createHandler({ });
     const local = new Request('http://localhost:5173/api/resume-picker?action=login', {
       method: 'POST', headers: { 'Content-Type': 'application/json', Origin: 'http://localhost:5173' }, body: JSON.stringify({ password }),
     });
@@ -143,7 +158,7 @@ test('AI mode clearly reports a missing key and rejects untrusted upstream outpu
   const previousFetch = globalThis.fetch;
   delete process.env.OPENAI_API_KEY;
   try {
-    const handler = createResumePickerHandler({ pack });
+    const handler = createHandler({ });
     const cookie = await login(handler);
     const missing = await handler(request('analyze', { method: 'POST', cookie, body: { jd: 'Required: Python', mode: 'ai' } }));
     assert.equal(missing.status, 503);
@@ -191,7 +206,7 @@ test('AI defaults to GPT-6 Luna with compatible nonreasoning parameters and vali
     if (previousKey === undefined) delete process.env.OPENAI_API_KEY;
     else process.env.OPENAI_API_KEY = previousKey;
   });
-  const handler = createResumePickerHandler({ pack });
+  const handler = createHandler({ });
   const cookie = await login(handler);
   let captured;
   let authorization;
@@ -232,7 +247,7 @@ test('a legacy model override remains usable without Luna-specific reasoning set
     if (previousModel === undefined) delete process.env.OPENAI_MODEL;
     else process.env.OPENAI_MODEL = previousModel;
   });
-  const handler = createResumePickerHandler({ pack });
+  const handler = createHandler({ });
   const cookie = await login(handler);
   let captured;
   globalThis.fetch = async (_url, options) => {
@@ -248,4 +263,133 @@ test('a legacy model override remains usable without Luna-specific reasoning set
   assert.equal((await response.json()).model, 'gpt-4.1-mini');
   const metadata = await (await handler(request('resumes', { cookie }))).json();
   assert.equal(metadata.aiModel, 'gpt-4.1-mini');
+});
+
+test('Gateway OIDC is resolved for every request and uses exact OpenAI Luna routing', async t => {
+  const previousFetch = globalThis.fetch;
+  t.after(() => { globalThis.fetch = previousFetch; });
+  let tokenReads = 0;
+  const handler = createHandler({ getOidcToken: async () => `oidc-fixture-${++tokenReads}` });
+  const cookie = await login(handler);
+  const metadata = await (await handler(request('resumes', { cookie }))).json();
+  assert.equal(metadata.aiAvailable, true);
+  assert.equal(metadata.aiProvider, 'vercel-gateway');
+  assert.equal(metadata.aiModel, 'gpt-6-luna');
+  assert.equal(JSON.stringify(metadata).includes('oidc-fixture'), false);
+  const calls = [];
+  globalThis.fetch = async (url, options) => {
+    calls.push({ url, authorization: options.headers.Authorization, body: JSON.parse(options.body) });
+    return Response.json({ model: 'openai/gpt-6-luna', choices: [{ finish_reason: 'stop', message: { content: JSON.stringify(successfulModelOutput()) } }] });
+  };
+  for (let index = 0; index < 2; index++) {
+    const response = await handler(request('analyze', { method: 'POST', cookie, body: { jd: 'Python required.', mode: 'ai' } }));
+    assert.equal(response.status, 200);
+    const result = await response.json();
+    assert.equal(result.provider, 'vercel-gateway');
+    assert.equal(result.model, 'openai/gpt-6-luna');
+    assert.equal(result.winner, 'SWE');
+    assert.equal(JSON.stringify(result).includes('oidc-fixture'), false);
+  }
+  assert.equal(tokenReads, 3);
+  assert.deepEqual(calls.map(call => call.authorization), ['Bearer oidc-fixture-2', 'Bearer oidc-fixture-3']);
+  for (const call of calls) {
+    assert.equal(call.url, 'https://ai-gateway.vercel.sh/v1/chat/completions');
+    assert.equal(call.body.model, 'openai/gpt-6-luna');
+    assert.equal(call.body.reasoning_effort, 'none');
+    assert.equal(call.body.max_completion_tokens, 12000);
+    assert.equal(call.body.store, false);
+    assert.deepEqual(call.body.providerOptions, { gateway: { only: ['openai'] } });
+    assert.equal(Object.hasOwn(call.body.providerOptions.gateway, 'byok'), false);
+  }
+});
+
+test('Gateway API keys take precedence over OIDC and prefixed model names are preserved', async t => {
+  const previousFetch = globalThis.fetch;
+  t.after(() => { globalThis.fetch = previousFetch; });
+  process.env.AI_GATEWAY_API_KEY = 'gateway-private-fixture';
+  process.env.OPENAI_MODEL = 'openai/gpt-6-luna';
+  let tokenReads = 0;
+  const handler = createHandler({ getOidcToken: async () => { tokenReads++; return 'unused-oidc-fixture'; } });
+  const cookie = await login(handler);
+  const metadata = await (await handler(request('resumes', { cookie }))).json();
+  assert.equal(metadata.aiAvailable, true);
+  assert.equal(metadata.aiProvider, 'vercel-gateway');
+  let captured;
+  globalThis.fetch = async (url, options) => {
+    captured = { url, authorization: options.headers.Authorization, body: JSON.parse(options.body) };
+    return Response.json({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify(successfulModelOutput()) } }] });
+  };
+  const response = await handler(request('analyze', { method: 'POST', cookie, body: { jd: 'Python required.', mode: 'ai' } }));
+  assert.equal(response.status, 200);
+  assert.equal(tokenReads, 0);
+  assert.equal(captured.authorization, 'Bearer gateway-private-fixture');
+  assert.equal(captured.body.model, 'openai/gpt-6-luna');
+  assert.equal(captured.body.reasoning_effort, 'none');
+  assert.equal(captured.url, 'https://ai-gateway.vercel.sh/v1/chat/completions');
+  const result = await response.json();
+  assert.equal(result.model, 'openai/gpt-6-luna');
+  assert.equal(JSON.stringify(result).includes('gateway-private-fixture'), false);
+});
+
+test('explicit and server OpenAI keys take precedence over Gateway credentials', async t => {
+  const previousFetch = globalThis.fetch;
+  t.after(() => { globalThis.fetch = previousFetch; });
+  process.env.OPENAI_API_KEY = 'server-openai-fixture';
+  process.env.AI_GATEWAY_API_KEY = 'unused-gateway-fixture';
+  let tokenReads = 0;
+  const handler = createHandler({ getOidcToken: async () => { tokenReads++; return 'unused-oidc-fixture'; } });
+  const cookie = await login(handler);
+  const metadata = await (await handler(request('resumes', { cookie }))).json();
+  assert.equal(metadata.aiProvider, 'openai');
+  const calls = [];
+  globalThis.fetch = async (url, options) => {
+    calls.push({ url, authorization: options.headers.Authorization, body: JSON.parse(options.body) });
+    return Response.json({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify(successfulModelOutput()) } }] });
+  };
+  for (const extra of [{ apiKey: 'explicit-openai-fixture' }, {}]) {
+    const response = await handler(request('analyze', { method: 'POST', cookie, body: { jd: 'Python required.', mode: 'ai', ...extra } }));
+    assert.equal(response.status, 200);
+    assert.equal((await response.json()).provider, 'openai');
+  }
+  assert.equal(tokenReads, 0);
+  assert.deepEqual(calls.map(call => call.authorization), ['Bearer explicit-openai-fixture', 'Bearer server-openai-fixture']);
+  assert.ok(calls.every(call => call.url === 'https://api.openai.com/v1/chat/completions' && call.body.model === 'gpt-6-luna' && !Object.hasOwn(call.body, 'providerOptions')));
+});
+
+test('missing Gateway credentials give a private 503 and local analysis never resolves tokens', async t => {
+  const previousFetch = globalThis.fetch;
+  t.after(() => { globalThis.fetch = previousFetch; });
+  let tokenReads = 0;
+  let fetchCalls = 0;
+  const handler = createHandler({ getOidcToken: async () => { tokenReads++; throw new Error('private-runtime-token-detail'); } });
+  globalThis.fetch = async () => { fetchCalls++; throw new Error('No external requests expected.'); };
+  const cookie = await login(handler);
+  const local = await handler(request('analyze', { method: 'POST', cookie, body: { jd: 'Python required.', mode: 'local' } }));
+  assert.equal(local.status, 200);
+  assert.equal(tokenReads, 0);
+  const metadata = await (await handler(request('resumes', { cookie }))).json();
+  assert.equal(metadata.aiAvailable, false);
+  assert.equal(metadata.aiProvider, null);
+  const unavailable = await handler(request('analyze', { method: 'POST', cookie, body: { jd: 'Python required.', mode: 'ai' } }));
+  assert.equal(unavailable.status, 503);
+  const error = await unavailable.text();
+  assert.match(error, /Gateway|API key/);
+  assert.equal(error.includes('private-runtime-token-detail'), false);
+  assert.equal(fetchCalls, 0);
+});
+
+test('Gateway authentication and billing failures return actionable errors without upstream secrets', async t => {
+  const previousFetch = globalThis.fetch;
+  t.after(() => { globalThis.fetch = previousFetch; });
+  const handler = createHandler({ getOidcToken: async () => 'private-oidc-fixture' });
+  const cookie = await login(handler);
+  for (const [status, messagePattern] of [[401, /Gateway.*auth/i], [403, /Gateway.*auth/i], [402, /billing|credit|BYOK/i]]) {
+    globalThis.fetch = async () => Response.json({ error: { message: 'private-upstream-secret' } }, { status });
+    const response = await handler(request('analyze', { method: 'POST', cookie, body: { jd: 'Python required.', mode: 'ai' } }));
+    assert.equal(response.status, 503);
+    const error = await response.text();
+    assert.match(error, messagePattern);
+    assert.equal(error.includes('private-upstream-secret'), false);
+    assert.equal(error.includes('private-oidc-fixture'), false);
+  }
 });

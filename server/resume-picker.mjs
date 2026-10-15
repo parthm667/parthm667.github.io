@@ -1,6 +1,7 @@
 import { createDecipheriv, createHmac, pbkdf2, randomBytes, timingSafeEqual } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { promisify } from 'node:util';
+import { getVercelOidcToken } from '@vercel/oidc';
 import { analyzeJob, scoreAnalysis } from '../src/resume-picker/analysis.js';
 
 const deriveKey = promisify(pbkdf2);
@@ -97,33 +98,50 @@ const AI_INSTRUCTIONS = `You compare five exact resumes SWE, AI, Defense, QD, Qu
 6. Select recommendation using eligibility, coverage, cosine, company/role context and differentiated evidence. Explain concrete reasons; code exposes any difference from raw-score winner. HumanOrder must include every resume exactly once. Do not invent human certainty.
 7. Under-signaled observations and edits must cite existing experience. Prioritize truthful high-weight concepts, surfacing existing evidence, legitimate exact JD terminology, removing low-value material for space and strengthening story. Never invent tools/skills, keyword stuff, call adjacent skills direct experience or sacrifice strong accomplishments for weak keywords. A gap in a resume is not proof of lack of ability. Suggest team/track only when relevant.`;
 
-async function analyzeWithAI(input, apiKey) {
+async function resolveAIAuth(apiKey, getOidcToken) {
+  const directKey = apiKey?.trim() || process.env.OPENAI_API_KEY?.trim();
+  if (directKey) return { provider: 'openai', token: directKey };
+  let token = process.env.AI_GATEWAY_API_KEY?.trim();
+  if (!token) {
+    try { token = await getOidcToken(); }
+    catch { return null; }
+  }
+  return typeof token === 'string' && token.trim() ? { provider: 'vercel-gateway', token: token.trim() } : null;
+}
+
+async function analyzeWithAI(input, auth) {
   try {
-    const model = process.env.OPENAI_MODEL || DEFAULT_AI_MODEL;
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const configuredModel = process.env.OPENAI_MODEL || DEFAULT_AI_MODEL;
+    const gateway = auth.provider === 'vercel-gateway';
+    const model = gateway ? (configuredModel.includes('/') ? configuredModel : `openai/${configuredModel}`) : configuredModel.replace(/^openai\//, '');
+    const response = await fetch(gateway ? 'https://ai-gateway.vercel.sh/v1/chat/completions' : 'https://api.openai.com/v1/chat/completions', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${auth.token}` },
       signal: AbortSignal.timeout(45000),
       body: JSON.stringify({
         model,
-        ...(model === DEFAULT_AI_MODEL ? { reasoning_effort: 'none' } : {}),
+        ...(model.replace(/^openai\//, '') === DEFAULT_AI_MODEL ? { reasoning_effort: 'none' } : {}),
+        ...(gateway ? { providerOptions: { gateway: { only: ['openai'] } } } : {}),
         store: false, response_format: { type: 'json_object' }, temperature: .1, max_completion_tokens: 12000,
         messages: [{ role: 'system', content: AI_INSTRUCTIONS }, { role: 'user', content: JSON.stringify({ JD: input.jd, RESUMES: input.resumes, USER_FACTS: input.facts, companyType: input.companyType }) }],
       }),
     });
     if (!response.ok) {
       await response.body?.cancel();
+      if (gateway && [401, 403].includes(response.status)) throw fail('Vercel AI Gateway authentication failed. Check project OIDC access or AI_GATEWAY_API_KEY.', 503);
+      if (gateway && response.status === 402) throw fail('Vercel AI Gateway needs billing credits or an enabled BYOK provider. Check Gateway billing and BYOK settings.', 503);
       throw new Error('Upstream request failed.');
     }
     const result = await readJson(response, 2 * 1024 * 1024);
     if (result.choices?.[0]?.finish_reason !== 'stop' || typeof result.choices[0].message?.content !== 'string') throw new Error('Incomplete model response.');
-    return { ...scoreAnalysis(JSON.parse(result.choices[0].message.content), input.resumes, input.facts), mode: 'ai', model: typeof result.model === 'string' ? result.model : model };
-  } catch {
+    return { ...scoreAnalysis(JSON.parse(result.choices[0].message.content), input.resumes, input.facts), mode: 'ai', model: typeof result.model === 'string' ? result.model : model, provider: auth.provider };
+  } catch (error) {
+    if (error.status === 503) throw error;
     throw fail('AI analysis failed or returned invalid evidence. Retry or use local analysis.', 502);
   }
 }
 
-export function createResumePickerHandler({ pack, now = Date.now } = {}) {
+export function createResumePickerHandler({ pack, now = Date.now, getOidcToken = getVercelOidcToken } = {}) {
   let packPromise;
   const attempts = new Map();
   const getPack = () => pack || (packPromise ||= readFile(new URL('./data/resumes.enc.json', import.meta.url), 'utf8').then(JSON.parse));
@@ -164,7 +182,10 @@ export function createResumePickerHandler({ pack, now = Date.now } = {}) {
       const data = sessionFrom(request, encrypted, now());
       if (action === 'session') return json({ authenticated: Boolean(data) });
       if (!data) return json({ error: 'Sign in to continue.' }, 401);
-      if (action === 'resumes') return json({ resumes: textResumes(data), files: Object.fromEntries(Object.entries(data.resumes).map(([name, resume]) => [name, resume.filename])), facts: data.facts || '', aiAvailable: Boolean(process.env.OPENAI_API_KEY), aiModel: process.env.OPENAI_MODEL || DEFAULT_AI_MODEL });
+      if (action === 'resumes') {
+        const auth = await resolveAIAuth(undefined, getOidcToken);
+        return json({ resumes: textResumes(data), files: Object.fromEntries(Object.entries(data.resumes).map(([name, resume]) => [name, resume.filename])), facts: data.facts || '', aiAvailable: Boolean(auth), aiModel: process.env.OPENAI_MODEL || DEFAULT_AI_MODEL, aiProvider: auth?.provider || null });
+      }
       if (action === 'pdf') {
         const name = url.searchParams.get('resume');
         if (!Object.hasOwn(data.resumes, name)) return json({ error: 'Choose a valid resume.' }, 400);
@@ -180,9 +201,9 @@ export function createResumePickerHandler({ pack, now = Date.now } = {}) {
       if (body.apiKey !== undefined && (typeof body.apiKey !== 'string' || body.apiKey.length > 512 || /[\r\n]/.test(body.apiKey))) throw fail('Provide a valid API key.', 400);
       const input = { jd: body.jd, facts: body.facts ?? data.facts ?? '', companyType: body.companyType || '', resumes: textResumes(data) };
       if (body.mode !== 'ai') return json(analyzeJob(input));
-      const apiKey = body.apiKey?.trim() || process.env.OPENAI_API_KEY;
-      if (!apiKey) return json({ error: 'AI analysis needs an OpenAI API key. Enter your key or use local analysis.' }, 503);
-      return json(await analyzeWithAI(input, apiKey));
+      const auth = await resolveAIAuth(body.apiKey, getOidcToken);
+      if (!auth) return json({ error: 'AI analysis needs Vercel AI Gateway access or an OpenAI API key. Configure Gateway authentication, enter a key, or use local analysis.' }, 503);
+      return json(await analyzeWithAI(input, auth));
     } catch (error) {
       return json({ error: error.status ? error.message : 'The resume picker is temporarily unavailable.' }, error.status || 500);
     }
