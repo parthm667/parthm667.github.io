@@ -186,3 +186,83 @@ test('limited or uncertain sponsorship statements remain Risk and definite need 
   }
   assert.equal(analyzeJob({ jd, resumes, facts: 'I will require visa sponsorship in the future.' }).eligibility.status, 'Fail');
 });
+
+function addLocationConcept(data, name = 'In-person Cambridge HQ or NYC work') {
+  data.concepts.push({ name, category: 'hard_requirement', evidence: {} });
+  return data;
+}
+
+test('office attendance is an eligibility confirmation, not a technical gap or score penalty', () => {
+  const baseline = scoreAnalysis(model(), resumes, 'Location availability is unconfirmed.');
+  const data = addLocationConcept(model());
+  data.underSignaled = ['Clarify availability for in-person Cambridge HQ or NYC work.'];
+  data.edits = ['Add in-person Cambridge HQ or NYC work to your resume.'];
+  const result = scoreAnalysis(data, resumes, 'Location availability is unconfirmed.');
+  assert.deepEqual(result.scorecard, baseline.scorecard);
+  assert.deepEqual(result.concepts, baseline.concepts);
+  assert.deepEqual(result.evidence, baseline.evidence);
+  assert.ok(!result.realGaps.some(text => /Cambridge|NYC/.test(text)));
+  assert.ok(!result.strongMatches.some(text => /Cambridge|NYC/.test(text)));
+  assert.deepEqual(result.edits, []);
+  assert.deepEqual(result.underSignaled, []);
+  assert.equal(result.eligibility.status, 'Risk');
+  assert.ok(result.eligibility.checks.some(check => /Cambridge HQ or NYC/.test(check.requirement) && check.status === 'Risk'));
+});
+
+test('a confirmed model location eligibility check is preserved without an extra Risk', () => {
+  for (const requirement of ['Location / onsite', 'Office location', 'In-person work in Cambridge or NYC']) {
+    const data = addLocationConcept(model());
+    data.eligibility = { status: 'Pass', explanation: 'User confirmed availability.', checks: [{ requirement, status: 'Pass', explanation: 'User can work in the NYC office.' }] };
+    const result = scoreAnalysis(data, resumes, 'I can work in person in the NYC office.');
+    assert.deepEqual(result.eligibility, data.eligibility, requirement);
+  }
+});
+
+test('removing office screens does not hide genuine missing technical evidence', () => {
+  const data = addLocationConcept(model());
+  data.recommendedResume = 'SWE';
+  data.concepts.push({ name: 'Rust', category: 'explicitly_required', evidence: {} });
+  const result = scoreAnalysis(data, resumes, '');
+  assert.ok(result.realGaps.some(text => /^Rust:/.test(text)));
+  assert.ok(!result.realGaps.some(text => /in-person/i.test(text)));
+});
+
+test('an added office confirmation preserves an existing eligibility failure and its explanation', () => {
+  const data = addLocationConcept(model());
+  data.eligibility = { status: 'Fail', explanation: 'A confirmed requirement conflicts with user facts.', checks: [{ requirement: 'Availability dates', status: 'Fail', explanation: 'The user confirmed incompatible dates.' }] };
+  const result = scoreAnalysis(data, resumes, 'I am unavailable during the required internship dates.');
+  assert.equal(result.eligibility.status, 'Fail');
+  assert.equal(result.eligibility.explanation, data.eligibility.explanation);
+  assert.ok(result.eligibility.checks.some(check => check.status === 'Risk'));
+});
+
+test('local mode recognizes Kensho office attendance language', () => {
+  const jd = 'We value in-person collaboration, therefore interns are required to work out of the Cambridge HQ or our New York City office! Python required.';
+  const result = analyzeJob({ jd, resumes });
+  assert.ok(result.eligibility.checks.some(check => check.requirement === 'Location / onsite' && check.status === 'Risk'));
+  assert.equal(result.eligibility.status, 'Risk');
+  assert.deepEqual(result.concepts.map(concept => concept.name), ['Python']);
+});
+
+test('physical office screens are recognized without filtering technical location terms', () => {
+  for (const name of ['On-site work required', 'Work location: Cambridge office', 'Relocation availability for the NYC office', 'Must work onsite in NYC']) {
+    const result = scoreAnalysis(addLocationConcept(model(), name), resumes, '');
+    assert.ok(!result.concepts.some(concept => concept.name === name), name);
+    assert.ok(result.eligibility.checks.some(check => check.requirement === name), name);
+  }
+  for (const name of ['On-site Kubernetes deployment engineering', 'On-site Kubernetes deployments at customer offices', 'On-site equipment maintenance at the office', 'Remote procedure calls', 'IP network location', 'Object location detection']) {
+    const result = scoreAnalysis(addLocationConcept(model(), name), resumes, '');
+    assert.ok(result.concepts.some(concept => concept.name === name), name);
+    assert.equal(result.eligibility.checks.length, 0, name);
+  }
+});
+
+test('a preferred office arrangement does not become a mandatory eligibility screen', () => {
+  const jd = 'In-person collaboration in the Cambridge office is preferred. Python required.';
+  assert.ok(!analyzeJob({ jd, resumes }).eligibility.checks.some(check => check.requirement === 'Location / onsite'));
+  const data = addLocationConcept(model());
+  data.concepts.at(-1).category = 'preferred_skill';
+  const result = scoreAnalysis(data, resumes, '');
+  assert.ok(!result.concepts.some(concept => /in-person/i.test(concept.name)));
+  assert.equal(result.eligibility.checks.length, 0);
+});

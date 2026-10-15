@@ -44,6 +44,18 @@ function categoryFor(text) {
   return 'domain_context';
 }
 
+// Attendance is a candidate eligibility screen, not resume evidence of technical skill.
+// Require work-arrangement context so terms such as on-site deployment and RPC remain technical.
+function isLocationScreen(text) {
+  if (/\b(?:deployments?|deploying|installations?|installing|maintenance|maintaining|repairs?|repairing|calibration|engineering)\b/i.test(text)) return false;
+  return /\b(?:work (?:location|arrangement)|office (?:attendance|presence|location)|location\s*\/\s*onsite|must (?:be located|reside))\b/i.test(text)
+    || /\b(?:in[- ]person|on[- ]site|onsite)\b[^.\n]{0,120}\b(?:office|HQ|collaboration|attendance|availability|available|presence|work(?:ing)?\s+(?:in|at|from)\b|work\s*(?:required|requirement)?\s*$)/i.test(text)
+    || /\bwork(?:ing)?\s+(?:in[- ]person|on[- ]site|onsite)\b/i.test(text)
+    || /\b(?:work(?:ing)? (?:out of|from)|based in)\b[^.\n]{0,120}\b(?:office|HQ)\b/i.test(text)
+    || /\brelocat\w*\b[^.\n]{0,100}\b(?:office|HQ|location|availability|required|willing|city)\b/i.test(text)
+    || /\b(?:must|willing|available|required|able)\b[^.\n]{0,40}\brelocate\b/i.test(text);
+}
+
 function localConcepts(jd, resumes) {
   const concepts = new Map();
   let heading = '';
@@ -152,11 +164,11 @@ function eligibilityFor(jd, facts) {
   for (const [pattern, name] of [
     [/\b(?:degree|bachelor|master|ph\.?d|undergraduate|graduate student|currently enrolled)\b/i, 'Education / enrollment'],
     [/\b(?:security clearance|secret clearance|top secret|TS\/SCI)\b/i, 'Security clearance'],
-    [/\b(?:on[- ]site|onsite|relocat|must be located|must reside)\w*/i, 'Location / onsite'],
     [/\b(?:internship dates|available from|available for|full[- ]time[^.\n]{0,30}(?:summer|weeks)|(?:summer|fall|spring) 20\d{2})\b/i, 'Availability / internship dates'],
   ]) {
     if (pattern.test(jd)) add(name, 'Risk', 'Local mode cannot reliably establish this screen from free text; confirm the exact requirement against user facts.');
   }
+  if (textParts(jd).some(part => isLocationScreen(part) && categoryFor(part) !== 'preferred_skill')) add('Location / onsite', 'Risk', 'Confirm whether you can meet the stated office attendance or location requirement; resume evidence does not establish availability.');
   const status = checks.some(check => check.status === 'Fail') ? 'Fail' : checks.some(check => check.status === 'Risk') ? 'Risk' : 'Pass';
   return {
     status,
@@ -237,9 +249,14 @@ export function scoreAnalysis(data, resumes, facts = '') {
   if (!data || !Array.isArray(data.concepts) || data.concepts.length > 200) throw new Error('Invalid model concepts.');
   const limitations = ['Model extraction and recruiter judgment may be wrong; inspect the quoted evidence and confirm eligibility facts. Coverage and cosine are calculated deterministically from validated evidence.'];
   const unique = new Map();
+  const locationScreens = new Set();
   for (const concept of data.concepts) {
     const name = canonicalName(requiredText(concept?.name, 'concept name'));
     if (!Object.hasOwn(WEIGHTS, concept.category)) throw new Error('Invalid model concept category.');
+    if (isLocationScreen(name)) {
+      if (concept.category !== 'preferred_skill') locationScreens.add(name);
+      continue;
+    }
     if (!concept.evidence || typeof concept.evidence !== 'object') throw new Error('Invalid model evidence.');
     const evidence = {};
     for (const resume of names) {
@@ -262,10 +279,18 @@ export function scoreAnalysis(data, resumes, facts = '') {
   const humanOrder = stringList(data.humanOrder, 'human order');
   if (new Set(humanOrder).size !== names.length || humanOrder.length !== names.length || humanOrder.some(name => !names.includes(name))) throw new Error('Invalid model human resume order.');
   if (!names.includes(data.recommendedResume)) throw new Error('Invalid model recommended resume.');
+  const eligibility = validateEligibility(data.eligibility, facts);
+  if (locationScreens.size && !eligibility.checks.some(check => isLocationScreen(check.requirement))) {
+    eligibility.checks.push({ requirement: [...locationScreens].join('; '), status: 'Risk', explanation: 'Confirm whether you can meet this office attendance or location requirement. Missing resume evidence does not establish unavailability.' });
+    if (eligibility.status !== 'Fail') {
+      eligibility.status = 'Risk';
+      eligibility.explanation = 'Some eligibility requirements need confirmation; office availability is separate from technical resume fit.';
+    }
+  }
   return calculate([...unique.values()], available, {
-    mode: 'model', eligibility: validateEligibility(data.eligibility, facts), humanOrder,
+    mode: 'model', eligibility, humanOrder,
     recommendedResume: data.recommendedResume, why: requiredText(data.why, 'recommendation explanation'),
-    underSignaled: stringList(data.underSignaled, 'under-signaled evidence'), edits: stringList(data.edits, 'edits'),
+    underSignaled: stringList(data.underSignaled, 'under-signaled evidence').filter(text => !isLocationScreen(text)), edits: stringList(data.edits, 'edits').filter(text => !isLocationScreen(text)),
     track: requiredText(data.track, 'track', true), limitations,
   });
 }
