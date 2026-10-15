@@ -66,6 +66,38 @@ The résumé is `public/resume.pdf`.
 - `/public_remediation`: street-design essay.
 - `/scavenger-hunt/`: HTML/CSS scavenger hunt.
 - `/goose-chase/`: encrypted puzzle sequence. See `tools/README.md`.
+- `/resume-picker`: password-protected comparison of the SWE, AI, Defense, QD,
+  and Quant resume PDFs. Paste a job description, confirm eligibility facts,
+  and inspect coverage, cosine similarity, gaps, and quoted evidence.
+
+### Resume picker
+
+The picker and PDF downloads use the authenticated `/api/resume-picker`
+Vercel Function. The five PDFs and their extracted text are encrypted in
+`server/data/resumes.enc.json`; plaintext resumes are not bundled into the
+browser or copied into `public/`. Login creates an eight-hour HttpOnly session.
+The password unlocks the encrypted pack, so no deployment secret is needed.
+Forms and results stay in memory rather than browser storage.
+
+Local analysis works without an API key and explicitly reports its limits:
+dictionary-based concept matching, conservative evidence, and no recruiter
+story ranking. Optional AI analysis uses OpenAI with an ephemeral key entered
+in the app, or `OPENAI_API_KEY` configured on Vercel. `OPENAI_MODEL` can override
+the default model. Selecting AI analysis sends the JD, resume text, and
+eligibility facts to OpenAI; keys are not persisted. Coverage and cosine are
+always calculated in code, and model quotes must appear on the exact resume.
+
+To refresh the bundled resumes, put these five PDFs in an external directory:
+`ParthMhaskeSWEResume.pdf`, `ParthMhaskeAIResume.pdf`,
+`ParthMhaskeDefenseResume.pdf`, `ParthMhaskeQDResume.pdf`, and
+`ParthMhaskeQuantResume.pdf`. Install `pdftotext`, set
+`RESUME_PICKER_BUILD_PASSWORD` in the shell, and run
+`node tools/pack-resume-picker.mjs <directory>`. Repacking also invalidates old
+sessions. Keep plaintext inputs and the password outside Git.
+
+`npm run dev` serves the same API locally through a Vite development adapter.
+`npm run preview` previews static assets only; production API checks require
+Vercel or the development server.
 
 Vercel routing lives in `vercel.json`, including the `/nj-hin` app and API proxies.
 Other app routes fall back to `index.html`.
