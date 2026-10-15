@@ -25,6 +25,16 @@ test('calculates weighted coverage and cosine independently and explains a judgm
   assert.match(result.why, /Raw score winner is SWE, but I recommend AI/);
 });
 
+test('perfectly aligned weighted vectors have cosine exactly one despite rounding', () => {
+  const data = model();
+  data.concepts = ['hard_requirement', 'explicitly_required', 'core_responsibility'].map((category, index) => ({
+    name: `Requirement ${index + 1}`, category,
+    evidence: { SWE: { level: 1, quote: 'Python', reason: 'Supported' }, AI: { level: 1, quote: 'Python', reason: 'Supported' } },
+  }));
+  const result = scoreAnalysis(data, resumes, '');
+  assert.ok(result.scorecard.every(row => row.cosine === 1));
+});
+
 test('refuses invented evidence quotes and keeps zero-norm vectors finite', () => {
   const input = model();
   input.concepts = [{ name: 'Rust', category: 'explicitly_required', evidence: { SWE: { level: 1, quote: 'Built Rust services.', reason: 'Invented' } } }];

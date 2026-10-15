@@ -182,7 +182,7 @@ function calculate(concepts, resumes, options) {
       normSquared += value ** 2;
     }
     const supported = concepts.filter(concept => concept.evidence[resume].level >= .75).map(concept => concept.name);
-    return { resume, coverage: total ? covered / total * 100 : 0, cosine: jdNorm && normSquared ? dot / (jdNorm * Math.sqrt(normSquared)) : 0, humanRank: options.humanOrder ? options.humanOrder.indexOf(resume) + 1 : null, story: supported.length ? `Visible support: ${supported.slice(0, 6).join(', ')}.` : 'No extracted concept has direct visible support.' };
+    return { resume, coverage: total ? covered / total * 100 : 0, cosine: jdNorm && normSquared ? Math.min(1, Math.max(0, dot / (jdNorm * Math.sqrt(normSquared)))) : 0, humanRank: options.humanOrder ? options.humanOrder.indexOf(resume) + 1 : null, story: supported.length ? `Visible support: ${supported.slice(0, 6).join(', ')}.` : 'No extracted concept has direct visible support.' };
   }).sort((left, right) => right.coverage - left.coverage || right.cosine - left.cosine);
   const rawWinner = scorecard[0].resume;
   const winner = options.recommendedResume || rawWinner;
