@@ -175,7 +175,7 @@ test('AI mode clearly reports a missing key and rejects untrusted upstream outpu
     assert.equal(response.status, 502);
     assert.ok(!(await response.text()).includes('test-private-key'));
     assert.equal(captured.store, false);
-    assert.deepEqual(captured.response_format, { type: 'json_object' });
+    assert.equal(captured.response_format.type, 'json_schema');
   } finally {
     globalThis.fetch = previousFetch;
     if (previousKey === undefined) delete process.env.OPENAI_API_KEY;
@@ -225,7 +225,7 @@ test('AI defaults to GPT-6 Luna with compatible nonreasoning parameters and vali
   assert.equal(Object.hasOwn(captured, 'max_tokens'), false);
   assert.equal(captured.temperature, .1);
   assert.equal(captured.store, false);
-  assert.deepEqual(captured.response_format, { type: 'json_object' });
+  assert.equal(captured.response_format.type, 'json_schema');
   assert.equal(authorization, 'Bearer server-private-fixture-key');
   const result = await response.json();
   assert.equal(result.mode, 'ai');
@@ -259,6 +259,7 @@ test('a legacy model override remains usable without Luna-specific reasoning set
   const response = await handler(request('analyze', { method: 'POST', cookie, body: { jd: 'Python required.', mode: 'ai', apiKey: 'ephemeral-fixture-key' } }));
   assert.equal(response.status, 200);
   assert.equal(captured.model, 'gpt-4.1-mini');
+  assert.equal(captured.response_format.type, 'json_schema');
   assert.equal(Object.hasOwn(captured, 'reasoning_effort'), false);
   assert.equal(captured.max_completion_tokens, 12000);
   assert.equal(Object.hasOwn(captured, 'max_tokens'), false);
@@ -442,6 +443,57 @@ test('invalid AI comparison identifies a static validator field without exposing
   assert.doesNotMatch(JSON.stringify(body), /private-/);
 });
 
+test('comparison requests enforce compact complete structured output and preserve absent or rejected evidence as zero', async t => {
+  const previousFetch = globalThis.fetch;
+  t.after(() => { globalThis.fetch = previousFetch; });
+  const handler = createHandler({ getOidcToken: async () => 'schema-fixture-token' });
+  const cookie = await login(handler);
+  let captured;
+  const output = successfulModelOutput();
+  output.concepts[0].evidence.Defense = null;
+  output.concepts[0].evidence.QD = null;
+  output.concepts[0].evidence.Quant = null;
+  globalThis.fetch = async (_url, options) => {
+    captured = JSON.parse(options.body);
+    return Response.json({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify(output) } }] });
+  };
+  const response = await handler(request('analyze', { method: 'POST', cookie, body: { jd: 'Python required.' } }));
+  assert.equal(response.status, 200);
+  const { type, json_schema: format } = captured.response_format;
+  assert.equal(type, 'json_schema');
+  assert.equal(format.strict, true);
+  const schema = format.schema;
+  const checkObjects = value => {
+    if (!value || typeof value !== 'object') return;
+    if (value.type === 'object') {
+      assert.equal(value.additionalProperties, false);
+      assert.deepEqual(value.required, Object.keys(value.properties));
+    }
+    for (const child of Object.values(value)) checkObjects(child);
+  };
+  checkObjects(schema);
+  assert.equal(schema.properties.concepts.maxItems, 200);
+  const evidence = schema.properties.concepts.items.properties.evidence;
+  assert.deepEqual(evidence.required, ['SWE', 'AI', 'Defense', 'QD', 'Quant']);
+  for (const entry of Object.values(evidence.properties)) {
+    assert.equal(entry.anyOf[1].type, 'null');
+    const supported = entry.anyOf[0].properties;
+    assert.deepEqual(supported.level.enum, [.25, .5, .75, 1]);
+    assert.equal(supported.quote.minLength, 1);
+    assert.equal(supported.quote.maxLength, 240);
+    assert.equal(supported.reason.minLength, 1);
+    assert.equal(supported.reason.maxLength, 80);
+  }
+  assert.match(captured.messages[0].content, /null for absent/i);
+  const result = await response.json();
+  assert.equal(result.scorecard.find(row => row.resume === 'SWE').coverage, 100);
+  for (const name of ['AI', 'Defense', 'QD', 'Quant']) {
+    assert.equal(result.scorecard.find(row => row.resume === name).coverage, 0);
+    assert.equal(result.evidence.find(row => row.resume === name).level, 0);
+  }
+  assert.ok(result.limitations.some(value => /Rejected unsupported quote for Python on AI/.test(value)));
+});
+
 test('analysis defaults to AI and excludes story-bank text from technical scoring', async t => {
   const previousFetch = globalThis.fetch;
   t.after(() => { globalThis.fetch = previousFetch; });
@@ -485,6 +537,7 @@ test('application answers use the authenticated Gateway transport and all profil
   assert.equal(sent.model, 'openai/gpt-6-luna');
   assert.equal(sent.reasoning_effort, 'none');
   assert.equal(sent.max_completion_tokens, 6000);
+  assert.deepEqual(sent.response_format, { type: 'json_object' });
   const supplied = JSON.parse(sent.messages[1].content);
   assert.equal(supplied.sources['story-bank'], payload.storyBank);
   for (const name of ['SWE', 'AI', 'Defense', 'QD', 'Quant']) assert.equal(supplied.sources[`resume:${name}`], payload.resumes[name].text);
