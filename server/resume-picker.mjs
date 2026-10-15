@@ -25,6 +25,31 @@ function json(data, status = 200, headers = {}) {
 function fail(message, status) {
   return Object.assign(new Error(message), { status });
 }
+const AI_FAILURE = Symbol('safe-ai-failure');
+function aiFail(code, message, status = 502) {
+  return Object.assign(fail(message, status), { code, [AI_FAILURE]: true });
+}
+const COMPARISON_FIELDS = new Map([
+  ['Invalid model concepts.', 'concepts'],
+  ['Invalid model concept name.', 'concept name'],
+  ['Invalid model concept category.', 'concept category'],
+  ['Invalid model evidence.', 'evidence'],
+  ['Invalid model evidence level.', 'evidence level'],
+  ['Invalid model evidence quote.', 'evidence quote'],
+  ['Invalid model evidence reason.', 'evidence reason'],
+  ['Invalid model eligibility.', 'eligibility'],
+  ['Invalid model eligibility explanation.', 'eligibility explanation'],
+  ['Invalid model eligibility check.', 'eligibility check'],
+  ['Invalid model eligibility requirement.', 'eligibility requirement'],
+  ['Invalid model eligibility check explanation.', 'eligibility check explanation'],
+  ['Invalid model human order.', 'human order'],
+  ['Invalid model human resume order.', 'human resume order'],
+  ['Invalid model recommended resume.', 'recommended resume'],
+  ['Invalid model recommendation explanation.', 'recommendation explanation'],
+  ['Invalid model under-signaled evidence.', 'under-signaled evidence'],
+  ['Invalid model edits.', 'edits'],
+  ['Invalid model track.', 'track'],
+]);
 async function readJson(request, limit = BODY_LIMIT) {
   if (!request.headers.get('content-type')?.toLowerCase().startsWith('application/json')) throw fail('Send JSON content.', 400);
   if (Number(request.headers.get('content-length')) > limit) throw fail('Request is too large.', 413);
@@ -129,16 +154,29 @@ async function requestAIJson(messages, auth, { maxCompletionTokens = 12000, sign
     });
     if (!response.ok) {
       await response.body?.cancel();
-      if (gateway && [401, 403].includes(response.status)) throw fail('Vercel AI Gateway authentication failed. Check project OIDC access or AI_GATEWAY_API_KEY.', 503);
-      if (gateway && response.status === 402) throw fail('Vercel AI Gateway needs billing credits or an enabled BYOK provider. Check Gateway billing and BYOK settings.', 503);
-      throw new Error('Upstream request failed.');
+      if (gateway && [401, 403].includes(response.status)) throw aiFail('AI_GATEWAY_AUTH', 'Vercel AI Gateway authentication failed. Check project OIDC access or AI_GATEWAY_API_KEY.', 503);
+      if (gateway && response.status === 402) throw aiFail('AI_GATEWAY_BILLING', 'Vercel AI Gateway needs billing credits or an enabled BYOK provider. Check Gateway billing and BYOK settings.', 503);
+      if (response.status === 429) throw aiFail('AI_RATE_LIMIT', 'The AI provider rate limit was reached. Wait briefly, then retry.', 503);
+      throw aiFail('AI_PROVIDER_ERROR', `The AI provider returned HTTP ${response.status}. Please retry or check AI access.`);
     }
-    const result = await readJson(response, 2 * 1024 * 1024);
-    if (result.choices?.[0]?.finish_reason !== 'stop' || typeof result.choices[0].message?.content !== 'string') throw new Error('Incomplete model response.');
-    return { data: JSON.parse(result.choices[0].message.content), model: typeof result.model === 'string' ? result.model : model, provider: auth.provider };
+    let result;
+    try { result = await readJson(response, 2 * 1024 * 1024); }
+    catch (error) {
+      if (signal.aborted || error.name === 'TimeoutError') throw error;
+      throw aiFail('AI_INVALID_RESPONSE', 'The AI provider returned an invalid response format. Please retry.');
+    }
+    const choice = result.choices?.[0];
+    if (choice?.finish_reason === 'length') throw aiFail('AI_OUTPUT_LIMIT', 'The AI response reached its output limit before finishing. Please retry.');
+    if (choice?.finish_reason !== 'stop') throw aiFail('AI_INCOMPLETE_OUTPUT', 'The AI provider returned an incomplete response. Please retry.');
+    if (typeof choice.message?.content !== 'string') throw aiFail('AI_INVALID_RESPONSE', 'The AI provider returned an invalid response format. Please retry.');
+    let data;
+    try { data = JSON.parse(choice.message.content); }
+    catch { throw aiFail('AI_INVALID_JSON', 'The AI returned invalid JSON. Please retry.'); }
+    return { data, model: typeof result.model === 'string' ? result.model : model, provider: auth.provider };
   } catch (error) {
-    if (error.status === 503) throw error;
-    throw fail('AI request failed or returned invalid output. Retry after checking AI access.', 502);
+    if (error[AI_FAILURE]) throw error;
+    if (signal.aborted || error.name === 'TimeoutError') throw aiFail('AI_TIMEOUT', 'The AI request timed out. Please retry or use local analysis.', 504);
+    throw aiFail('AI_REQUEST_FAILED', 'The AI request failed before a complete response arrived. Please retry.', 502);
   }
 }
 
@@ -146,7 +184,10 @@ async function analyzeWithAI(input, auth) {
   const completion = await requestAIJson([{ role: 'system', content: AI_INSTRUCTIONS }, { role: 'user', content: JSON.stringify({ JD: input.jd, RESUMES: input.resumes, USER_FACTS: input.facts, companyType: input.companyType }) }], auth);
   try {
     return { ...scoreAnalysis(completion.data, input.resumes, input.facts), mode: 'ai', model: completion.model, provider: completion.provider };
-  } catch { throw fail('AI analysis failed or returned invalid evidence. Retry or use local analysis.', 502); }
+  } catch (error) {
+    const field = COMPARISON_FIELDS.get(error.message);
+    throw aiFail('AI_INVALID_COMPARISON', field ? `AI returned an invalid comparison (${field}). Please retry.` : 'AI returned an invalid comparison. Please retry or use local analysis.');
+  }
 }
 
 export function createResumePickerHandler({ pack, now = Date.now, getOidcToken = getVercelOidcToken } = {}) {
@@ -220,7 +261,7 @@ export function createResumePickerHandler({ pack, now = Date.now, getOidcToken =
       if (!auth) return json({ error: 'AI analysis needs Vercel AI Gateway access or an OpenAI API key. Configure Gateway authentication, enter a key, or use local analysis.' }, 503);
       return json(await analyzeWithAI(input, auth));
     } catch (error) {
-      return json({ error: error.status ? error.message : 'The resume picker is temporarily unavailable.' }, error.status || 500);
+      return json({ error: error.status ? error.message : 'The resume picker is temporarily unavailable.', ...(error[AI_FAILURE] ? { code: error.code } : {}) }, error.status || 500);
     }
   };
 }

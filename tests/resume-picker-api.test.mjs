@@ -398,6 +398,50 @@ test('Gateway authentication and billing failures return actionable errors witho
   }
 });
 
+test('AI transport failures identify timeout, provider status, truncation and invalid JSON without private output', async t => {
+  const previousFetch = globalThis.fetch;
+  t.after(() => { globalThis.fetch = previousFetch; });
+  const handler = createHandler({ getOidcToken: async () => 'private-diagnostic-token' });
+  const cookie = await login(handler);
+  const cases = [
+    [() => { throw new DOMException('private-timeout-details', 'TimeoutError'); }, 504, 'AI_TIMEOUT', /timed out/i],
+    [() => Response.json({ error: 'private-upstream-body' }, { status: 429 }), 503, 'AI_RATE_LIMIT', /rate limit/i],
+    [() => Response.json({ error: 'private-upstream-body' }, { status: 500 }), 502, 'AI_PROVIDER_ERROR', /HTTP 500/],
+    [() => Response.json({ choices: [{ finish_reason: 'length', message: { content: 'private-incomplete-output' } }] }), 502, 'AI_OUTPUT_LIMIT', /output limit/i],
+    [() => Response.json({ choices: [{ finish_reason: 'content_filter', message: { content: 'private-filtered-output' } }] }), 502, 'AI_INCOMPLETE_OUTPUT', /incomplete/i],
+    [() => Response.json({ choices: [{ finish_reason: 'stop', message: {} }] }), 502, 'AI_INVALID_RESPONSE', /response format/i],
+    [() => new Response('private-non-json-body', { headers: { 'Content-Type': 'application/json' } }), 502, 'AI_INVALID_RESPONSE', /response format/i],
+    [() => Response.json({ choices: [{ finish_reason: 'stop', message: { content: 'private-invalid-json' } }] }), 502, 'AI_INVALID_JSON', /invalid JSON/i],
+    [() => { throw Object.assign(new Error('private-fake-access-error'), { status: 503 }); }, 502, 'AI_REQUEST_FAILED', /request failed/i],
+  ];
+  for (const [mock, status, code, pattern] of cases) {
+    globalThis.fetch = async () => mock();
+    const response = await handler(request('analyze', { method: 'POST', cookie, body: { jd: 'Python required.' } }));
+    assert.equal(response.status, status, code);
+    const body = await response.json();
+    assert.equal(body.code, code);
+    assert.match(body.error, pattern);
+    assert.doesNotMatch(JSON.stringify(body), /private-/);
+  }
+});
+
+test('invalid AI comparison identifies a static validator field without exposing model data', async t => {
+  const previousFetch = globalThis.fetch;
+  t.after(() => { globalThis.fetch = previousFetch; });
+  const handler = createHandler({ getOidcToken: async () => 'private-comparison-token' });
+  const cookie = await login(handler);
+  const modelOutput = successfulModelOutput();
+  modelOutput.concepts[0].evidence.SWE.reason = null;
+  modelOutput.why = 'private-model-content';
+  globalThis.fetch = async () => Response.json({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify(modelOutput) } }] });
+  const response = await handler(request('analyze', { method: 'POST', cookie, body: { jd: 'Python required.' } }));
+  assert.equal(response.status, 502);
+  const body = await response.json();
+  assert.equal(body.code, 'AI_INVALID_COMPARISON');
+  assert.match(body.error, /invalid comparison \(evidence reason\)/i);
+  assert.doesNotMatch(JSON.stringify(body), /private-/);
+});
+
 test('analysis defaults to AI and excludes story-bank text from technical scoring', async t => {
   const previousFetch = globalThis.fetch;
   t.after(() => { globalThis.fetch = previousFetch; });
