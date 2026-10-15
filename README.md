@@ -82,9 +82,10 @@ Forms and results stay in memory rather than browser storage.
 Local analysis works without an API key and explicitly reports its limits:
 dictionary-based concept matching, conservative evidence, and no recruiter
 story ranking. Optional AI analysis uses OpenAI with an ephemeral key entered
-in the app, or `OPENAI_API_KEY` configured on Vercel. `OPENAI_MODEL` can override
-the default model. Selecting AI analysis sends the JD, resume text, and
-eligibility facts to OpenAI; keys are not persisted. Coverage and cosine are
+in the app, or `OPENAI_API_KEY` configured on Vercel. The default is `gpt-6-luna`
+with reasoning disabled; `OPENAI_MODEL` can override the model. Selecting AI
+analysis sends the JD, resume text, and eligibility facts to OpenAI; keys are
+not persisted. Coverage and cosine are
 always calculated in code, and model quotes must appear on the exact resume.
 
 To refresh the bundled resumes, put these five PDFs in an external directory:

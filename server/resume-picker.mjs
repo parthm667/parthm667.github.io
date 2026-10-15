@@ -7,6 +7,7 @@ const deriveKey = promisify(pbkdf2);
 const SESSION_MS = 8 * 60 * 60 * 1000;
 const BODY_LIMIT = 150 * 1024;
 const COOKIE = 'rp_session';
+const DEFAULT_AI_MODEL = 'gpt-6-luna';
 const PRIVATE_HEADERS = {
   'Cache-Control': 'private, no-store, max-age=0',
   'CDN-Cache-Control': 'no-store',
@@ -98,13 +99,15 @@ const AI_INSTRUCTIONS = `You compare five exact resumes SWE, AI, Defense, QD, Qu
 
 async function analyzeWithAI(input, apiKey) {
   try {
+    const model = process.env.OPENAI_MODEL || DEFAULT_AI_MODEL;
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
       signal: AbortSignal.timeout(45000),
       body: JSON.stringify({
-        model: process.env.OPENAI_MODEL || 'gpt-4.1-mini',
-        store: false, response_format: { type: 'json_object' }, temperature: .1, max_tokens: 12000,
+        model,
+        ...(model === DEFAULT_AI_MODEL ? { reasoning_effort: 'none' } : {}),
+        store: false, response_format: { type: 'json_object' }, temperature: .1, max_completion_tokens: 12000,
         messages: [{ role: 'system', content: AI_INSTRUCTIONS }, { role: 'user', content: JSON.stringify({ JD: input.jd, RESUMES: input.resumes, USER_FACTS: input.facts, companyType: input.companyType }) }],
       }),
     });
@@ -114,7 +117,7 @@ async function analyzeWithAI(input, apiKey) {
     }
     const result = await readJson(response, 2 * 1024 * 1024);
     if (result.choices?.[0]?.finish_reason !== 'stop' || typeof result.choices[0].message?.content !== 'string') throw new Error('Incomplete model response.');
-    return { ...scoreAnalysis(JSON.parse(result.choices[0].message.content), input.resumes, input.facts), mode: 'ai' };
+    return { ...scoreAnalysis(JSON.parse(result.choices[0].message.content), input.resumes, input.facts), mode: 'ai', model: typeof result.model === 'string' ? result.model : model };
   } catch {
     throw fail('AI analysis failed or returned invalid evidence. Retry or use local analysis.', 502);
   }
@@ -161,7 +164,7 @@ export function createResumePickerHandler({ pack, now = Date.now } = {}) {
       const data = sessionFrom(request, encrypted, now());
       if (action === 'session') return json({ authenticated: Boolean(data) });
       if (!data) return json({ error: 'Sign in to continue.' }, 401);
-      if (action === 'resumes') return json({ resumes: textResumes(data), files: Object.fromEntries(Object.entries(data.resumes).map(([name, resume]) => [name, resume.filename])), facts: data.facts || '', aiAvailable: Boolean(process.env.OPENAI_API_KEY) });
+      if (action === 'resumes') return json({ resumes: textResumes(data), files: Object.fromEntries(Object.entries(data.resumes).map(([name, resume]) => [name, resume.filename])), facts: data.facts || '', aiAvailable: Boolean(process.env.OPENAI_API_KEY), aiModel: process.env.OPENAI_MODEL || DEFAULT_AI_MODEL });
       if (action === 'pdf') {
         const name = url.searchParams.get('resume');
         if (!Object.hasOwn(data.resumes, name)) return json({ error: 'Choose a valid resume.' }, 400);

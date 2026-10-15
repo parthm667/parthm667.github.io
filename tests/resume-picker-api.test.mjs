@@ -165,3 +165,87 @@ test('AI mode clearly reports a missing key and rejects untrusted upstream outpu
     else process.env.OPENAI_API_KEY = previousKey;
   }
 });
+
+function successfulModelOutput() {
+  return {
+    concepts: [{ name: 'Python', category: 'hard_requirement', evidence: {
+      SWE: { level: 1, quote: 'Built Python services and REST APIs.', reason: 'Demonstrated service implementation.' },
+      AI: { level: 1, quote: 'Built Python AI models.', reason: 'Unsupported invented quote must be rejected.' },
+    } }],
+    eligibility: { status: 'Risk', explanation: 'Confirm requirements before applying.', checks: [] },
+    humanOrder: ['SWE', 'AI', 'Defense', 'QD', 'Quant'], recommendedResume: 'SWE',
+    why: 'Visible service implementation fits the backend role.', underSignaled: [], edits: [], track: '',
+  };
+}
+
+test('AI defaults to GPT-6 Luna with compatible nonreasoning parameters and validates real scoring', async t => {
+  const previousModel = process.env.OPENAI_MODEL;
+  const previousKey = process.env.OPENAI_API_KEY;
+  const previousFetch = globalThis.fetch;
+  delete process.env.OPENAI_MODEL;
+  process.env.OPENAI_API_KEY = 'server-private-fixture-key';
+  t.after(() => {
+    globalThis.fetch = previousFetch;
+    if (previousModel === undefined) delete process.env.OPENAI_MODEL;
+    else process.env.OPENAI_MODEL = previousModel;
+    if (previousKey === undefined) delete process.env.OPENAI_API_KEY;
+    else process.env.OPENAI_API_KEY = previousKey;
+  });
+  const handler = createResumePickerHandler({ pack });
+  const cookie = await login(handler);
+  let captured;
+  let authorization;
+  globalThis.fetch = async (_url, options) => {
+    captured = JSON.parse(options.body);
+    authorization = options.headers.Authorization;
+    return Response.json({ model: 'gpt-6-luna-test-snapshot', choices: [{ finish_reason: 'stop', message: { content: JSON.stringify(successfulModelOutput()) } }] });
+  };
+  const response = await handler(request('analyze', { method: 'POST', cookie, body: { jd: 'Python required for backend services.', mode: 'ai' } }));
+  assert.equal(response.status, 200);
+  assert.equal(captured.model, 'gpt-6-luna');
+  assert.equal(captured.reasoning_effort, 'none');
+  assert.equal(captured.max_completion_tokens, 12000);
+  assert.equal(Object.hasOwn(captured, 'max_tokens'), false);
+  assert.equal(captured.temperature, .1);
+  assert.equal(captured.store, false);
+  assert.deepEqual(captured.response_format, { type: 'json_object' });
+  assert.equal(authorization, 'Bearer server-private-fixture-key');
+  const result = await response.json();
+  assert.equal(result.mode, 'ai');
+  assert.equal(result.model, 'gpt-6-luna-test-snapshot');
+  assert.equal(result.winner, 'SWE');
+  assert.equal(result.scorecard.find(row => row.resume === 'SWE').coverage, 100);
+  assert.equal(result.scorecard.find(row => row.resume === 'AI').coverage, 0);
+  assert.equal(JSON.stringify(result).includes('server-private-fixture-key'), false);
+  const metadata = await (await handler(request('resumes', { cookie }))).json();
+  assert.equal(metadata.aiAvailable, true);
+  assert.equal(metadata.aiModel, 'gpt-6-luna');
+  assert.equal(JSON.stringify(metadata).includes('server-private-fixture-key'), false);
+});
+
+test('a legacy model override remains usable without Luna-specific reasoning settings', async t => {
+  const previousModel = process.env.OPENAI_MODEL;
+  const previousFetch = globalThis.fetch;
+  process.env.OPENAI_MODEL = 'gpt-4.1-mini';
+  t.after(() => {
+    globalThis.fetch = previousFetch;
+    if (previousModel === undefined) delete process.env.OPENAI_MODEL;
+    else process.env.OPENAI_MODEL = previousModel;
+  });
+  const handler = createResumePickerHandler({ pack });
+  const cookie = await login(handler);
+  let captured;
+  globalThis.fetch = async (_url, options) => {
+    captured = JSON.parse(options.body);
+    return Response.json({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify(successfulModelOutput()) } }] });
+  };
+  const response = await handler(request('analyze', { method: 'POST', cookie, body: { jd: 'Python required.', mode: 'ai', apiKey: 'ephemeral-fixture-key' } }));
+  assert.equal(response.status, 200);
+  assert.equal(captured.model, 'gpt-4.1-mini');
+  assert.equal(Object.hasOwn(captured, 'reasoning_effort'), false);
+  assert.equal(captured.max_completion_tokens, 12000);
+  assert.equal(Object.hasOwn(captured, 'max_tokens'), false);
+  assert.equal((await response.json()).model, 'gpt-4.1-mini');
+  const metadata = await (await handler(request('resumes', { cookie }))).json();
+  assert.equal(metadata.aiModel, 'gpt-4.1-mini');
+});
