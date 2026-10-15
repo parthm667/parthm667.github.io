@@ -2,15 +2,35 @@ const labels = ['SWE', 'AI', 'Defense', 'QD', 'Quant'];
 const text = maxLength => ({ type: 'string', minLength: 1, maxLength });
 const object = properties => ({ type: 'object', properties, required: Object.keys(properties), additionalProperties: false });
 const status = { type: 'string', enum: ['Pass', 'Risk', 'Fail'] };
-const evidence = {
-  anyOf: [
-    object({ level: { type: 'number', enum: [.25, .5, .75, 1] }, quote: text(240), reason: text(80) }),
-    { type: 'null' },
-  ],
-};
+export function buildResumePassages(resumes) {
+  return Object.fromEntries(Object.entries(resumes).map(([name, original]) => [name,
+    original.split(/\r?\n/u).map(line => line.trim()).filter(Boolean).map((line, index) => ({ id: index + 1, text: line })),
+  ]));
+}
 
-// Null means absent evidence; scoreAnalysis expands it to the existing zero-credit entry.
-export const COMPARISON_RESPONSE_FORMAT = {
+export function hydrateComparison(data, passages) {
+  if (!Array.isArray(data?.concepts)) return data;
+  return { ...data, concepts: data.concepts.map(concept => {
+    if (!concept?.evidence || typeof concept.evidence !== 'object' || Array.isArray(concept.evidence)) return concept;
+    const evidence = Object.fromEntries(Object.entries(passages).map(([name, lines]) => {
+      const entry = concept.evidence[name];
+      if (entry == null) return [name, null];
+      if (!Number.isInteger(entry.quoteId) || entry.quoteId < 1 || entry.quoteId > lines.length) throw new Error('Invalid model evidence reference.');
+      return [name, { level: entry.level, quote: lines[entry.quoteId - 1].text, reason: entry.reason }];
+    }));
+    return { ...concept, evidence };
+  }) };
+}
+
+// Model references expand to exact same-resume text; null retains existing zero credit.
+export function comparisonResponseFormat(passages) {
+  const evidence = Object.fromEntries(labels.map(label => [label, {
+    anyOf: [
+      object({ level: { type: 'number', enum: [.25, .5, .75, 1] }, quoteId: { type: 'integer', minimum: 1, maximum: passages[label].length }, reason: text(80) }),
+      { type: 'null' },
+    ],
+  }]));
+  return {
   type: 'json_schema',
   json_schema: {
     name: 'resume_comparison',
@@ -21,7 +41,7 @@ export const COMPARISON_RESPONSE_FORMAT = {
         items: object({
           name: text(120),
           category: { type: 'string', enum: ['hard_requirement', 'explicitly_required', 'core_responsibility', 'preferred_skill', 'domain_context'] },
-          evidence: object(Object.fromEntries(labels.map(label => [label, evidence]))),
+          evidence: object(evidence),
         }),
       },
       eligibility: object({
@@ -36,4 +56,5 @@ export const COMPARISON_RESPONSE_FORMAT = {
       track: { type: 'string', maxLength: 120 },
     }),
   },
-};
+  };
+}

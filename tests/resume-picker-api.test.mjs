@@ -2,6 +2,7 @@ import test, { beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { createCipheriv, pbkdf2Sync, randomBytes } from 'node:crypto';
 import { createResumePickerHandler } from '../server/resume-picker.mjs';
+import { buildResumePassages, hydrateComparison } from '../server/ai-comparison.mjs';
 
 const password = 'test-pin';
 const salt = randomBytes(16);
@@ -186,8 +187,8 @@ test('AI mode clearly reports a missing key and rejects untrusted upstream outpu
 function successfulModelOutput() {
   return {
     concepts: [{ name: 'Python', category: 'hard_requirement', evidence: {
-      SWE: { level: 1, quote: 'Built Python services and REST APIs.', reason: 'Demonstrated service implementation.' },
-      AI: { level: 1, quote: 'Built Python AI models.', reason: 'Unsupported invented quote must be rejected.' },
+      SWE: { level: 1, quoteId: 1, reason: 'Demonstrated service implementation.' },
+      AI: null, Defense: null, QD: null, Quant: null,
     } }],
     eligibility: { status: 'Risk', explanation: 'Confirm requirements before applying.', checks: [] },
     humanOrder: ['SWE', 'AI', 'Defense', 'QD', 'Quant'], recommendedResume: 'SWE',
@@ -443,7 +444,7 @@ test('invalid AI comparison identifies a static validator field without exposing
   assert.doesNotMatch(JSON.stringify(body), /private-/);
 });
 
-test('comparison requests enforce compact complete structured output and preserve absent or rejected evidence as zero', async t => {
+test('comparison requests enforce compact complete structured output and preserve absent evidence as zero', async t => {
   const previousFetch = globalThis.fetch;
   t.after(() => { globalThis.fetch = previousFetch; });
   const handler = createHandler({ getOidcToken: async () => 'schema-fixture-token' });
@@ -479,8 +480,10 @@ test('comparison requests enforce compact complete structured output and preserv
     assert.equal(entry.anyOf[1].type, 'null');
     const supported = entry.anyOf[0].properties;
     assert.deepEqual(supported.level.enum, [.25, .5, .75, 1]);
-    assert.equal(supported.quote.minLength, 1);
-    assert.equal(supported.quote.maxLength, 240);
+    assert.equal(supported.quoteId.type, 'integer');
+    assert.equal(supported.quoteId.minimum, 1);
+    assert.equal(supported.quoteId.maximum, 1);
+    assert.equal(supported.quote, undefined);
     assert.equal(supported.reason.minLength, 1);
     assert.equal(supported.reason.maxLength, 80);
   }
@@ -491,7 +494,48 @@ test('comparison requests enforce compact complete structured output and preserv
     assert.equal(result.scorecard.find(row => row.resume === name).coverage, 0);
     assert.equal(result.evidence.find(row => row.resume === name).level, 0);
   }
-  assert.ok(result.limitations.some(value => /Rejected unsupported quote for Python on AI/.test(value)));
+  assert.equal(result.evidence.find(row => row.resume === 'SWE').quote, payload.resumes.SWE.text);
+  assert.deepEqual(JSON.parse(captured.messages[1].content).RESUMES.SWE, [{ id: 1, text: payload.resumes.SWE.text }]);
+});
+
+test('numbered passages retain every nonwhitespace character and exact source substrings', () => {
+  const originals = { SWE: '  Header\r\n\r\n  • Built Python services.\r\n    Wrapped continuation.  \n', AI: '\nDifferent Python experience.\n  ' };
+  const passages = buildResumePassages(originals);
+  for (const [name, original] of Object.entries(originals)) {
+    assert.equal(passages[name].map(row => row.text).join('').replace(/\s/gu, ''), original.replace(/\s/gu, ''));
+    assert.deepEqual(passages[name].map(row => row.id), passages[name].map((_, index) => index + 1));
+    assert.ok(passages[name].every(row => original.includes(row.text)));
+  }
+  const model = { concepts: [{ name: 'Python', evidence: {
+    SWE: { level: 1, quoteId: 1, quote: 'Invented text must not be trusted.', reason: 'Source reference.' },
+    AI: { level: .75, quoteId: 1, reason: 'Different source.' },
+  } }] };
+  const hydrated = hydrateComparison(model, passages);
+  assert.equal(hydrated.concepts[0].evidence.SWE.quote, 'Header');
+  assert.equal(hydrated.concepts[0].evidence.AI.quote, 'Different Python experience.');
+  assert.equal(model.concepts[0].evidence.SWE.quote, 'Invented text must not be trusted.');
+  assert.equal(hydrated.concepts[0].evidence.SWE.quoteId, undefined);
+  model.concepts[0].evidence.AI.quoteId = 2;
+  assert.throws(() => hydrateComparison(model, passages), /Invalid model evidence reference/);
+});
+
+test('out-of-range or invalid source references fail privately instead of borrowing another resume source', async t => {
+  const previousFetch = globalThis.fetch;
+  t.after(() => { globalThis.fetch = previousFetch; });
+  const handler = createHandler({ getOidcToken: async () => 'private-source-token' });
+  const cookie = await login(handler);
+  for (const quoteId of [0, 2, 1.5, '1', null]) {
+    const output = successfulModelOutput();
+    output.concepts[0].evidence.SWE.quoteId = quoteId;
+    output.concepts[0].evidence.SWE.quote = 'private-invented-source';
+    globalThis.fetch = async () => Response.json({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify(output) } }] });
+    const response = await handler(request('analyze', { method: 'POST', cookie, body: { jd: 'Python required.' } }));
+    assert.equal(response.status, 502);
+    const body = await response.json();
+    assert.equal(body.code, 'AI_INVALID_COMPARISON');
+    assert.match(body.error, /evidence reference/);
+    assert.doesNotMatch(JSON.stringify(body), /private-/);
+  }
 });
 
 test('analysis defaults to AI and excludes story-bank text from technical scoring', async t => {
