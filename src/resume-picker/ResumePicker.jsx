@@ -118,10 +118,16 @@ export default function ResumePicker() {
   }, [invalidateAnswer])
 
   useEffect(() => {
+    if (!authenticated) return undefined
+    const previousTitle = document.title
+    document.title = 'Resume picker | Parth Mhaske'
+    return () => { document.title = previousTitle }
+  }, [authenticated])
+
+  useEffect(() => {
     const previous = document.documentElement.dataset.room
     document.documentElement.dataset.room = 'resume-picker'
     const previousTitle = document.title
-    document.title = 'Resume picker | Parth Mhaske'
     const controller = new AbortController()
     request('session', undefined, controller.signal).then(data => setAuthenticated(Boolean(data.authenticated))).catch(error => {
       if (error.name !== 'AbortError' && error.status !== 401) setError(error.message)
@@ -242,10 +248,9 @@ export default function ResumePicker() {
   }
 
   if (!authenticated) return <main className="rp-page rp-gate">
-    <a className="rp-back" href="/">Parth Mhaske <ChevronRight size={14} aria-hidden="true" /> Private tools</a>
-    <div className="rp-gate-panel"><div className="rp-gate-icon"><LockKeyhole size={25} aria-hidden="true" /></div><h1>Private resume picker</h1><p>Compare five resume versions against a job description. Unlock your workspace to continue.</p>
+    <div className="rp-gate-panel"><div className="rp-gate-icon"><LockKeyhole size={25} aria-hidden="true" /></div><h1>Private</h1>
       {checking ? <p className="rp-status" role="status">Checking your session…</p> : <form onSubmit={login}><label htmlFor="rp-password">Password</label><input id="rp-password" type="password" autoComplete="current-password" autoFocus required disabled={loggingIn || locking} value={password} onChange={event => setPassword(event.target.value)} /><button className="rp-button rp-primary" disabled={loggingIn || locking} type="submit"><LockKeyhole size={16} aria-hidden="true" />{locking ? 'Locking…' : loggingIn ? 'Unlocking…' : 'Unlock workspace'}</button></form>}
-      {error && <p className="rp-error" role="alert">{error}</p>}<p className="rp-gate-foot">Resumes and analysis require an authenticated session.</p>
+      {error && <p className="rp-error" role="alert">{error}</p>}
     </div>
   </main>
 

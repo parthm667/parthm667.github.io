@@ -34,7 +34,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Desktop />} />
         <Route path="/public_remediation" element={<Remediation />} />
-        <Route path="/resume-picker" element={<Suspense fallback={<p role="status">Loading resume picker…</p>}><ResumePicker /></Suspense>} />
+        <Route path="/resume-picker" element={<Suspense fallback={<p role="status">Loading…</p>}><ResumePicker /></Suspense>} />
       </Routes>
     </BrowserRouter>
   )
