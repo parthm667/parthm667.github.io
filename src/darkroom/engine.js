@@ -402,7 +402,7 @@ export function useConsoleNote() {
   }, [])
 }
 
-/* A ref-and-mount helper for the one-shot paints (the portrait in
+/* A ref-and-mount helper for the one-shot paints (the one-shot canvas in
    the self room, the big print on the easel) that are not part of
    the sheet's staggered develop. */
 export function useOneShot(canvasRef, gen, { slow = false, key } = {}) {

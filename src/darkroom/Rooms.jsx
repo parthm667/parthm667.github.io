@@ -37,8 +37,7 @@ export function DataSheet() {
       </ol>
 
       <p className="dr-self-links">
-        <a className="dr-btn" href="/resume.pdf" target="_blank" rel="noreferrer">Résumé ↗</a>
-        <a className="dr-btn ghost" href="mailto:pmhaske@umd.edu">Email me</a>
+        <a className="dr-btn" href="mailto:pmhaske@umd.edu">Email me</a>
         <a className="dr-btn ghost" href="#work">The nine work frames ↓</a>
       </p>
     </section>
@@ -59,14 +58,6 @@ export function Self() {
       </div>
 
       <div className="dr-self">
-        <div>
-          <div className="dr-print-mount dr-tilt">
-            <canvas data-gen="portrait" data-slow="" aria-label="Parth Mhaske"></canvas>
-            <p className="cap"><span>FRAME 1</span><span>HP5+ · f/2 · 1/60</span></p>
-            <span className="dr-hand dr-tag" aria-hidden="true">the only one<br />I didn&rsquo;t take</span>
-          </div>
-        </div>
-
         <div>
           <p className="dr-lede">{self.print.deck}</p>
           {self.print.body.map((para) => <p key={para.slice(0, 24)}>{para}</p>)}
@@ -92,8 +83,7 @@ export function Self() {
           </dl>
 
           <p className="dr-self-links">
-            <a className="dr-btn" href="/resume.pdf" target="_blank" rel="noreferrer">Résumé ↗</a>
-            <a className="dr-btn ghost" href="mailto:pmhaske@umd.edu">Email</a>
+            <a className="dr-btn" href="mailto:pmhaske@umd.edu">Email</a>
             <a className="dr-btn ghost" href="https://github.com/parthm667" target="_blank" rel="noreferrer">GitHub ↗</a>
           </p>
         </div>

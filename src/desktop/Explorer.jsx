@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { ArrowDownAZ, ArrowLeft, ArrowRight, ArrowUp, ChevronRight, FileText, FileUser, Folder, Home, LayoutGrid, List, PanelLeft, Search, X } from 'lucide-react'
+import { ArrowDownAZ, ArrowLeft, ArrowRight, ArrowUp, ChevronRight, FileText, Folder, Home, LayoutGrid, List, PanelLeft, Search, X } from 'lucide-react'
 import { HOME, breadcrumbs, filesystem, getNode, listDirectory, parentPath } from './filesystem'
 import { FileIcon } from './FileContent'
 
@@ -68,9 +68,8 @@ export default function Explorer({ active, cwd, onNavigate, onPreview, onBack, o
         <button className={cwd === HOME ? 'sidebar-active' : ''} onClick={() => navigate(HOME)}><Home size={19} aria-hidden="true" /><span>home</span></button>
         {filesystem.children.filter(node => node.type === 'folder').map(node => <button key={node.name} className={cwd.startsWith(`${HOME}/${node.name}`) ? 'sidebar-active' : ''} onClick={() => navigate(`${HOME}/${node.name}`)}><Folder size={18} aria-hidden="true" /><span>{node.name}</span></button>)}
         <div className="sidebar-divider" />
-        {['about.txt', 'contact.txt', 'resume.pdf'].map(name => {
-          const Icon = name === 'resume.pdf' ? FileUser : FileText
-          return <button key={name} aria-label={`open ${name}`} onClick={event => { if (event.detail <= 1) onPreview(`${HOME}/${name}`) }}><Icon size={18} aria-hidden="true" /><span>{name === 'resume.pdf' ? 'résumé' : name.replace('.txt', '')}</span></button>
+        {['about.txt', 'contact.txt'].map(name => {
+          return <button key={name} aria-label={`open ${name}`} onClick={event => { if (event.detail <= 1) onPreview(`${HOME}/${name}`) }}><FileText size={18} aria-hidden="true" /><span>{name.replace('.txt', '')}</span></button>
         })}
       </nav>
       <div className="explorer-main">

@@ -41,7 +41,7 @@ test('featured work and visual readers resolve real files from any folder', () =
 test('home exposes the personal site sections', () => {
   assert.equal(HOME, '/home/parth')
   assert.equal(filesystem.type, 'folder')
-  for (const name of ['projects', 'research', 'experience', 'about.txt', 'contact.txt', 'resume.pdf', 'photography.url']) {
+  for (const name of ['projects', 'research', 'experience', 'about.txt', 'contact.txt', 'photography.url']) {
     assert.ok(listDirectory(HOME).some(entry => entry.name === name), name)
   }
 })
@@ -117,7 +117,7 @@ test('readable files and quoted paths return real content', () => {
 
 test('open enters folders and exposes real links without navigating the browser', () => {
   assert.equal(executeCommand('open projects', HOME).cwd, `${HOME}/projects`)
-  assert.equal(executeCommand('xdg-open resume.pdf', HOME).lines[0].href, '/resume.pdf')
+  assert.equal(executeCommand('xdg-open photography.url', HOME).lines[0].href, 'https://parthmhaske.myportfolio.com/')
   assert.equal(executeCommand('open projects/order-book/source.url', HOME).lines[0].href, 'https://github.com/sujaykonda/crypto-hft')
   assert.equal(executeCommand('explorer', HOME).mode, 'explorer')
 })

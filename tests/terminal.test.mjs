@@ -41,8 +41,8 @@ test('ls -l prints permissions and actual content counts without invented dates'
 test('file and link output are terminal text and real clickable targets', () => {
   const file = executeCommand('cat about.txt', HOME).lines[0]
   assert.equal(plain(formatOutput(file, 80)), file.node.content.replaceAll('\n', '\r\n'))
-  const link = formatOutput(executeCommand('open resume.pdf', HOME).lines[0], 80)
-  assert.ok(link.includes('/resume.pdf'))
+  const link = formatOutput(executeCommand('open photography.url', HOME).lines[0], 80)
+  assert.ok(link.includes('parthmhaske.myportfolio.com'))
   assert.ok(formatListing({ entries: listDirectory(HOME), path: HOME }, 100).includes('portfolio:'))
   const contact = formatOutput(executeCommand('cat contact.txt', HOME).lines[0], 80)
   assert.ok(contact.includes('\x1b]8;;mailto:pmhaske@umd.edu\x07'))

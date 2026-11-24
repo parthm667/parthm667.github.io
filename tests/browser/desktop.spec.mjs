@@ -253,8 +253,6 @@ test('Explorer search, file previews, grid, and links work', async ({ page }, in
   await page.screenshot({ path: info.outputPath('list.png'), fullPage: true })
   await page.getByRole('button', { name: 'grid view' }).click()
   await expect(page.getByRole('button', { name: 'grid view' })).toHaveAttribute('aria-pressed', 'true')
-  await page.getByRole('button', { name: /^resume.pdf pdf document/ }).click()
-  await expect(page.getByRole('link', { name: 'open résumé', exact: true })).toHaveAttribute('href', '/resume.pdf')
   await page.screenshot({ path: info.outputPath('preview.png'), fullPage: true })
 })
 
@@ -275,7 +273,7 @@ test('ls is names-only, ls -l has Unix metadata, and files remain safe', async (
 })
 
 test('existing essay and static assets remain reachable', async ({ page, request }) => {
-  for (const path of ['/resume.pdf', '/scavenger-hunt/', '/goose-chase/']) {
+  for (const path of ['/scavenger-hunt/', '/goose-chase/']) {
     expect((await request.get(path)).status()).toBe(200)
   }
   await page.goto('/public_remediation')

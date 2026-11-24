@@ -46,7 +46,7 @@ const help = `look around
   cd ..                 go up one folder
   cd ~                  go home
   cat about.txt         read a file
-  open resume.pdf       show a link to open
+  open contact.txt      show a link to open
   open projects         go into a folder
   tree                  show the folder tree
   pwd                   show your location

@@ -26,7 +26,7 @@ export const ROLL = [
     subject: 'Parth Mhaske',
     role: 'College Park, Maryland',
     kind: 'SELF',
-    gen: 'portrait',
+    gen: 'unexposed',
     exposure: 'HP5+ · f/2 · 1/60 · COLLEGE PARK, MD',
     keeper: true,
     note: 'the only one\nI didn\'t take',
@@ -38,7 +38,7 @@ export const ROLL = [
         'Away from a screen I ride a bike and I photograph birds on film. Both are on this roll, and neither is a hobby I put on a website to seem interesting. The heron on frame 2 took forty minutes of standing in a marsh at dawn, and it is one of about four keepers from that entire roll. Frame 6 is the crash that turned into frame 8.',
       ],
       stat: [['SCHOOL', 'UMD'], ['CLASS', '2027'], ['NOW', 'Corsha'], ['SEEKING', 'S27 intern']],
-      links: [['Résumé', '/resume.pdf'], ['GitHub', 'https://github.com/parthm667'], ['Email', 'mailto:pmhaske@umd.edu']],
+      links: [['GitHub', 'https://github.com/parthm667'], ['Email', 'mailto:pmhaske@umd.edu']],
     },
   },
   {
@@ -270,7 +270,7 @@ export const ROLL = [
     print: {
       deck: 'Every photograph here was drawn in a canvas, in grayscale, and then put through an emulsion curve.',
       body: [
-        'There is no stock photography on this page. Every frame on the roll is procedural: the heron is bezier curves, the order book is a loop, the corpus is a grid of paper slips either side of a decision boundary, and frame 6 is a night road with two thirds of the emulsion removed by a destination-out composite. Only the portrait starts from a real photograph.',
+        'There is no stock photography on this page. Every frame on the roll is procedural: the heron is bezier curves, the order book is a loop, the corpus is a grid of paper slips either side of a decision boundary, and frame 6 is a night road with two thirds of the emulsion removed by a destination-out composite.',
         'One shared post-process then does what film does. It applies an exposure stop per frame, an S-curve blended toward linear so that the toe keeps its shadow detail, grain whose amplitude peaks in the midtones, and a vignette painted after the grain so that the vignette does not get speckled.',
         'A print does not fade in, so nothing here fades in. The dense areas surface first and the highlights arrive last, so the develop sweeps a density threshold rather than an alpha, with a per-pixel noise term to roughen the edge. The tone curve and the grain are baked once into a Float32Array, which means the per-frame work is a threshold and a write. That is also why the grain does not crawl.',
       ],
@@ -355,7 +355,7 @@ export const ROLL = [
         'If you have one of those, my email is in the correspondence section below.',
       ],
       stat: [['STATUS', 'open'], ['WANT', 'quant · systems'], ['WHEN', 'Summer 2027'], ['FRAME', 'unspent']],
-      links: [['Email me', 'mailto:pmhaske@umd.edu'], ['Résumé', '/resume.pdf']],
+      links: [['Email me', 'mailto:pmhaske@umd.edu']],
     },
   },
 ]

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { FileUser, Folder, Mail, Terminal as TerminalIcon } from 'lucide-react'
+import { Folder, Mail, Terminal as TerminalIcon } from 'lucide-react'
 import { HOME } from './filesystem'
 import Explorer from './Explorer'
 import Terminal from './Terminal'
@@ -32,7 +32,7 @@ export default function Desktop() {
         <button aria-pressed={mode === 'explorer'} onClick={() => setMode('explorer')}><Folder size={16} /><span>file explorer</span></button>
       </nav>
       <span className="window-session">{mode === 'terminal' ? `parth@portfolio: ${cwd.replace(HOME, '~')}` : 'file explorer'}</span>
-      <div className="header-links"><a href="/resume.pdf" aria-label="résumé" title="résumé"><FileUser size={16} /></a><a href="mailto:pmhaske@umd.edu" aria-label="email parth" title="email parth"><Mail size={16} /></a></div>
+      <div className="header-links"><a href="mailto:pmhaske@umd.edu" aria-label="email parth" title="email parth"><Mail size={16} /></a></div>
     </header>
     <main className="desktop-workspace" id="workspace" tabIndex={-1}>
       <Terminal cwd={cwd} active={mode === 'terminal'} onNavigate={navigate} onMode={setMode} onPreview={setPreview} />

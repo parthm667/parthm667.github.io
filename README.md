@@ -46,7 +46,6 @@ Edit `src/desktop/filesystem.js`. Both views read the same data:
 - Link: `name`, `description`, `type: 'link'`, `href`.
 
 Project folders contain `readme.md` and a source shortcut when available.
-The résumé is `public/resume.pdf`.
 
 ### Source
 

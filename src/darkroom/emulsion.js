@@ -30,7 +30,7 @@ const ASSETS = {}
 let assetsReady = null
 export function loadAssets() {
   if (assetsReady) return assetsReady
-  const want = { portrait: '/img/parth-photo.webp', goose: '/img/goose.png' }
+  const want = { goose: '/img/goose.png' }
   assetsReady = Promise.all(
     Object.entries(want).map(
       ([k, src]) =>
@@ -90,17 +90,6 @@ function graticule(ctx, w, h, cols, rows, a) {
 
 /* ── the scenes ────────────────────────────────────────────── */
 const SCENES = {
-  /* A photograph of a person, treated the way a darkroom would:
-     contrast up, warmth out. */
-  portrait(ctx, w, h) {
-    const im = ASSETS.portrait
-    sky(ctx, w, h, 26, 12)
-    if (!im) return
-    const s = Math.max(w / im.width, h / im.height)
-    const dw = im.width * s, dh = im.height * s
-    ctx.drawImage(im, (w - dw) / 2, (h - dh) * 0.16, dw, dh)
-  },
-
   /* Great blue heron. Standing in flat water at dawn, which is the
      only time they let you close. */
   heron(ctx, w, h) {

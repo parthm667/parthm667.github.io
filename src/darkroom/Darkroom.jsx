@@ -122,9 +122,6 @@ export default function Darkroom() {
                 <a href={href} aria-current={active === href ? 'true' : undefined}>{label}</a>
               </li>
             ))}
-            <li className="keep">
-              <a href="/resume.pdf" target="_blank" rel="noreferrer">Résumé&thinsp;↗</a>
-            </li>
           </ul>
         </nav>
 

@@ -920,9 +920,7 @@ html[data-lights='on'] .dr-perf {
 
 .dr-self {
   display: grid;
-  grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
-  gap: clamp(2rem, 5vw, 4rem);
-  align-items: start;
+  grid-template-columns: minmax(0, 1fr);
   padding-top: 1.6rem;
 }
 
