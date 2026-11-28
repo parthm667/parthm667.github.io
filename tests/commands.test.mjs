@@ -36,9 +36,9 @@ test('pipes combine with command chains', () => {
 test('text filters read files and report missing input', () => {
   assert.equal(output('head -n 1 about.txt'), 'hey, i’m parth.')
   assert.equal(output('head -1 about.txt'), 'hey, i’m parth.')
-  assert.equal(output('tail -n 1 contact.txt'), 'feel free to reach out.')
+  assert.equal(output('tail -n 1 contact.txt'), 'linkedin: https://linkedin.com/in/pmhaske/')
   assert.match(output('wc about.txt'), /^\d+ 72 \d+ about.txt$/)
-  assert.equal(output('wc -l contact.txt'), '5 contact.txt')
+  assert.equal(output('wc -l contact.txt'), '3 contact.txt')
   assert.ok(failed('head'))
   assert.ok(failed('wc projects'))
   assert.ok(failed('tail missing.txt'))

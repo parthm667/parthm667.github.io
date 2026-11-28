@@ -117,7 +117,7 @@ export function createOrderBook(_options, { seed }) {
       return [
         TITLE,
         ...plain,
-        ...wrap('the strategy (SimpleMomentum) and the risk checks are ported from the c++ engine. the exchange is a small simulator with generated order flow, so the fills here say nothing about a real market.', columns).map(line => paint(line, STYLE.dim)),
+        ...wrap('i ported the strategy (SimpleMomentum) and the risk checks from the c++ engine. the exchange is a small simulator with generated order flow, so these fills do not show how the strategy would do in a real market.', columns).map(line => paint(line, STYLE.dim)),
         'the real one: view order-book',
       ].map(line => fit(line, columns)).join('\r\n')
     },

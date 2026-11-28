@@ -311,7 +311,7 @@ test('a demo prints its result without animating under reduced motion', async ({
   await command(page, 'clear')
   await command(page, 'run uav 12000 300')
   await expect(screen(page)).toContainText('k 12,000 N/m')
-  await expect(screen(page)).toContainText('1,000 landings, each sampled fresh')
+  await expect(screen(page)).toContainText('these are 1,000 new landings')
   await expect(screen(page)).toContainText('failed')
   await command(page, 'run nope')
   await expect(screen(page)).toContainText('no demo called nope')

@@ -69,17 +69,17 @@ export const MANUAL = {
   ssh: 'you are already logged in',
   ifconfig: 'show network interfaces',
   ip: 'show network interfaces',
-  kill: 'nothing here can be killed',
-  sleep: 'wait, in theory',
-  true: 'succeed',
-  false: 'fail quietly',
-  yes: 'agree, briefly',
+  kill: 'there are no processes to kill',
+  sleep: 'does nothing here',
+  true: 'do nothing, successfully',
+  false: 'do nothing, unsuccessfully',
+  yes: 'print a few lines of y',
   seq: 'print a run of numbers',
-  export: 'set a variable, in theory',
+  export: 'variables do not persist here',
   su: 'switch user',
   passwd: 'change a password',
   rm: 'remove files; not here',
-  sudo: 'ask nicely',
+  sudo: 'not available here',
   cowsay: 'a cow says it',
   fortune: 'a short fortune',
   neofetch: 'system summary',
@@ -204,7 +204,7 @@ function manual(name, known) {
   if (!name) return fail('usage: man <command>. try man grep, or help for the short list.')
   if (name === 'parth') return text('PARTH(1)\n\nname\n  parth mhaske: cs + math at umd, class of 2028.\n\nsynopsis\n  overview | view <project> | run <demo>\n\ndescription\n  works on trading systems, simulations, and agent evaluation.\n  looking for summer 2027 internships.\n\nsee also\n  cat about.txt, cat contact.txt')
   if (!known(name)) return fail(`no manual entry for ${name}. type help to see what works here.`)
-  return text(`${name.toUpperCase()}(1)\n\n  ${name}: ${MANUAL[name] ?? 'answers, but keeps its secrets.'}`)
+  return text(`${name.toUpperCase()}(1)\n\n  ${name}: ${MANUAL[name] ?? 'no description yet.'}`)
 }
 
 function git(args) {
@@ -223,7 +223,7 @@ export function runExtra(command, args, context) {
   const now = context.now?.() ?? new Date()
   if (READ_ONLY.includes(command)) return text(`${command}: this filesystem is read-only. nothing was changed.`)
   if (NOT_INSTALLED.includes(command)) return text(`${command} is not installed on a website. the real code is linked from each project: ls ~/projects.`)
-  if (POWER.includes(command)) return text('the server would rather stay up. try clear.')
+  if (POWER.includes(command)) return text('this is a website, so there is nothing to shut down.')
   switch (command) {
     case 'echo': {
       const variables = environment(cwd)
@@ -291,7 +291,7 @@ export function runExtra(command, args, context) {
     case 'which': case 'type': case 'whatis': {
       if (!args[0]) return fail(`usage: ${command} <command>.`)
       if (!context.known(args[0])) return fail(`${args[0]}: not found. type help to see what works here.`)
-      if (command === 'whatis') return text(`${args[0]} (1) - ${MANUAL[args[0]] ?? 'answers, but keeps its secrets.'}`)
+      if (command === 'whatis') return text(`${args[0]} (1) - ${MANUAL[args[0]] ?? 'no description yet.'}`)
       return text(command === 'which' ? `/usr/bin/${args[0]}` : `${args[0]} is /usr/bin/${args[0]}`)
     }
     case 'man': return manual(args[0], context.known)
@@ -313,20 +313,20 @@ export function runExtra(command, args, context) {
       if (args[0]) return Object.hasOwn(variables, args[0]) ? text(variables[args[0]]) : fail(`${args[0]} is not set.`)
       return text(Object.entries(variables).map(([name, value]) => `${name}=${value}`).join('\n'))
     }
-    case 'export': case 'alias': return text(command === 'alias' ? "alias work='overview'\nalias less='cat'\nalias more='cat'\nalias demo='run'" : 'noted, but variables do not persist here.')
+    case 'export': case 'alias': return text(command === 'alias' ? "alias work='overview'\nalias less='cat'\nalias more='cat'\nalias demo='run'" : 'variables do not persist here.')
     case 'ps': return text('  PID TTY      CMD\n    1 pts/0    pretend-bash\n   27 pts/0    internship-search --summer 2027\n   28 pts/0    ps')
-    case 'top': case 'htop': return text('  PID  %CPU  COMMAND\n   27  61.0  internship-search --summer 2027\n   31  22.0  classes --umd\n   35  12.0  bike\n   36   5.0  birds\n\nrun uav, run orderbook, or run maze for something that actually computes.')
-    case 'free': return text('memory is your browser\'s problem. this page keeps a few kilobytes of text.')
+    case 'top': case 'htop': return text('  PID  %CPU  COMMAND\n   27  61.0  internship-search --summer 2027\n   31  22.0  classes --umd\n   35  12.0  bike\n   36   5.0  birds\n\nthese numbers are made up. run uav, run orderbook, or run maze does real computation.')
+    case 'free': return text('this page keeps a few kilobytes of text in memory.')
     case 'git': return git(args)
-    case 'ping': return text('no packets leave this page. email answers more reliably: mailto:pmhaske@umd.edu')
-    case 'curl': case 'wget': return text('nothing is fetched from this terminal. cat contact.txt has real links.')
+    case 'ping': return text('this page does not send packets. my email is mailto:pmhaske@umd.edu')
+    case 'curl': case 'wget': return text('nothing is fetched from this terminal. my links are in contact.txt.')
     case 'ssh': return text('you are already in.')
     case 'ifconfig': case 'ip': return text('lo: 127.0.0.1\nno other interfaces. this terminal never touches the network.')
-    case 'kill': return text('nothing here can be killed. q stops a running demo.')
+    case 'kill': return text('there are no processes to kill. q stops a running demo.')
     case 'sleep': return text('no need to wait.')
     case 'true': return text('')
     case 'false': return fail('false.')
-    case 'yes': return text(Array(5).fill(args.join(' ') || 'y').join('\n') + '\n... and so on.')
+    case 'yes': return text(Array(5).fill(args.join(' ') || 'y').join('\n') + '\n(stopped after 5 lines)')
     case 'seq': {
       const numbers = args.map(Number)
       if (!numbers.length || numbers.length > 2 || numbers.some(number => !Number.isInteger(number))) return fail('usage: seq <last> or seq <first> <last>.')

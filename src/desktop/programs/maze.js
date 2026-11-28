@@ -146,7 +146,7 @@ export function createMazeProgram() {
         ...tape(columns, -1),
         ...wrap(totals(), columns),
         ...wrap(`gates cleared in order ${found.gatesSequence.join(' ')}. replaying the actions against the walls and gate rules: ${checked.valid ? 'valid' : 'not valid'}.${interrupted ? ' stopped early; this is the finished plan.' : ''}`, columns),
-        ...wrap(`the track, the costs and the search are from the repo, ported to javascript. the search expanded ${count(found.expanded)} states. a gate counts when the robot drives out of it, and gate ${maze.lastGate} has to be cleared last.`, columns).map(line => paint(line, STYLE.dim)),
+        ...wrap(`i ported the track, the costs, and the search from the python in the repo. the search expanded ${count(found.expanded)} states. a gate counts when the robot drives out of it, and gate ${maze.lastGate} has to be cleared last.`, columns).map(line => paint(line, STYLE.dim)),
         'the real one: view ~/projects/maze-robot',
       ].map(line => fit(line, columns)).join('\r\n')
     },

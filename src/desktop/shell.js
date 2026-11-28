@@ -46,7 +46,7 @@ const help = `look around
   view corsha           backend services and log ingestion
   view nuntius          agent evaluation work
 
-watch it work
+demos
   run uav               1,000 monte carlo landings from the paper
   run orderbook         the c++ engine's strategy and risk checks, live
   run maze              robot tour: the fastest route through every gate
@@ -182,7 +182,7 @@ const projectShortcuts = {
   'order-book': `${HOME}/projects/order-book/readme.md`,
 }
 
-const runHelp = `live demos. each one runs a real model in your browser.
+const runHelp = `each demo runs a real model in your browser.
 ${PROGRAM_NAMES.map(name => `  run ${name.padEnd(12)}${PROGRAMS[name].describe}`).join('\n')}
   run uav 12000 300   the same landings on a softer spring
 q stops a demo early.`

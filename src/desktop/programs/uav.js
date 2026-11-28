@@ -150,14 +150,14 @@ export function createUav({ k, c }, { seed }) {
     },
     summary(columns) {
       const total = results.length
-      const note = interrupted && total < TRIALS ? `stopped after ${count(total)} of ${count(TRIALS)} landings.` : `${count(total)} landings, each sampled fresh in your browser.`
+      const note = interrupted && total < TRIALS ? `stopped after ${count(total)} of ${count(TRIALS)} landings.` : `these are ${count(total)} new landings sampled in your browser.`
       const custom = k !== SELECTED.k || c !== SELECTED.c
       return [
         ...(columns >= heading.length ? [heading] : ['uav landing · monte carlo', settings]),
         paint('peak leg force in each landing (N)', STYLE.dim),
         ...histogram(columns, 0.05),
         ...tally(columns),
-        ...wrap(`${note} same model as the paper: heave, roll and pitch on four one-way spring-dampers, integrated with rk4. a landing fails if a spring bottoms out, a leg exceeds the force limit, roll or pitch passes 0.2 rad, or it is still bouncing after 2 s.`, columns).map(line => paint(line, STYLE.dim)),
+        ...wrap(`${note} the model is the one from the paper: heave, roll, and pitch on four one-way spring-dampers, integrated with rk4. a landing fails if a spring bottoms out, a leg exceeds the force limit, roll or pitch passes 0.2 rad, or the uav is still bouncing after 2 s.`, columns).map(line => paint(line, STYLE.dim)),
         ...wrap(custom ? `the paper's choice is run uav (k ${fixed(SELECTED.k)}, c ${fixed(SELECTED.c)}).` : 'try a softer spring: run uav 12000 300', columns),
       ].map(line => fit(line, columns)).join('\r\n')
     },

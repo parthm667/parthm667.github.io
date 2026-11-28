@@ -44,7 +44,7 @@ i worked on a c++ engine for crypto.com that takes market updates, runs strategy
 
 i built an event-driven strategy interface in which each strategy subclasses strategybase and emits signals. a thread-safe order book maintains market state, and a pre-trade risk manager checks order flow before execution. this gives each strategy the same path from market data to an order.
 
-to check strategy behavior on repeatable inputs, i used a jsonl replay backtester. the internal tick-to-order benchmark reached 110 ns p99, excluding network and exchange latency. replay testing checks what the strategy does; the benchmark measures how long that internal processing takes.
+to check strategy behavior on repeatable inputs, i used a jsonl replay backtester. the internal tick-to-order benchmark, which times the path from a market update to an order, reached 110 ns p99. this excludes network and exchange latency.
 
 c++ / boost.beast / concurrent queues / replay testing`,
       'https://github.com/sujaykonda/crypto-hft', {
@@ -56,9 +56,9 @@ science olympiad robot tour, 2023–2024
 
 i built a robot to follow a planned route through a maze without wall sensors. since it could not use the walls to correct its position, the route planner and motion controller had to work from encoders and an imu.
 
-i used a* to plan routes on a 16 × 16 grid, with an added cost for turns. this let the planner account for turning instead of considering only the number of steps. the robot then followed the route using sensor fusion and cascaded pid control at 1 khz.
+i used a* to plan routes on a 16 × 16 grid. since turning takes time, i added a cost for each turn so that the planner did not only count steps. the robot then followed the route using sensor fusion and cascaded pid control at 1 khz.
 
-we placed third at the 2024 national tournament. the project brought the planning and control problems together: finding a route was only useful if the robot could follow it.
+we placed third at the 2024 national tournament.
 
 python / a* / pid / sensor fusion`,
       'https://github.com/parthm667/RobotTourMazeSolver'),
@@ -85,7 +85,7 @@ i built this tool to help municipalities identify road segments with unusually h
 
 i then used poisson tests to flag high-crash corridors across 568 new jersey municipalities, combining five open data sources. the tool also adds equity data and exports maps and tables for municipal safety planning and safe streets and roads for all grant applications.
 
-the output gives a municipality specific corridors to examine and the crash data behind each one. deciding which street changes to make still requires looking at the conditions on those roads.
+the output is a list of corridors for a municipality to examine, with the crash data behind each one. it does not decide which street changes to make. that still requires looking at the conditions on those roads.
 
 fastapi / postgis / geopandas / react / leaflet`,
       'https://github.com/parthm667/nj-hin-generator'),
@@ -101,7 +101,7 @@ we modeled vertical motion, pitch, and roll with a spring-mass-damper system. si
 
 we then evaluated 5,000 spring/damping combinations with 1,000 sampled trials per combination. a trial fails if the suspension bottoms out or exceeds the force, attitude, or settling limits. several configurations passed 1,000 of 1,000 sampled trials, so success count alone did not determine which one to choose.
 
-we selected a spring constant of 21,216 newtons per meter and damping coefficient of 484.56 newton-seconds per meter using the lowest average maximum force as the tie-break. its average maximum force was 5,057 newtons, below the modeled threshold of 6,708 newtons. this gives a suspension choice with more force margin under the sampled conditions. rerunning that setting with fresh samples passes about 99.6% of landings, so a perfect 1,000 is a favorable draw rather than a guarantee. physical testing is still needed to check those modeled outcomes.
+we selected a spring constant of 21,216 newtons per meter and damping coefficient of 484.56 newton-seconds per meter using the lowest average maximum force as the tie-break. its average maximum force was 5,057 newtons, below the modeled threshold of 6,708 newtons. this gives a suspension choice with more force margin under the sampled conditions. rerunning that setting with new samples passes about 99.6% of landings, so 1,000 of 1,000 should not be expected on every run. physical testing is still needed to check those modeled outcomes.
 
 suspension parameter optimization in a paramotor uav using monte carlo analysis
 parth mhaske and christian claudel
@@ -135,7 +135,7 @@ when people choose from a ranked list, the existing ranking can affect what they
 
 we ran monte carlo sweeps across the model parameters, then used approximate bayesian computation to calibrate the simulations against observed ranking data. this compares simulated outcomes with the data to find parameter settings that reproduce its patterns.
 
-the comparison connects a proposed choice process to an observed ranking. matching that ranking is a test of the model, rather than proof that the same process caused it.
+matching the observed ranking supports the proposed choice process, but it does not show that the same process caused the ranking.
 
 agent-based modeling / monte carlo / abc calibration`),
     project('literature-classification', 'classifying 35,000+ research papers',
@@ -144,7 +144,7 @@ population biology laboratory, iiser pune
 
 i built a classification pipeline for a collection of more than 35,000 research papers. the records included missing and duplicated bibliographic metadata, so i cleaned those records as part of preparing the corpus for classification.
 
-to represent the text, i used tf-idf features, which weight terms by how often they appear in a paper relative to the collection. i then trained logistic regression and svm models and tuned them with cross-validation. this let me compare model settings on held-out examples rather than only on the papers used to fit them.
+to represent the text, i used tf-idf features, which weight terms by how often they appear in a paper relative to the collection. i then trained logistic regression and svm models and tuned them with cross-validation. cross-validation let me compare model settings on papers that were held out from fitting.
 
 python / scikit-learn / tf-idf / gridsearchcv`),
   ]),
@@ -166,9 +166,9 @@ software engineering intern · may–august 2026
 
 i worked on backend services and deployment automation at corsha. partner integrations required manual api version setup, so i built a go service that infers the version during handshake. the handshake took 80 ms, removing that configuration step across 6+ deployments.
 
-log ingestion raised a different problem: incoming traffic could spike while the core api still needed to serve requests. i built a separate ingestion service with disk-backed queues to buffer those spikes. in testing, it sustained 10,000+ logs per second with no data loss, keeping incoming data in durable storage while it waited to be processed.
+log ingestion had a different problem. incoming traffic could spike while the core api still needed to serve requests, so i built a separate ingestion service with disk-backed queues to buffer those spikes. in testing, it sustained 10,000+ logs per second with no data loss, keeping incoming data in durable storage while it waited to be processed.
 
-i also automated strongswan ipsec deployment using kubernetes helm. this removed the need for manual restarts during certificate rotation, so routine certificate changes no longer required that deployment step.
+i also automated strongswan ipsec deployment using kubernetes helm. this removed the need for manual restarts during certificate rotation.
 
 go / disk-backed queues / kubernetes / helm / ipsec`),
     file('frc-1923.txt', 'electrical director, frc team 1923',
@@ -177,7 +177,7 @@ electrical director
 
 i led electrical system design and diagnostics for the robot, including can wiring, encoder signals, and connectors. these connections carry the commands and measurements that the control code depends on, so checking the electrical system was part of finding why the robot behaved differently from what the code requested.
 
-i also worked on autonomous routines and match strategy, connecting the robot's hardware and control behavior to what we planned to attempt in a match.`),
+i also worked on autonomous routines and match strategy.`),
   ]),
   folder('writing', 'an essay on street design', [
     link('road_design.url', 'street design and road safety', '/public_remediation'),
@@ -185,7 +185,7 @@ i also worked on autonomous routines and match strategy, connecting the robot's 
   file('about.txt', 'a little about me',
     'hey, i’m parth.\n\ni study cs and math at the university of maryland. class of 2028.\n\ni work on trading systems, simulations, and agent evaluation. i wrote a first-author aiaa paper on uav suspension design, analyzed 604,578 polymarket trader records, and contributed to agent evaluation at nuntius (yc s25).\n\ni’m looking for summer 2027 internships in software engineering, quantitative research, or systems engineering. outside of that, i ride bikes and photograph birds.'),
   file('contact.txt', 'email, github, and linkedin',
-    'email: mailto:pmhaske@umd.edu\ngithub: https://github.com/parthm667\nlinkedin: https://linkedin.com/in/pmhaske/\n\nfeel free to reach out.'),
+    'email: mailto:pmhaske@umd.edu\ngithub: https://github.com/parthm667\nlinkedin: https://linkedin.com/in/pmhaske/'),
   link('photography.url', 'birds and other photos', 'https://parthmhaske.myportfolio.com/'),
 ])
 
