@@ -80,7 +80,7 @@ class Heap {
 // Least-time search over (square, heading, gates left so far in order). The
 // original leaves the A* heuristic at zero, so states come off the queue in
 // order of elapsed time, earliest pushed first among ties. With trace set, the
-// square and time of every expansion are kept so the search can be replayed.
+// state and time of every expansion are kept so the search can be replayed.
 export function findOptimalPath(maze, { trace = false } = {}) {
   const gateCount = Object.keys(maze.gates).length
   const key = state => `${state.row},${state.col},${state.direction},${state.sequence}`
@@ -89,12 +89,12 @@ export function findOptimalPath(maze, { trace = false } = {}) {
   const queue = new Heap()
   let order = 0, expanded = 0
   queue.push({ cost: 0, order: order++, state: start })
-  const log = trace ? { squares: [], times: [], gates: [] } : null
+  const log = trace ? { states: [], times: [] } : null
 
   while (queue.size) {
     const { cost, state } = queue.pop()
     expanded++
-    if (log) { log.squares.push(state.row * maze.cols + state.col); log.times.push(cost); log.gates.push(state.sequence.length) }
+    if (log) { log.states.push(state); log.times.push(cost) }
     if (state.row === maze.end[0] && state.col === maze.end[1] && state.sequence.length === gateCount) {
       const path = []
       for (let at = state; at; at = at.parent) path.unshift({ row: at.row, col: at.col, direction: at.direction, move: at.move })
