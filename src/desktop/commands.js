@@ -202,7 +202,7 @@ const environment = cwd => ({ USER: 'parth', HOME, PWD: cwd, SHELL: '/bin/preten
 
 function manual(name, known) {
   if (!name) return fail('usage: man <command>. try man grep, or help for the short list.')
-  if (name === 'parth') return text('PARTH(1)\n\nname\n  parth mhaske: cs + applied math at umd, class of 2028.\n\nsynopsis\n  overview | view <project> | run <demo>\n\ndescription\n  works on trading systems, simulations, and agent evaluation.\n  looking for summer 2027 internships.\n\nsee also\n  cat about.txt, cat contact.txt')
+  if (name === 'parth') return text('PARTH(1)\n\nname\n  parth mhaske: cs + math at umd, class of 2028.\n\nsynopsis\n  overview | view <project> | run <demo>\n\ndescription\n  works on trading systems, simulations, and agent evaluation.\n  looking for summer 2027 internships.\n\nsee also\n  cat about.txt, cat contact.txt')
   if (!known(name)) return fail(`no manual entry for ${name}. type help to see what works here.`)
   return text(`${name.toUpperCase()}(1)\n\n  ${name}: ${MANUAL[name] ?? 'answers, but keeps its secrets.'}`)
 }

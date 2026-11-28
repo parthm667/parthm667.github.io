@@ -1,14 +1,21 @@
 import { createRandom } from './random.js'
-import { BUY, SELL, TICK, createMarket } from './orderBookModel.js'
+import { BUY, SELL, SETTINGS, TICK, createMarket } from './orderBookModel.js'
 import { STOP_HINT, STYLE, bar, count, fit, headline, padEnd, padStart, paint, repeat, wrap } from './draw.js'
 
 const RUN_MS = 16000
-const EVENTS_PER_SECOND = 140
+const EVENTS_PER_SECOND = 200
 const TOTAL_EVENTS = Math.round((RUN_MS / 1000) * EVENTS_PER_SECOND)
+const TITLE = 'order book · market data > strategy > risk > order'
+// Internal tick-to-order latency of the C++ engine, from its hot-path
+// benchmark. Measured inside the process; network and exchange time excluded.
+// Add further percentiles here as [label, nanoseconds] when they are published.
+const ENGINE_LATENCY = [['p99', 110]]
+const latencyLine = `c++ engine, tick to order: ${ENGINE_LATENCY.map(([label, ns]) => `${label} ${count(ns)} ns`).join(' · ')}`
+const latencyNote = 'internal; excludes network and exchange latency'
+
 const price = ticks => (ticks * TICK).toFixed(2)
-const decimal = value => `${value >= 0 ? '+' : '-'}${Math.abs(value).toFixed(2)}`
-const TITLE = 'order book · market data > book > strategy > risk > order'
 const signed = value => `${value > 0 ? '+' : ''}${value}`
+const percent = value => `${value >= 0 ? '+' : '-'}${Math.abs(value).toFixed(3)}%`
 
 export function parseOrderBook(args) {
   return args.length ? { error: 'usage: run orderbook. it takes no options.' } : { options: {} }
@@ -17,20 +24,21 @@ export function parseOrderBook(args) {
 export function createOrderBook(_options, { seed }) {
   const market = createMarket(createRandom(seed))
   const { book, strategy, risk, stats } = market
-  const tape = []
-  let elapsed = 0, lastSignal = null, interrupted = false, closed = false, carried = 0
+  const tape = [], signals = []
+  let elapsed = 0, interrupted = false, closed = false, carried = 0
 
+  const keep = (list, item, most) => { list.unshift(item); if (list.length > most) list.pop() }
   const step = () => {
     const event = market.step()
-    for (const trade of event.tape) { tape.unshift(trade); if (tape.length > 24) tape.pop() }
-    if (event.signal) lastSignal = event.signal
+    for (const trade of event.tape) keep(tape, trade, 24)
+    for (const signal of event.signals) keep(signals, signal, 8)
   }
   const runTo = total => { while (stats.events < Math.min(TOTAL_EVENTS, total)) step() }
   const close = () => {
     if (closed) return
     closed = true
     carried = risk.position
-    for (const trade of market.flatten()) { tape.unshift(trade); if (tape.length > 24) tape.pop() }
+    for (const trade of market.flatten()) keep(tape, trade, 24)
   }
 
   function ladder(levels, width) {
@@ -41,35 +49,35 @@ export function createOrderBook(_options, { seed }) {
       ? `${padStart(count(level.size), 6)}  ${paint(padStart(price(level.price), 7), style)} ${paint(bar(level.size, most, room), style)}`
       : ''
     const bid = book.best(BUY), ask = book.best(SELL)
-    const spread = bid !== null && ask !== null ? `spread ${price(ask - bid)} · mid ${((bid + ask) / 2 * TICK).toFixed(3)}` : 'one side is empty'
+    const moved = ((market.last - market.start) / market.start) * 100
+    const middle = bid !== null && ask !== null ? `spread ${price(ask - bid)} · last ${price(market.last)} (${moved >= 0 ? '+' : '-'}${Math.abs(moved).toFixed(2)}%)` : 'one side is empty'
     return [
       paint(`${padStart('size', 6)}  ${padStart('price', 7)}`, STYLE.dim),
       ...Array.from({ length: levels }, (_, index) => row(asks[levels - 1 - index], STYLE.red)),
-      paint(`${repeat('─', 6)} ${spread} ${repeat('─', Math.max(2, width - spread.length - 8))}`, STYLE.dim),
+      paint(`${repeat('─', 6)} ${middle} ${repeat('─', Math.max(2, width - middle.length - 8))}`, STYLE.dim),
       ...Array.from({ length: levels }, (_, index) => row(bids[index], STYLE.green)),
     ]
   }
 
-  const tapeLine = trade => `${paint(padEnd(trade.side, 4), trade.side === BUY ? STYLE.green : STYLE.red)} ${padStart(count(trade.size), 4)} @ ${price(trade.price)}${trade.own ? paint('  strategy', STYLE.cyan) : ''}`
+  const tapeLine = trade => `${paint(padEnd(trade.side, 4), trade.side === BUY ? STYLE.green : STYLE.red)} ${padStart(count(trade.size), 4)} @ ${price(trade.price)}${trade.own ? paint('  ours', STYLE.cyan) : ''}`
 
-  function pipeline(wide) {
-    const signal = lastSignal
-    const verdict = signal && (signal.ok ? paint('risk ok', STYLE.green) : paint(`stopped: ${signal.reason}`, STYLE.yellow))
-    const latest = signal ? `${signal.side} ${signal.size} on imbalance ${decimal(signal.imbalance)}, ${verdict}` : 'none yet'
-    const imbalance = decimal(strategy.imbalance)
-    const progress = paint(`events ${count(stats.events)} of ${count(TOTAL_EVENTS)} · trades ${count(stats.trades)} · resting orders ${count(book.orders.size)}`, STYLE.dim)
-    if (wide) return [
-      `strategy  imbalance ${imbalance}   last signal: ${latest}`,
-      `risk      position ${padStart(signed(risk.position), 4)} of ±${risk.maxPosition}   orders sent ${count(stats.sent)}   stopped ${count(stats.rejected)}`,
-      progress,
-    ]
+  function signalLine(signal, wide) {
+    const order = `${paint(padEnd(signal.side, 4), signal.side === BUY ? STYLE.green : STYLE.red)} ${signal.quantity}`
+    const outcome = !signal.accepted ? paint(wide ? `rejected: ${signal.reason}` : 'rejected: position', STYLE.yellow)
+      : signal.filled ? `${paint('risk ok', STYLE.green)}${wide ? ` · filled ${signal.filled} @ ${price(signal.price)}` : ` @ ${price(signal.price)}`}`
+      : paint('risk ok', STYLE.green)
+    return `  ${padStart(percent(signal.change), 8)}  ${order}  ${outcome}`
+  }
+
+  function status(wide, signalRows) {
+    const shown = Array.from({ length: signalRows }, (_, index) => (signals[index] ? signalLine(signals[index], wide) : ''))
+    const position = `position ${padStart(signed(risk.position), 3)} of ±${risk.limits.maxNetPositionAbs}`
+    const counts = `signals ${count(stats.signals)} · sent ${count(stats.sent)} · rejected ${count(stats.rejected)}`
     return [
-      `strategy  imbalance ${imbalance}`,
-      `signal    ${signal ? `${signal.side} ${signal.size} on imbalance ${decimal(signal.imbalance)}` : 'none yet'}`,
-      `          ${signal ? verdict : ''}`,
-      `risk      position ${signed(risk.position)} of ±${risk.maxPosition}`,
-      `orders    sent ${count(stats.sent)} · stopped ${count(stats.rejected)}`,
-      paint(`events ${count(stats.events)} of ${count(TOTAL_EVENTS)} · trades ${count(stats.trades)}`, STYLE.dim),
+      paint(wide ? `signals · momentum, ${SETTINGS.thresholdPct}% move from the reference price, ${SETTINGS.orderSize} lots` : `signals · momentum, ${SETTINGS.thresholdPct}% threshold`, STYLE.dim),
+      ...shown,
+      ...(wide ? [`${position} · ${counts} · events ${count(stats.events)} of ${count(TOTAL_EVENTS)}`] : [`${position} · events ${count(stats.events)} of ${count(TOTAL_EVENTS)}`, counts]),
+      wide ? `${latencyLine} ${paint(`(${latencyNote})`, STYLE.dim)}` : latencyLine,
     ]
   }
 
@@ -79,39 +87,41 @@ export function createOrderBook(_options, { seed }) {
     finish() { runTo(TOTAL_EVENTS); close() },
     stop() { interrupted = true; close() },
     frame(columns, rows) {
-      if (columns < 40 || rows < 14) return null
-      const levels = rows >= 24 ? 6 : rows >= 19 ? 4 : 3
+      if (columns < 40 || rows < 17) return null
       const wide = columns >= 76
+      const levels = rows >= 27 ? 6 : rows >= 22 ? 4 : 3
+      const signalRows = rows >= 27 ? 5 : rows >= 20 ? 3 : 2
       const ladderWidth = wide ? columns - 30 : columns
       const left = ladder(levels, ladderWidth)
       const body = wide
         ? left.map((line, index) => `${padEnd(fit(line, ladderWidth - 2), ladderWidth)}${index === 0 ? paint('trades', STYLE.dim) : tape[index - 1] ? tapeLine(tape[index - 1]) : ''}`)
-        : [...left, tape[0] ? `last trade  ${tapeLine(tape[0])}` : '']
+        : left
       return [
         headline(wide ? TITLE : 'order book', STOP_HINT, columns),
-        paint('synthetic order flow, matched in your browser', STYLE.dim),
-        '',
+        paint(wide ? 'simulated exchange and order flow · strategy and risk checks from the c++ engine' : 'simulated exchange, generated flow', STYLE.dim),
         ...body,
-        '',
-        ...pipeline(wide),
+        ...status(wide, signalRows),
       ].slice(0, rows).map(line => fit(line, columns))
     },
     summary(columns) {
-      const bid = book.best(BUY), ask = book.best(SELL)
-      const reasons = Object.entries(stats.rejectReasons).map(([reason, total]) => `${count(total)} by the ${reason}`).join(', ')
+      const reasons = Object.entries(stats.rejectReasons).map(([reason, total]) => `${count(total)}: ${reason}`).join(', ')
+      const closing = carried === 0 ? 'it was already flat at the close.'
+        : `at the close it ${carried > 0 ? 'sold' : 'bought back'} the ${count(Math.abs(carried))} lots it was ${carried > 0 ? 'long' : 'short'}${risk.position === 0 ? ', so it ends flat' : `, as far as the book allowed; ${signed(risk.position)} remains`}.`
+      const moved = ((market.last - market.start) / market.start) * 100
+      const plain = [
+        `${interrupted && stats.events < TOTAL_EVENTS ? 'stopped after ' : ''}${count(stats.events)} generated events · ${count(stats.trades)} trades · ${count(stats.volume)} lots · price ${price(market.start)} to ${price(market.last)} (${moved >= 0 ? '+' : '-'}${Math.abs(moved).toFixed(2)}%)`,
+        `momentum strategy: ${count(stats.signals)} signals · ${count(stats.sent)} orders sent · ${count(stats.rejected)} rejected by the risk check${reasons ? ` (${reasons})` : ''}`,
+        closing,
+        `${latencyLine} (${latencyNote})`,
+      ].flatMap(line => wrap(line, columns))
       return [
         TITLE,
-        `${interrupted && stats.events < TOTAL_EVENTS ? 'stopped after ' : ''}${count(stats.events)} synthetic events · ${count(stats.trades)} trades · ${count(stats.volume)} lots traded`,
-        `book at the end: ${count(book.orders.size)} resting orders${bid !== null && ask !== null ? `, ${price(bid)} bid / ${price(ask)} ask` : ''}`,
-        `strategy: ${count(stats.signals)} signals, ${count(stats.sent)} orders sent, ${count(stats.rejected)} stopped by the risk check${reasons ? ` (${reasons})` : ''}.`,
-        carried === 0
-          ? 'the strategy was already flat at the close.'
-          : `at the close it ${carried > 0 ? 'sold' : 'bought back'} the ${count(Math.abs(carried))} lots it was ${carried > 0 ? 'long' : 'short'}${risk.position === 0 ? ', so it ends flat' : `, as far as the book allowed; ${signed(risk.position)} remains`}.`,
-        ...wrap('this is a small javascript sketch of the pipeline in the c++ engine: a price-time priority book, a strategy that emits signals, and a pre-trade risk check in front of every order. the order flow is generated, and the strategy is a toy that only exists to exercise that path.', columns).map(line => paint(line, STYLE.dim)),
+        ...plain,
+        ...wrap('the strategy (SimpleMomentum) and the risk checks are ported from the c++ engine. the exchange is a small simulator with generated order flow, so the fills here say nothing about a real market.', columns).map(line => paint(line, STYLE.dim)),
         'the real one: view order-book',
-      ].flatMap(line => (line.includes('\x1b') ? [line] : wrap(line, columns))).map(line => fit(line, columns)).join('\r\n')
+      ].map(line => fit(line, columns)).join('\r\n')
     },
     get stats() { return { ...stats, position: risk.position, resting: book.orders.size } },
-    book,
+    book, strategy,
   }
 }

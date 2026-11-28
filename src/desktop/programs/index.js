@@ -1,13 +1,13 @@
 import { createUav, parseUav } from './uav.js'
 import { createOrderBook, parseOrderBook } from './orderbook.js'
-import { createMaze, parseMaze } from './maze.js'
+import { createMazeProgram, parseMaze } from './maze.js'
 
 // Live demos started with `run <name>`. Each one is a small real model that is
 // advanced by wall time, drawn as a text frame, and summarized when it ends.
 export const PROGRAMS = {
   uav: { describe: 'monte carlo landings from the aiaa paper', parse: parseUav, create: createUav },
-  orderbook: { describe: 'a matching engine with a strategy and risk check', parse: parseOrderBook, create: createOrderBook },
-  maze: { describe: 'a* route planning where turns cost extra', parse: parseMaze, create: createMaze },
+  orderbook: { describe: "the c++ engine's strategy and risk checks, live", parse: parseOrderBook, create: createOrderBook },
+  maze: { describe: 'robot tour: the fastest route through every gate', parse: parseMaze, create: createMazeProgram },
 }
 
 const ALIASES = { 'order-book': 'orderbook', 'uav-suspension': 'uav', 'maze-robot': 'maze' }

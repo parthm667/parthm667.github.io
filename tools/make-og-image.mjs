@@ -33,7 +33,7 @@ body { width: 1200px; height: 630px; background: #08090a; font-family: 'Ubuntu M
 <div class="screen">
 <div><span class="prompt">parth@portfolio:~$</span> overview</div>
 <div class="name">parth mhaske</div>
-<div class="about">cs + applied math, umd '28.</div>
+<div class="about">cs + math, umd '28.</div>
 ${rows}
 <div class="last"><div><span class="prompt">parth@portfolio:~$</span> run uav<span class="cursor"></span></div><div class="site">mhaske.com</div></div>
 </div></div></body></html>`

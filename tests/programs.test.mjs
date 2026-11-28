@@ -6,8 +6,8 @@ import { PROGRAM_NAMES, createProgram } from '../src/desktop/programs/index.js'
 import { createRandom } from '../src/desktop/programs/random.js'
 import { visibleWidth } from '../src/desktop/programs/draw.js'
 import { SELECTED, TRIALS, forceLimit, sampleTouchdown, simulateLanding } from '../src/desktop/programs/uavModel.js'
-import { BUY, OrderBook, RiskManager, SELL, createMarket } from '../src/desktop/programs/orderBookModel.js'
-import { GOAL, START, cellKey, createGrid, solve } from '../src/desktop/programs/mazeModel.js'
+import { BUY, OrderBook, RiskManager, SELL, SETTINGS, SimpleMomentum, createMarket } from '../src/desktop/programs/orderBookModel.js'
+import { MOVE_COST, TURN_COST, createMaze, findOptimalPath, replay, toActions, wallBlocks } from '../src/desktop/programs/mazeModel.js'
 
 const spec = command => executeCommand(command, HOME).program
 
@@ -86,21 +86,48 @@ test('the order book matches by price, then by arrival time', () => {
   assert.equal(book.best(BUY), null)
 })
 
-test('the synthetic market never leaves a crossed book and respects the risk limits', () => {
-  const market = createMarket(createRandom(21))
-  for (let event = 0; event < 4000; event++) {
-    market.step()
-    const bid = market.book.best(BUY), ask = market.book.best(SELL)
-    if (bid !== null && ask !== null) assert.ok(bid < ask, `crossed at event ${event}`)
-    assert.ok(Math.abs(market.risk.position) <= market.risk.maxPosition)
+test('the momentum strategy signals on moves past its threshold and resets its reference', () => {
+  const strategy = new SimpleMomentum(0.015, 10)
+  assert.equal(strategy.onTrade(100), null, 'the first print only sets the reference')
+  assert.equal(strategy.onTrade(100.01), null)
+  const up = strategy.onTrade(100.02)
+  assert.deepEqual([up.side, up.quantity], [BUY, 10])
+  assert.ok(Math.abs(up.change - 0.02) < 1e-9)
+  assert.equal(strategy.onTrade(100.03), null, 'measured from the new reference')
+  assert.equal(strategy.onTrade(100.0).side, SELL)
+  assert.equal(strategy.tradeCount, 2)
+})
+
+test('the risk check applies the engine limits in order, with its rejection reasons', () => {
+  const risk = new RiskManager({ maxOrderQuantity: 25, maxOrderNotional: 5000, maxNetPositionAbs: 40 })
+  risk.updateQuote(99.99, 100.01)
+  assert.deepEqual(risk.checkOrder({ side: BUY, quantity: 0 }), { accepted: false, reason: 'quantity must be positive' })
+  assert.deepEqual(risk.checkOrder({ side: BUY, quantity: 30 }), { accepted: false, reason: 'order quantity exceeds limit' })
+  assert.deepEqual(risk.checkOrder({ side: BUY, quantity: 20, price: 300 }), { accepted: false, reason: 'order notional exceeds limit' })
+  assert.deepEqual(risk.checkOrder({ side: BUY, quantity: 20 }), { accepted: true, reason: '' })
+  risk.onFill(BUY, 25)
+  assert.deepEqual(risk.checkOrder({ side: BUY, quantity: 20 }), { accepted: false, reason: 'net position exceeds limit' })
+  assert.equal(risk.checkOrder({ side: SELL, quantity: 25 }).accepted, true)
+  assert.deepEqual(new RiskManager({ allowMarketOrders: false }).checkOrder({ side: BUY, quantity: 1 }), { accepted: false, reason: 'market orders disabled' })
+  assert.equal(new RiskManager().checkOrder({ side: BUY, quantity: 1e9 }).accepted, true, 'a limit of zero is off')
+})
+
+test('the simulated market stays two-sided, never crosses, and keeps the position inside its limit', () => {
+  let signals = 0
+  for (const seed of [21, 22, 23, 24, 25, 26]) {
+    const market = createMarket(createRandom(seed))
+    for (let event = 0; event < 3200; event++) {
+      market.step()
+      const bid = market.book.best(BUY), ask = market.book.best(SELL)
+      assert.ok(bid !== null && ask !== null, `a side emptied at event ${event}, seed ${seed}`)
+      assert.ok(bid < ask, `crossed at event ${event}, seed ${seed}`)
+      assert.ok(Math.abs(market.risk.position) <= SETTINGS.limits.maxNetPositionAbs)
+    }
+    assert.equal(market.stats.signals, market.stats.sent + market.stats.rejected)
+    assert.equal(market.stats.signals, market.strategy.tradeCount)
+    signals += market.stats.signals
   }
-  assert.equal(market.stats.signals, market.stats.sent + market.stats.rejected)
-  assert.ok(market.stats.trades > 500 && market.book.orders.size > 20)
-  const risk = new RiskManager({ maxPosition: 20, maxOrder: 15 })
-  assert.deepEqual(risk.check({ side: BUY, size: 30 }), { ok: false, reason: 'order size limit' })
-  risk.fill(BUY, 15)
-  assert.deepEqual(risk.check({ side: BUY, size: 10 }), { ok: false, reason: 'position limit' })
-  assert.deepEqual(risk.check({ side: SELL, size: 10 }), { ok: true })
+  assert.ok(signals / 6 > 100, `${signals / 6} signals a run`)
 })
 
 test('the strategy flattens its position at the close, in slices the risk check allows', () => {
@@ -121,23 +148,37 @@ test('the strategy flattens its position at the close, in slices the risk check 
     program[end]()
     assert.equal(program.stats.position, 0, end)
     assert.match(program.summary(92), /so it ends flat|already flat at the close/)
+    assert.match(program.summary(92), /p99 110 ns/)
   }
 })
 
-test('the planner returns a legal route and takes fewer turns than a step-only search', () => {
-  for (const seed of [1, 2, 3, 4, 5]) {
-    const { blocked, planned, shortest } = createGrid(createRandom(seed))
-    const { path } = planned
-    assert.deepEqual([path[0].x, path[0].y], [START.x, START.y])
-    assert.deepEqual([path.at(-1).x, path.at(-1).y], [GOAL.x, GOAL.y])
-    for (let index = 1; index < path.length; index++) {
-      assert.equal(Math.abs(path[index].x - path[index - 1].x) + Math.abs(path[index].y - path[index - 1].y), 1)
-      assert.ok(!blocked.has(cellKey(path[index].x, path[index].y)))
-    }
-    assert.ok(planned.steps >= shortest.steps)
-    assert.ok(planned.turns < shortest.turns)
-    assert.deepEqual(solve(blocked).path, path, 'the search is deterministic')
-  }
+// Printed by robottouroptimalpathtominseconds.py in RobotTourMazeSolver.
+const PYTHON_ACTIONS = 'S R F L F R F L F F L F F R R F R F R F F R F L L F L F R F R F F L F L F R R F R F F F R R F F L F F F F R E'
+
+test('the route search reproduces the output of the original python', () => {
+  const maze = createMaze()
+  const found = findOptimalPath(maze)
+  const actions = toActions(found.path)
+  assert.equal(actions.join(' '), PYTHON_ACTIONS)
+  assert.deepEqual(found.gatesSequence, ['C', 'B', 'D', 'A', 'E'])
+  const forward = actions.filter(action => action === 'F' || action === 'E').length
+  const turns = actions.filter(action => action === 'L' || action === 'R').length
+  assert.deepEqual([forward, turns, actions.length], [30, 24, 55])
+  assert.ok(Math.abs(found.cost - (30 * MOVE_COST + 24 * TURN_COST)) < 1e-9)
+})
+
+test('replaying the route obeys the walls and the gate rules', () => {
+  const maze = createMaze()
+  const checked = replay(maze, PYTHON_ACTIONS.split(' '))
+  assert.equal(checked.valid, true)
+  assert.deepEqual(checked.cleared, ['C', 'B', 'D', 'A', 'E'])
+  assert.ok(Math.abs(checked.time - 51.9) < 1e-9)
+  assert.deepEqual([checked.steps.at(-1).row, checked.steps.at(-1).col], maze.end)
+  assert.equal(wallBlocks(maze, 4, 3, 3), true, 'the barrier between the start and gate A')
+  assert.equal(wallBlocks(maze, 4, 3, 1), false)
+  assert.equal(replay(maze, ['S', 'L', 'F']).valid, false, 'driving through a wall')
+  assert.equal(replay(maze, ['S', 'R', 'F', 'F']).valid, false, 'the barrier before the end square')
+  assert.equal(replay(maze, PYTHON_ACTIONS.split(' ').slice(0, -3)).valid, false, 'stopping short of the end')
 })
 
 test('every demo draws inside the terminal, finishes, and summarizes', () => {
@@ -151,6 +192,7 @@ test('every demo draws inside the terminal, finishes, and summarizes', () => {
       for (const line of frame) assert.ok(visibleWidth(line) <= columns, `${name} line fits ${columns} columns: ${line}`)
     }
     assert.equal(program.frame(30, 8), null, `${name} declines a terminal that is too small`)
+    assert.equal(program.frame(80, 12), null, `${name} declines a terminal that is too short`)
     let elapsed = 0
     while (!program.done && elapsed < 60000) {
       program.advance(50)

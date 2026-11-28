@@ -9,7 +9,7 @@ const output = (command, context) => run(command, context).lines.map(line => lin
 const failed = command => run(command).lines.some(line => line.type === 'error')
 
 test('pipes pass plain text between commands', () => {
-  assert.equal(output('cat about.txt | wc -w'), '74')
+  assert.equal(output('cat about.txt | wc -w'), '72')
   assert.equal(output('ls | sort -r | head -n 2'), 'writing\nresearch')
   assert.equal(output('ls | grep txt'), 'about.txt\ncontact.txt')
   assert.equal(output('echo one two | rev'), 'owt eno')
@@ -37,7 +37,7 @@ test('text filters read files and report missing input', () => {
   assert.equal(output('head -n 1 about.txt'), 'hey, i’m parth.')
   assert.equal(output('head -1 about.txt'), 'hey, i’m parth.')
   assert.equal(output('tail -n 1 contact.txt'), 'feel free to reach out.')
-  assert.match(output('wc about.txt'), /^\d+ 74 \d+ about.txt$/)
+  assert.match(output('wc about.txt'), /^\d+ 72 \d+ about.txt$/)
   assert.equal(output('wc -l contact.txt'), '5 contact.txt')
   assert.ok(failed('head'))
   assert.ok(failed('wc projects'))

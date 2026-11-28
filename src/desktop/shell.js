@@ -48,8 +48,8 @@ const help = `look around
 
 watch it work
   run uav               1,000 monte carlo landings from the paper
-  run orderbook         a matching engine with a strategy and risk check
-  run maze              a* route planning where turns cost extra
+  run orderbook         the c++ engine's strategy and risk checks, live
+  run maze              robot tour: the fastest route through every gate
   ls                    list files and folders
   ls -la                list all files with details
   cd projects           go into a folder
@@ -229,7 +229,7 @@ function executeSingle(raw, cwd = HOME, context = {}) {
   if (command === 'overview') return { ...result, lines: [{ type: 'overview', entries: FEATURED_WORK, more: MORE_WORK }] }
   if (command === 'clear') return { ...result, clear: true }
   if (command === 'pwd') return text(cwd)
-  if (command === 'whoami') return text('parth mhaske\ncs + applied math at umd, class of 2028.\nread about.txt for a little more.')
+  if (command === 'whoami') return text('parth mhaske\ncs + math at umd, class of 2028.\nread about.txt for a little more.')
   if (['cat', 'open', 'view'].includes(command) && !args[0]) return error(`usage: ${command} <file or path>. try ${command} about.txt.`)
   let path = command === 'view' && Object.hasOwn(projectShortcuts, args[0]) ? projectShortcuts[args[0]] : resolvePath(args[0] ?? (command === 'cd' ? '~' : '.'), cwd)
   if (!path) return error('that path is outside this home directory or contains invalid characters. try cd ~.')

@@ -183,7 +183,7 @@ i also worked on autonomous routines and match strategy, connecting the robot's 
     link('road_design.url', 'street design and road safety', '/public_remediation'),
   ]),
   file('about.txt', 'a little about me',
-    'hey, i’m parth.\n\ni study computer science and applied mathematics at the university of maryland. class of 2028.\n\ni work on trading systems, simulations, and agent evaluation. i wrote a first-author aiaa paper on uav suspension design, analyzed 604,578 polymarket trader records, and contributed to agent evaluation at nuntius (yc s25).\n\ni’m looking for summer 2027 internships in software engineering, quantitative research, or systems engineering. outside of that, i ride bikes and photograph birds.'),
+    'hey, i’m parth.\n\ni study cs and math at the university of maryland. class of 2028.\n\ni work on trading systems, simulations, and agent evaluation. i wrote a first-author aiaa paper on uav suspension design, analyzed 604,578 polymarket trader records, and contributed to agent evaluation at nuntius (yc s25).\n\ni’m looking for summer 2027 internships in software engineering, quantitative research, or systems engineering. outside of that, i ride bikes and photograph birds.'),
   file('contact.txt', 'email, github, and linkedin',
     'email: mailto:pmhaske@umd.edu\ngithub: https://github.com/parthm667\nlinkedin: https://linkedin.com/in/pmhaske/\n\nfeel free to reach out.'),
   link('photography.url', 'birds and other photos', 'https://parthmhaske.myportfolio.com/'),

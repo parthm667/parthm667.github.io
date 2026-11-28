@@ -44,11 +44,15 @@ terminal too small for the frames, only the summary is printed.
   [UAVSuspensionSystem](https://github.com/parthm667/UAVSuspensionSystem)
   (`monte_carlo.cpp`): the same equations, RK4 grid, touchdown sampling, and
   failure checks. Each run samples 1,000 new landings, so counts vary by run.
-- `run orderbook`: a price-time priority book with generated order flow, a
-  toy strategy that emits signals, and a pre-trade risk check. It sketches the
-  pipeline of the C++ engine; it is not that engine.
-- `run maze`: A* over cell and heading on a random 16 x 16 grid, with a cost
-  for each quarter turn, compared with a search that counts steps only.
+- `run orderbook`: the `SimpleMomentum` strategy and `RiskManager` checks
+  from [crypto-hft](https://github.com/sujaykonda/crypto-hft), ported, trading
+  against a small simulated exchange with generated order flow. The strategy
+  closes its position at the end of a run. The latency line quotes the C++
+  engine's published internal benchmark; nothing is timed in the browser.
+- `run maze`: a port of `robottouroptimalpathtominseconds.py` from
+  [RobotTourMazeSolver](https://github.com/parthm667/RobotTourMazeSolver): the
+  same track, action costs, gate rules, and search order. A test checks that
+  it prints the same action list as the Python.
 
 The models live in `src/desktop/programs/` (`uavModel.js`,
 `orderBookModel.js`, `mazeModel.js`) apart from the code that draws them.

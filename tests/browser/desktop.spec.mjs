@@ -335,7 +335,7 @@ test('a demo animates in place, stops on q, and hands the prompt back', async ({
   await expect(screen(page)).toContainText('stopped after')
   await expect(screen(page)).not.toContainText('q stops')
   await command(page, 'cat about.txt | wc -w')
-  await expect(screen(page)).toContainText('74')
+  await expect(screen(page)).toContainText('72')
 })
 
 test('everyday linux commands and pipes answer from the virtual files', async ({ page }) => {

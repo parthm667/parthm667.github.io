@@ -228,7 +228,7 @@ test('reduced motion and small terminals print the result without animating', as
     assert.equal(session.program, null)
     await session.whenIdle()
     const output = terminal.writes.join('')
-    assert.match(output, /2,240 synthetic events/)
+    assert.match(output, /3,200 generated events/)
     assert.ok(!output.includes('\x1b[?25l'))
     session.dispose()
   }
