@@ -64,6 +64,7 @@ export default function Terminal({ cwd, active, onNavigate, onMode, onPreview })
       onNavigate: path => callbacksRef.current.onNavigate(path),
       onMode: mode => callbacksRef.current.onMode(mode),
       onPreview: path => callbacksRef.current.onPreview?.(path),
+      reducedMotion: () => reducedMotion.matches,
       onBootComplete: () => {
         if (disposed) return
         setBooting(false)

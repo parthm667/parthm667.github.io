@@ -178,3 +178,94 @@ test('stale directory props cannot rewind a burst of navigation', async () => {
   await session.whenIdle()
   session.dispose()
 })
+
+const settle = ms => new Promise(resolve => setTimeout(resolve, ms))
+
+test('a demo draws frames in place, ignores typing, and q returns the prompt with a summary', async () => {
+  let clock = 0
+  const { terminal, session } = createSession({ seed: () => 7, now: () => (clock += 400) })
+  session.input('run maze\r')
+  assert.ok(session.program, 'the demo owns the terminal')
+  await settle(120)
+  const live = terminal.writes.join('')
+  assert.ok(live.includes('parth@portfolio:~$ run maze'))
+  assert.ok(live.includes('\x1b[?25l'), 'the cursor is hidden while frames are drawn')
+  assert.ok(live.includes('searching'))
+  session.input('ls\r')
+  assert.equal(session.editor.value, '', 'typing does not reach the prompt while a demo runs')
+  assert.ok(session.program)
+  session.input('q')
+  assert.equal(session.program, null)
+  await session.whenIdle()
+  const output = terminal.writes.join('')
+  assert.ok(output.includes('quarter turns'))
+  assert.ok(output.includes('stopped early'))
+  assert.ok(terminal.writes.at(-1).includes('\x1b[?25h'), 'the cursor returns with the prompt')
+  session.input('pwd\r')
+  await session.whenIdle()
+  assert.ok(terminal.writes.join('').includes(HOME))
+  session.dispose()
+})
+
+test('a demo ends on its own and leaves its summary in the scrollback', async () => {
+  let clock = 0
+  const { terminal, session } = createSession({ seed: () => 7, now: () => (clock += 3000) })
+  session.input('run uav\r')
+  for (let waited = 0; session.program && waited < 3000; waited += 20) await settle(20)
+  assert.equal(session.program, null)
+  await session.whenIdle()
+  const output = terminal.writes.join('')
+  assert.match(output, /1,000 landings, each sampled fresh/)
+  assert.ok(!output.includes('stopped after'))
+  session.dispose()
+})
+
+test('reduced motion and small terminals print the result without animating', async () => {
+  for (const options of [{ reducedMotion: () => true }, { rows: 10 }]) {
+    const { terminal, session } = createSession({ seed: () => 7, reducedMotion: options.reducedMotion })
+    if (options.rows) terminal.rows = options.rows
+    session.input('run orderbook\r')
+    assert.equal(session.program, null)
+    await session.whenIdle()
+    const output = terminal.writes.join('')
+    assert.match(output, /2,240 synthetic events/)
+    assert.ok(!output.includes('\x1b[?25l'))
+    session.dispose()
+  }
+})
+
+test('a demo pauses while the terminal is hidden and is released on dispose', async () => {
+  let clock = 0
+  const { session } = createSession({ seed: () => 7, now: () => (clock += 50) })
+  session.input('run orderbook\r')
+  await settle(80)
+  session.active = false
+  await settle(40)
+  const paused = session.program.instance.stats.events
+  await settle(120)
+  assert.equal(session.program.instance.stats.events, paused)
+  session.active = true
+  await settle(120)
+  assert.ok(session.program.instance.stats.events > paused)
+  session.dispose()
+  assert.equal(session.program, null)
+  assert.equal(session.programTimer, null)
+})
+
+test('opening a link from the scrollback stops a running demo first', async () => {
+  const { session, navigation } = createSession({ seed: () => 7 })
+  session.input('run maze\r')
+  session.openVirtualLink(`portfolio:${encodeURIComponent(`${HOME}/projects`)}`)
+  assert.equal(session.program, null)
+  assert.deepEqual(navigation, [`${HOME}/projects`])
+  await session.whenIdle()
+  session.dispose()
+})
+
+test('history reaches the shell from the session', async () => {
+  const { terminal, session } = createSession()
+  session.input('pwd\rwhoami\rhistory\r')
+  await session.whenIdle()
+  assert.match(terminal.writes.join(''), / {3}1 {2}pwd\r\n {3}2 {2}whoami\r\n {3}3 {2}history/)
+  session.dispose()
+})

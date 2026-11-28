@@ -71,8 +71,10 @@ export function formatOutput(line, columns) {
       wrapWords(entry.detail, columns, '  '),
     ].join('\r\n')).join('\r\n\r\n')
     const more = (line.more ?? []).map(entry => `${hyperlink(`${ANSI.blue}${safeTerminalText(entry.title)}${ANSI.reset}`, `portfolio-view:${encodeURIComponent(entry.path)}`)}\r\n${wrapWords(entry.detail, columns, '  ')}`).join('\r\n')
-    return `parth mhaske\r\ncs + applied math, umd '28.\r\n\r\n${work}\r\n\r\n${more}\r\n\r\n${wrapWords('click a title to read. or type view uav / polymarket / order-book.', columns)}\r\n${wrapWords('ls explores everything. help shows commands. cat contact.txt to get in touch.', columns)}`
+    return `parth mhaske\r\ncs + applied math, umd '28.\r\n\r\n${work}\r\n\r\n${more}\r\n\r\n${wrapWords('click a title to read. or type view uav / polymarket / order-book.', columns)}\r\n${wrapWords('run uav, run orderbook, or run maze plays a live demo.', columns)}\r\n${wrapWords('ls explores everything. help shows commands. cat contact.txt to get in touch.', columns)}`
   }
+  // Demo output is generated here, never from visitor input, and carries its own colors.
+  if (line.type === 'ansi') return line.text
   if (line.type === 'listing') return formatListing(line, columns)
   if (line.type === 'link') {
     const href = line.href ?? line.node?.href ?? ''

@@ -28,6 +28,31 @@ There are also a few command-line easter eggs: `sudo`, `cowsay`, `fortune`,
 `sl`, `exit`, `vim`, and `neofetch`. They print into the terminal without
 changing files or leaving the page.
 
+Everyday Linux commands answer against the virtual home directory: `grep`,
+`find`, `head`, `tail`, `wc`, `sort`, `history`, `man`, `date`, `git log`, and
+others in `commands.js`. Text travels through pipes (`cat about.txt | wc -w`).
+The filesystem is read-only, and nothing reaches the network or a real shell.
+
+### Live demos
+
+`run uav`, `run orderbook`, and `run maze` play a model in the terminal. Each
+is a real computation, drawn about fifteen times a second and summarized in
+the scrollback when it ends. `q` stops one early. With reduced motion, or a
+terminal too small for the frames, only the summary is printed.
+
+- `run uav [k c]`: a port of the Monte Carlo landing model in
+  [UAVSuspensionSystem](https://github.com/parthm667/UAVSuspensionSystem)
+  (`monte_carlo.cpp`): the same equations, RK4 grid, touchdown sampling, and
+  failure checks. Each run samples 1,000 new landings, so counts vary by run.
+- `run orderbook`: a price-time priority book with generated order flow, a
+  toy strategy that emits signals, and a pre-trade risk check. It sketches the
+  pipeline of the C++ engine; it is not that engine.
+- `run maze`: A* over cell and heading on a random 16 x 16 grid, with a cost
+  for each quarter turn, compared with a search that counts steps only.
+
+The models live in `src/desktop/programs/` (`uavModel.js`,
+`orderBookModel.js`, `mazeModel.js`) apart from the code that draws them.
+
 The file browser uses an icon grid by default, Ubuntu fonts, and the official
 Yaru folder/document icons. It supports breadcrumbs, back/forward/up,
 folder search, list/grid views, and file previews in a dialog. Files and
@@ -57,8 +82,15 @@ Project folders contain `readme.md` and a source shortcut when available.
 - `Explorer.jsx`: file browsing and previews.
 - `FileContent.jsx`: Explorer previews and links.
 - `shell.js`: command parsing; no system commands are executed.
+- `commands.js`: everyday Linux commands over the virtual files.
+- `programs/`: the `run` demos: models, text drawing, and the registry.
 - `filesystem.js`: content and path handling.
 - `desktop.css`: styles scoped to the homepage.
+
+### Link preview
+
+`public/og.png` is the card shown when the site is shared. Regenerate it with
+`node tools/make-og-image.mjs`.
 
 ## Other pages
 

@@ -2,13 +2,17 @@ import { HOME, getNode, resolvePath } from './filesystem.js'
 import { completeCommand, executeCommand } from './shell.js'
 import { formatOutput, formatPrompt } from './terminalFormat.js'
 import { LineEditor, MAX_INPUT_LENGTH } from './terminalInput.js'
+import { createProgram } from './programs/index.js'
+import { freshSeed } from './programs/random.js'
 
 const ESCAPE_KEYS = ['\x1b[3~', '\x1b[1~', '\x1b[4~', '\x1b[H', '\x1bOH', '\x1b[F', '\x1bOF', '\x1b[D', '\x1bOD', '\x1b[C', '\x1bOC', '\x1b[A', '\x1bOA', '\x1b[B', '\x1bOB']
 const PASTE_START = '\x1b[200~'
 const PASTE_END = '\x1b[201~'
+const FRAME_MS = 66 // demo frames are drawn about fifteen times a second
+const STOP_KEYS = ['q', 'Q', '\x03', '\x1b']
 
 export class TerminalSession {
-  constructor(terminal, { cwd = HOME, onNavigate, onMode, onPreview, onBootComplete }) {
+  constructor(terminal, { cwd = HOME, onNavigate, onMode, onPreview, onBootComplete, reducedMotion, seed = freshSeed, now = () => performance.now() }) {
     this.terminal = terminal
     this.cwd = cwd
     this.onNavigate = onNavigate
@@ -31,6 +35,12 @@ export class TerminalSession {
     this.pasteText = ''
     this.clearPending = false
     this.requestedDirectory = null
+    this.reducedMotion = reducedMotion
+    this.seed = seed
+    this.now = now
+    this.program = null
+    this.programTimer = null
+    this.startedAt = Date.now()
   }
 
   write(text) {
@@ -90,7 +100,9 @@ export class TerminalSession {
       this.marker = terminal.registerMarker(0)
       // xterm owns wide characters and wrapping: save the real cursor at the
       // edit point, write the suffix, then restore rather than estimating cells.
-      await this.write(`${formatPrompt(cwd)}${before} \b\x1b7${after} \b\x1b8`)
+      const frame = this.program?.instance.frame(terminal.cols, terminal.rows - 1)
+      if (frame) await this.write(`\x1b[?25l${frame.join('\r\n')}`)
+      else await this.write(`\x1b[?25h${formatPrompt(cwd)}${before} \b\x1b7${after} \b\x1b8`)
       if (this.disposed) return
       for (const { result } of records) {
         if (result?.previewPath) this.onPreview?.(result.previewPath)
@@ -136,10 +148,62 @@ export class TerminalSession {
     this.redraw()
   }
 
+  // A demo owns the area below its command until it ends. Without room for
+  // its frames, or with reduced motion, it runs to completion and only the
+  // summary is printed.
+  launch(spec) {
+    const instance = createProgram(spec, { seed: this.seed() })
+    const columns = this.terminal.cols
+    if (this.reducedMotion?.() || !instance.frame(columns, this.terminal.rows - 1)) {
+      instance.finish()
+      return { type: 'ansi', text: instance.summary(columns) }
+    }
+    this.program = { instance, last: null, drawn: -Infinity }
+    this.scheduleProgram()
+    return null
+  }
+
+  scheduleProgram() {
+    const tick = () => { this.programTimer = null; this.tickProgram() }
+    this.programTimer = this.useFrames ? requestAnimationFrame(tick) : setTimeout(tick, 16)
+  }
+
+  tickProgram() {
+    const program = this.program
+    if (this.disposed || !program) return
+    const now = this.now()
+    // Time only passes while the terminal is the visible, ready view.
+    if (this.active && !this.booting && program.last !== null) {
+      program.instance.advance(Math.min(100, now - program.last))
+      if (program.instance.done || !program.instance.frame(this.terminal.cols, this.terminal.rows - 1)) return this.endProgram()
+      if (now - program.drawn >= FRAME_MS) { program.drawn = now; this.redraw() }
+    }
+    program.last = now
+    this.scheduleProgram()
+  }
+
+  endProgram(interrupted = false) {
+    const program = this.program
+    if (!program) return
+    this.program = null
+    if (this.programTimer !== null) {
+      if (this.useFrames) cancelAnimationFrame(this.programTimer)
+      else clearTimeout(this.programTimer)
+      this.programTimer = null
+    }
+    if (interrupted) program.instance.stop()
+    else program.instance.finish()
+    this.record({ raw: null, cwd: this.cwd, result: { lines: [{ type: 'ansi', text: program.instance.summary(this.terminal.cols) }] } })
+  }
+
   submit() {
     const raw = this.editor.submit()
     const cwd = this.cwd
-    const result = executeCommand(raw, cwd)
+    const result = executeCommand(raw, cwd, { history: this.editor.history, startedAt: this.startedAt })
+    if (result.program) {
+      const summary = this.launch(result.program)
+      if (summary) result.lines = [...result.lines, summary]
+    }
     if (result.clear) {
       this.clearOutput()
       if (result.lines?.length || result.mode || result.previewPath) this.record({ raw: null, cwd, result })
@@ -178,6 +242,10 @@ export class TerminalSession {
 
   input(data) {
     if (!this.active || this.disposed || !data) return
+    if (this.program) {
+      if (STOP_KEYS.includes(data)) this.endProgram(true)
+      return
+    }
     let index = 0
     while (index < data.length) {
       if (this.pasting) {
@@ -219,6 +287,7 @@ export class TerminalSession {
     try { path = resolvePath(decodeURIComponent(uri.slice(prefix.length))) } catch { return }
     const node = path && getNode(path)
     if (!node) return
+    this.endProgram(true)
     this.editor.set(`${preview ? 'view' : node.type === 'folder' ? 'cd' : 'open'} "${path}"`)
     this.submit()
     this.terminal.focus()
@@ -233,6 +302,12 @@ export class TerminalSession {
       else clearTimeout(this.frame)
     }
     this.frame = null
+    if (this.programTimer !== null) {
+      if (this.useFrames) cancelAnimationFrame(this.programTimer)
+      else clearTimeout(this.programTimer)
+    }
+    this.programTimer = null
+    this.program = null
     this.marker?.dispose()
     for (const finish of this.writeWaiters) finish()
     this.settleIdle()

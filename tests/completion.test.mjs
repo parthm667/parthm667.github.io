@@ -15,5 +15,6 @@ test('completion treats quoted separators as text and preserves the completed pr
   assert.ok(completeCommand('cowsay "a; b && c";  cat ab', HOME).includes('cowsay "a; b && c";  cat about.txt'))
   assert.ok(completeCommand('pwd; open "writing/road').includes('pwd; open writing/road_design.url'))
   assert.deepEqual(completeCommand('cat "about;'), [])
-  assert.deepEqual(completeCommand('pwd | cat ab'), [])
+  assert.deepEqual(completeCommand('pwd | cat ab'), ['pwd | cat about.txt'])
+  assert.deepEqual(completeCommand('pwd > cat ab'), [])
 })

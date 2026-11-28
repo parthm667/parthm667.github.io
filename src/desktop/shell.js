@@ -1,12 +1,18 @@
 import { HOME, FEATURED_WORK, MORE_WORK, resolvePath, getNode, listDirectory, parentPath } from './filesystem.js'
 import { EASTER_EGG_COMMANDS, easterEgg } from './easterEggs.js'
+import { PROGRAMS, PROGRAM_NAMES, resolveProgram } from './programs/index.js'
+import { EXTRA_COMMANDS, runExtra } from './commands.js'
 
 const aliases = {
   help: 'help', ls: 'ls', cd: 'cd', pwd: 'pwd', cat: 'cat',
   open: 'open', 'xdg-open': 'open', clear: 'clear', whoami: 'whoami',
-  tree: 'tree', explorer: 'explorer', rm: 'rm', overview: 'overview', work: 'overview', view: 'view',
+  tree: 'tree', explorer: 'explorer', rm: 'rm', overview: 'overview', work: 'overview', view: 'view', run: 'run', demo: 'run',
+  less: 'cat', more: 'cat', bat: 'cat',
+  ...Object.fromEntries(EXTRA_COMMANDS.map(command => [command, command])),
   ...Object.fromEntries(EASTER_EGG_COMMANDS.map(command => [command, command])),
 }
+const PATH_COMMANDS = ['head', 'tail', 'wc', 'sort', 'uniq', 'nl', 'file', 'stat', 'du']
+const knownCommand = name => Object.hasOwn(aliases, name)
 
 function tokenize(raw, allowUnclosed = false) {
   const tokens = []
@@ -39,6 +45,11 @@ const help = `look around
   view order-book       c++ trading platform
   view corsha           backend services and log ingestion
   view nuntius          agent evaluation work
+
+watch it work
+  run uav               1,000 monte carlo landings from the paper
+  run orderbook         a matching engine with a strategy and risk check
+  run maze              a* route planning where turns cost extra
   ls                    list files and folders
   ls -la                list all files with details
   cd projects           go into a folder
@@ -53,6 +64,14 @@ const help = `look around
   whoami                a short introduction
   clear                 clear the terminal
   explorer              switch to file explorer
+
+everyday linux
+  grep -ri monte        search every file for a word
+  find . -name "*.md"   list files by name
+  head, tail, wc, sort  work on a file or on piped text
+  cat about.txt | wc -w pipes work
+  history, date, man ls and most other everyday commands answer
+  git log               the timeline
 
 tab completes commands, folders, and filenames. ↑ / ↓ recall commands.
 use quotes around paths with spaces. chain commands with && or ;.
@@ -89,34 +108,66 @@ function missingPathHint(entered, command, input, cwd) {
 // are ordinary text; no command is ever passed to a real shell.
 function splitCommands(raw, incomplete = false) {
   const commands = []
-  let quote = null, start = 0, operator = null
+  let quote = null, start = 0, operator = null, stages = []
   for (let index = 0; index < raw.length; index++) {
     const char = raw[index]
     if (quote) { if (char === quote) quote = null; continue }
     if (char === '"' || char === "'") { quote = char; continue }
     if (char === ';' || (char === '&' && raw[index + 1] === '&')) {
       const command = raw.slice(start, index).trim()
-      if (!command) return { error: 'missing command before the separator.' }
-      commands.push({ command, operator })
+      if (!command) return { error: stages.length ? 'missing command after the pipe.' : 'missing command before the separator.' }
+      commands.push({ command: stages[0] ?? command, pipes: stages.length ? [...stages.slice(1), command] : [], operator })
+      stages = []
       operator = char === ';' ? ';' : '&&'
       if (operator === '&&') index++
       start = index + 1
-    } else if ('|&<>'.includes(char)) return { error: 'pipes, redirects, and background jobs are not supported here. use && to run commands in order.' }
+    } else if (char === '|' && raw[index + 1] !== '|') {
+      const stage = raw.slice(start, index).trim()
+      if (!stage) return { error: 'missing command before the pipe.' }
+      stages.push(stage)
+      start = index + 1
+    } else if (char === '>') return { error: 'this filesystem is read-only, so output cannot be redirected into a file.' }
+    else if ('|&<'.includes(char)) return { error: 'background jobs, ||, and input redirects are not supported here. use && to run commands in order, or | to pipe.' }
   }
   if (quote && !incomplete) return { error: 'missing closing quote. put paths with spaces inside matching quotes.' }
   const last = raw.slice(start).trim()
+  if (!last && stages.length && !incomplete) return { error: 'missing command after the pipe.' }
   if (!last && operator === '&&' && !incomplete) return { error: 'missing command after &&.' }
-  if (last) commands.push({ command: last, operator })
+  if (last || stages.length) commands.push({ command: stages[0] ?? last, pipes: stages.length ? [...stages.slice(1), last] : [], operator })
   return { commands, completionStart: start }
 }
 
-export function executeCommand(raw, cwd = HOME) {
+// What a command printed, as the plain text the next command in a pipe reads.
+function plainOutput(lines) {
+  return lines.map(line => {
+    if (line.type === 'listing') return [...line.entries].sort((a, b) => a.name.localeCompare(b.name)).map(entry => entry.name).join('\n')
+    if (line.type === 'overview') return [...line.entries, ...(line.more ?? [])].map(entry => `${entry.title}: ${entry.detail}`).join('\n')
+    if (line.type === 'link') return line.href ?? ''
+    if (line.type === 'ansi') return line.text.replace(new RegExp(`${String.fromCharCode(27)}\\[[0-9;]*m`, 'g'), '').replaceAll('\r\n', '\n')
+    return line.node?.content ?? line.text ?? ''
+  }).join('\n')
+}
+
+// Only text travels down a pipe: a piped command cannot change folder, open
+// the reader, or start a demo.
+function executePipeline(command, pipes, cwd, context) {
+  let result = executeSingle(command, cwd, context)
+  if (!pipes.length) return result
+  if (result.program) return { cwd, lines: [{ type: 'error', text: 'a demo draws on the whole terminal, so it cannot be piped. run it on its own.' }] }
+  for (const stage of pipes) {
+    if (result.lines.some(line => line.type === 'error')) break
+    result = executeSingle(stage, cwd, { ...context, stdin: plainOutput(result.lines) })
+  }
+  return { cwd, lines: result.lines }
+}
+
+export function executeCommand(raw, cwd = HOME, context = {}) {
   const parsed = splitCommands(raw)
   if (parsed.error) return { cwd, lines: [{ type: 'error', text: parsed.error }] }
   let result = { cwd, lines: [] }, failed = false
-  for (const { command, operator } of parsed.commands) {
+  for (const { command, pipes, operator } of parsed.commands) {
     if (operator === '&&' && failed) continue
-    const next = executeSingle(command, result.cwd)
+    const next = executePipeline(command, pipes, result.cwd, context)
     failed = next.lines.some(line => line.type === 'error')
     result = { ...result, ...next, lines: [...(next.clear ? [] : result.lines), ...next.lines] }
   }
@@ -131,7 +182,21 @@ const projectShortcuts = {
   'order-book': `${HOME}/projects/order-book/readme.md`,
 }
 
-function executeSingle(raw, cwd = HOME) {
+const runHelp = `live demos. each one runs a real model in your browser.
+${PROGRAM_NAMES.map(name => `  run ${name.padEnd(12)}${PROGRAMS[name].describe}`).join('\n')}
+  run uav 12000 300   the same landings on a softer spring
+q stops a demo early.`
+
+function runProgram(args, result, error, text) {
+  if (!args.length) return text(runHelp)
+  const name = resolveProgram(args[0])
+  if (!name) return error(`no demo called ${args[0]}. try run ${PROGRAM_NAMES.join(', run ')}.`)
+  const parsed = PROGRAMS[name].parse(args.slice(1))
+  if (parsed.error) return error(parsed.error)
+  return { ...result, program: { name, options: parsed.options } }
+}
+
+function executeSingle(raw, cwd = HOME, context = {}) {
   const result = { cwd, lines: [] }
   const error = text => ({ ...result, lines: [{ type: 'error', text }] })
   const text = value => ({ ...result, lines: [{ type: 'text', text: value }] })
@@ -143,9 +208,17 @@ function executeSingle(raw, cwd = HOME) {
   if (!command) {
     const path = resolvePath(entered, cwd)
     if (!rawArgs.length && path && getNode(path)?.type === 'folder') return { ...result, cwd: path }
-    if (!rawArgs.length && Object.hasOwn(projectShortcuts, entered)) return executeSingle(`view ${entered}`, cwd)
+    if (!rawArgs.length && Object.hasOwn(projectShortcuts, entered)) return executeSingle(`view ${entered}`, cwd, context)
     return error(`command not found: ${entered}. type help to see what works here.`)
   }
+  if (command === 'run') return runProgram(rawArgs, result, error, text)
+  const piped = context.stdin !== undefined && context.stdin !== null
+  if (EXTRA_COMMANDS.includes(command)) {
+    const extra = runExtra(command, rawArgs, { ...context, cwd, known: knownCommand })
+    return extra.error ? error(extra.error) : text(extra.text)
+  }
+  if (piped && command === 'cat' && !rawArgs.length) return text(context.stdin)
+  if (piped && command === 'cowsay' && !rawArgs.length) return text(easterEgg('cowsay', [context.stdin.replace(/\s+/g, ' ').trim()]))
   if (command === 'rm') return text('nice try. i still need those files. nothing was deleted.')
   if (EASTER_EGG_COMMANDS.includes(command)) return text(easterEgg(command, rawArgs))
   if (command === 'ls' && rawArgs.some(arg => arg.startsWith('-') && !/^-[la]+$/.test(arg))) return error('unknown ls option. try ls, ls -l, ls -a, or ls -la.')
@@ -189,7 +262,7 @@ export function completeCommand(raw, cwd = HOME) {
     const spacing = current.match(/^\s*/)[0]
     // The shell is a pure virtual model: previewing its cwd cannot open a
     // reader, switch views, or execute anything on the visitor's computer.
-    const directory = executeCommand(prefix.replace(/(?:;|&&)\s*$/, ''), cwd).cwd
+    const directory = executeCommand(prefix.replace(/(?:;|&&|\|)\s*$/, ''), cwd).cwd
     return completeCommand(current.trimStart(), directory).map(match => `${prefix}${spacing}${match}`)
   }
   if (!/\s/.test(raw.trimStart())) {
@@ -201,9 +274,10 @@ export function completeCommand(raw, cwd = HOME) {
   const tokens = tokenize(raw.trimStart(), true)
   const [entered, ...rawArgs] = tokens
   const command = aliases[entered]
+  if (command === 'run') return rawArgs.length > 1 ? [] : PROGRAM_NAMES.filter(name => name.startsWith(rawArgs[0] ?? '')).map(name => `${entered} ${name}`)
   const options = command === 'ls' ? rawArgs.filter(arg => /^-[la]+$/.test(arg)) : []
   const args = command === 'ls' ? rawArgs.filter(arg => !/^-[la]+$/.test(arg)) : rawArgs
-  if (!['ls', 'cd', 'cat', 'open', 'view', 'tree', 'explorer'].includes(command) || args.length > 1) return []
+  if (!['ls', 'cd', 'cat', 'open', 'view', 'tree', 'explorer', ...PATH_COMMANDS].includes(command) || args.length > 1) return []
   const partial = args[0] ?? ''
   const separator = partial.lastIndexOf('/')
   const prefix = partial.slice(0, separator + 1)
