@@ -138,17 +138,8 @@ we ran monte carlo sweeps across the model parameters, then used approximate bay
 matching the observed ranking supports the proposed choice process, but it does not show that the same process caused the ranking.
 
 agent-based modeling / monte carlo / abc calibration`),
-    project('literature-classification', 'classifying 35,000+ research papers',
-      `literature classification
-population biology laboratory, iiser pune
-
-i built a classification pipeline for a collection of more than 35,000 research papers. the records included missing and duplicated bibliographic metadata, so i cleaned those records as part of preparing the corpus for classification.
-
-to represent the text, i used tf-idf features, which weight terms by how often they appear in a paper relative to the collection. i then trained logistic regression and svm models and tuned them with cross-validation. cross-validation let me compare model settings on papers that were held out from fitting.
-
-python / scikit-learn / tf-idf / gridsearchcv`),
   ]),
-  folder('experience', 'agent evaluation, backend systems, and robotics', [
+  folder('experience', 'agent evaluation and backend systems', [
     file('nuntius.txt', 'evaluation infrastructure and agent behavior',
       `agent evaluation at nuntius (yc s25)
 software engineer · november 2025–may 2026
@@ -171,13 +162,6 @@ log ingestion had a different problem. incoming traffic could spike while the co
 i also automated strongswan ipsec deployment using kubernetes helm. this removed the need for manual restarts during certificate rotation.
 
 go / disk-backed queues / kubernetes / helm / ipsec`),
-    file('frc-1923.txt', 'electrical director, frc team 1923',
-      `frc team 1923
-electrical director
-
-i led electrical system design and diagnostics for the robot, including can wiring, encoder signals, and connectors. these connections carry the commands and measurements that the control code depends on, so checking the electrical system was part of finding why the robot behaved differently from what the code requested.
-
-i also worked on autonomous routines and match strategy.`),
   ]),
   folder('writing', 'an essay on street design', [
     link('road_design.url', 'street design and road safety', '/public_remediation'),
