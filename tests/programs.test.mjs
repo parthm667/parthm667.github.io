@@ -103,6 +103,27 @@ test('the synthetic market never leaves a crossed book and respects the risk lim
   assert.deepEqual(risk.check({ side: SELL, size: 10 }), { ok: true })
 })
 
+test('the strategy flattens its position at the close, in slices the risk check allows', () => {
+  for (const seed of [2, 3, 4, 7, 19]) {
+    const market = createMarket(createRandom(seed))
+    for (let event = 0; event < 2240; event++) market.step()
+    const carried = market.risk.position
+    const closing = market.flatten()
+    assert.equal(market.risk.position, 0, `seed ${seed}`)
+    assert.equal(closing.reduce((total, trade) => total + trade.size, 0), Math.abs(carried))
+    assert.equal(market.stats.flattened, Math.abs(carried))
+    assert.ok(closing.every(trade => trade.own && trade.side === (carried > 0 ? SELL : BUY)))
+    assert.deepEqual(market.flatten(), [], 'a flat book has nothing to close')
+  }
+  for (const end of ['finish', 'stop']) {
+    const program = createProgram({ name: 'orderbook', options: {} }, { seed: 2 })
+    program.advance(9000)
+    program[end]()
+    assert.equal(program.stats.position, 0, end)
+    assert.match(program.summary(92), /so it ends flat|already flat at the close/)
+  }
+})
+
 test('the planner returns a legal route and takes fewer turns than a step-only search', () => {
   for (const seed of [1, 2, 3, 4, 5]) {
     const { blocked, planned, shortest } = createGrid(createRandom(seed))

@@ -133,7 +133,7 @@ export function createMarket(random, { start = 10000 } = {}) {
   const strategy = new ImbalanceStrategy()
   const risk = new RiskManager()
   const resting = [] // ids that may still be live, for cancellation
-  const stats = { events: 0, trades: 0, volume: 0, signals: 0, sent: 0, rejected: 0, rejectReasons: {}, fills: 0 }
+  const stats = { events: 0, trades: 0, volume: 0, signals: 0, sent: 0, rejected: 0, rejectReasons: {}, fills: 0, flattened: 0 }
   let nextId = 1, last = start
   const lots = () => 10 * random.integer(1, 9)
 
@@ -191,5 +191,24 @@ export function createMarket(random, { start = 10000 } = {}) {
     return event
   }
 
-  return { book, strategy, risk, stats, step, get last() { return last } }
+  // End of session: the strategy does not carry inventory out. The position is
+  // worked off in slices that pass the same risk check as any other order.
+  function flatten() {
+    const tape = []
+    while (risk.position !== 0) {
+      const side = risk.position > 0 ? SELL : BUY
+      const order = { side, size: Math.min(Math.abs(risk.position), risk.maxOrder) }
+      if (!risk.check(order).ok) break
+      const trades = book.market(side, order.size)
+      if (!trades.length) break // nothing left to trade against
+      for (const trade of trades) {
+        risk.fill(side, trade.size)
+        stats.trades++; stats.fills++; stats.volume += trade.size; stats.flattened += trade.size; last = trade.price
+        tape.push({ ...trade, own: true })
+      }
+    }
+    return tape
+  }
+
+  return { book, strategy, risk, stats, step, flatten, get last() { return last } }
 }
