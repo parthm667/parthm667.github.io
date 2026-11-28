@@ -56,7 +56,7 @@ science olympiad robot tour, 2023–2024
 
 i built a robot to follow a planned route through a maze without wall sensors. since it could not use the walls to correct its position, the route planner and motion controller had to work from encoders and an imu.
 
-i used a* to plan routes on a 16 × 16 grid. since turning takes time, i added a cost for each turn so that the planner did not only count steps. the robot then followed the route using sensor fusion and cascaded pid control at 1 khz.
+i used a* to plan routes on a 6 × 7 grid. since turning takes time, i added a cost for each turn so that the planner did not only count steps. the robot then followed the route using sensor fusion and cascaded pid control at 1 khz.
 
 we placed third at the 2024 national tournament.
 
