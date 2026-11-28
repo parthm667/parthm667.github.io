@@ -12,7 +12,7 @@ export const FEATURED_WORK = [
   {
     title: 'uav suspension',
     path: `${HOME}/research/uav-suspension/readme.md`,
-    detail: '1,000/1,000 sampled landings passed; mean peak force 24.6% below the modeled limit.',
+    detail: 'about 99.6% of sampled landings pass; mean peak force 24.6% below the modeled limit.',
     evidence: 'first-author paper · aiaa aviation 2026',
   },
   {
@@ -101,7 +101,7 @@ we modeled vertical motion, pitch, and roll with a spring-mass-damper system. si
 
 we then evaluated 5,000 spring/damping combinations with 1,000 sampled trials per combination. a trial fails if the suspension bottoms out or exceeds the force, attitude, or settling limits. several configurations passed 1,000 of 1,000 sampled trials, so success count alone did not determine which one to choose.
 
-we selected a spring constant of 21,216 newtons per meter and damping coefficient of 484.56 newton-seconds per meter using the lowest average maximum force as the tie-break. its average maximum force was 5,057 newtons, below the modeled threshold of 6,708 newtons. this gives a suspension choice with more force margin under the sampled conditions. physical testing is still needed to check those modeled outcomes.
+we selected a spring constant of 21,216 newtons per meter and damping coefficient of 484.56 newton-seconds per meter using the lowest average maximum force as the tie-break. its average maximum force was 5,057 newtons, below the modeled threshold of 6,708 newtons. this gives a suspension choice with more force margin under the sampled conditions. rerunning that setting with fresh samples passes about 99.6% of landings, so a perfect 1,000 is a favorable draw rather than a guarantee. physical testing is still needed to check those modeled outcomes.
 
 suspension parameter optimization in a paramotor uav using monte carlo analysis
 parth mhaske and christian claudel
